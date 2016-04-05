@@ -2,123 +2,107 @@ import os
 import re
 
 #creation d'une liste vide de 12 elements par echantillon
-liste_echantillon=[]
+sampleList=[]
 #creation d'une liste contenant tout les barcodes du run
-liste_barcode=[]
-#creation d'une liste qui contiendra chaque liste_echantillon
-liste_finale=[['Sample','Barcode','Kit','Run date','Chip','Mapped Reads','ID','Reads On-Target','Reads On-SampleID','Mean Read Depth','Base at 1x Coverage','Base at 20x Coverage','Base at 100x Coverage']]
+barcodeList=[]
+#creation d'une liste qui contiendra chaque sampleList
+finalList=[['Sample','Barcode','Kit','Run date','Chip','Mapped Reads','ID','Reads On-Target','Reads On-SampleID','Mean Read Depth','Base at 1x Coverage','Base at 20x Coverage','Base at 100x Coverage']]
 
-def GetListBarcode(fileContent):
+def get_list_barcode(fileContent):
 	#supprime la legende
 	del fileContent[0]
 	for elements in fileContent:
 		#recupere le nom du barcode
 		elements = elements[0:13]
-		liste_barcode.append(elements)
-
-def ReadFile(File):
+		barcodeList.append(elements)
+def read_file(File):
 	# lit le fichier
 	fileContent = File.readlines()
 	# fermeture du fichier
 	File.close() 
 	return fileContent
-
-def GetSample(fileContent):
+def get_sample(fileContent):
 	sample = fileContent[0]
 	##TODO// A ameliorer par recherche expression reguliere
 	sample = sample.replace('Sample Name: ','')
 	sample = sample.replace('\n','')
-	liste_echantillon[0] = sample
-
-def GetBarcode(barecode):
-	liste_echantillon[1] = barecode
-
-def GetKit(fileContent):
+	sampleList[0] = sample
+def get_barcode(barecode):
+	sampleList[1] = barecode
+def get_kit(fileContent):
 	if 'LungColon_CPv2' in fileContent[0]:
 		kit = 'LungColon_CPv2' 
 	elif 'CCrenal' in fileContent[0]:
 		kit = 'CCrenal'
 	return kit
-
-def GetRunDate():
+def get_run_date():
 	listdir = []
 	listdir = os.listdir("../Data/Run_test/")
 	for i in listdir:
 		m =re.search('\d.-\d.-\d.', i)
 		if m is not None:
 			match = m.group()
-	liste_echantillon[3] = match
-
-
-def GetChip(fileContent):
+	sampleList[3] = match
+def get_chip(fileContent):
 	for indice in fileContent:
 		if 'ChipType' in indice:
 			chip = indice
 	if '318C' in chip:
 		chip = 'Ion 318 Chip V2'
 	return chip
-
-def GetMappedReads(fileContent):
+def get_mapped_reads(fileContent):
 	mappedReads = fileContent[2]
 	##TODO// A ameliorer par recherche expression reguliere
 	mappedReads = mappedReads.replace('Number of mapped reads:    ','')
 	mappedReads = mappedReads.replace('\n','')
-	liste_echantillon[5] = int(mappedReads)
-
-def GetID(fileContent):
+	sampleList[5] = int(mappedReads)
+def get_id(fileContent):
 	ID = fileContent[1]
 	##TODO// A ameliorer par recherche expression reguliere
 	ID = ID.replace('Sample ID:   ','')
 	ID = ID.replace('\n','')
-	liste_echantillon[6] = ID
-
-def GetReadsOnTarget():
+	sampleList[6] = ID
+def get_reads_on_target():
 	readsOnTarget
 	##//TODO
 	pass
-	liste_echantillon[7] = readsOnTarget
-
-def GetReadsOnSampleID(fileContent):
+	sampleList[7] = readsOnTarget
+def get_reads_on_sample_ID(fileContent):
 	readsOnSampleID = fileContent[4]
 	##TODO// A ameliorer par recherche expression reguliere
 	readsOnSampleID = readsOnSampleID.replace('Percent reads in sample ID regions:   ','')
 	readsOnSampleID = readsOnSampleID.replace('\n','')
-	liste_echantillon[8] = readsOnSampleID
-
-def GetMeanReadDepth(fileContent):
+	sampleList[8] = readsOnSampleID
+def get_mean_read_depth(fileContent):
 	meanReadDepth = fileContent[1]
 	##TODO// A ameliorer par recherche expression reguliere
 	meanReadDepth = meanReadDepth.replace('Average base coverage depth: ','')
 	meanReadDepth = meanReadDepth.replace('\n','')
-	liste_echantillon[9] = float(meanReadDepth)
-
-def GetCoverage1x(fileContent):
+	sampleList[9] = float(meanReadDepth)
+def get_coverage_1x(fileContent):
 	coverage1x = fileContent[3]
 	##TODO// A ameliorer par recherche expression reguliere
 	coverage1x = coverage1x.replace('Coverage at 1x:   ','')
 	coverage1x = coverage1x.replace('\n','')
-	liste_echantillon[10] = coverage1x
-
-def GetCoverage20x(fileContent):
+	sampleList[10] = coverage1x
+def get_coverage_20x(fileContent):
 	coverage20x = fileContent[4]
 	##TODO// A ameliorer par recherche expression reguliere
 	coverage20x = coverage20x.replace('Coverage at 20x:  ','')
 	coverage20x = coverage20x.replace('\n','')
-	liste_echantillon[11] = coverage20x
-
-def GetCoverage100x(fileContent):
+	sampleList[11] = coverage20x
+def get_coverage_100x(fileContent):
 	coverage100x = fileContent[5]
 	##TODO// A ameliorer par recherche expression reguliere
 	coverage100x = coverage100x.replace('Coverage at 100x: ','')
 	coverage100x = coverage100x.replace('\n','')
-	liste_echantillon[12] = coverage100x
-
-def OutputFile(FileName, liste_finale):
+	sampleList[12] = coverage100x
+def output_file(FileName, finalList):
 	NomFichier = FileName
 	# création et ouverture du File
 	with open(NomFichier,"w") as fout:
 	# écriture dans le File
-		for i in liste_finale:
+		for i in finalList:
 			i = str(i).replace("'","")
 			i = str(i).replace("[","")
 			i = str(i).replace("]","")
@@ -136,8 +120,8 @@ def OutputFile(FileName, liste_finale):
 Ouverture et Analyse du fichier *summary.xls
 """
 Fichier = open("../Data/Run_test/Auto_user_INS-81-SG_02-03-16_152/Root/plugin_out/sampleID_out.415/R_2014_07_31_06_44_53_user_INS-81-SG_02-03-16_Auto_user_INS-81-SG_02-03-16_152.bc_summary.xls","r")
-fileContent = ReadFile(Fichier)
-GetListBarcode(fileContent)
+fileContent = read_file(Fichier)
+get_list_barcode(fileContent)
 Fichier.close()
 
 """
@@ -145,14 +129,14 @@ Ouverture et Analyse du fichier explog_final.txt
 """
 NomFichier = "../Data/Run_test/Auto_user_INS-81-SG_02-03-16_152/explog_final.txt"
 Fichier = open(NomFichier,"r")
-fileContent = ReadFile(Fichier)
-kit = GetKit(fileContent)
-chip = GetChip(fileContent)
+fileContent = read_file(Fichier)
+kit = get_kit(fileContent)
+chip = get_chip(fileContent)
 Fichier.close()
 
-for barecode in liste_barcode:
+for barecode in barcodeList:
 
-	liste_echantillon=['NA','NA','NA','NA','NA','NA','NA','NA','NA','NA','NA','NA','NA']
+	sampleList=['NA','NA','NA','NA','NA','NA','NA','NA','NA','NA','NA','NA','NA']
 
 	"""
 	Ouverture et Analyse du fichier read_stats.txt
@@ -160,16 +144,16 @@ for barecode in liste_barcode:
 
 	NomFichier = "../Data/Run_test/Auto_user_INS-81-SG_02-03-16_152/Root/plugin_out/sampleID_out.415/"+barecode+"/read_stats.txt"
 	Fichier = open(NomFichier,"r")
-	fileContent = ReadFile(Fichier)
-	GetSample(fileContent)
-	GetBarcode(barecode)
-	GetID(fileContent)
-	GetMappedReads(fileContent)
-	GetReadsOnSampleID(fileContent)
+	fileContent = read_file(Fichier)
+	get_sample(fileContent)
+	get_barcode(barecode)
+	get_id(fileContent)
+	get_mapped_reads(fileContent)
+	get_reads_on_sample_ID(fileContent)
 	Fichier.close()
-	liste_echantillon[2] = kit
-	GetRunDate()
-	liste_echantillon[4] = chip
+	sampleList[2] = kit
+	get_run_date()
+	sampleList[4] = chip
 
 	"""
 	Ouverture et Analyse du fichier on_target_stats.txt
@@ -177,24 +161,18 @@ for barecode in liste_barcode:
 
 	NomFichier = "../Data/Run_test/Auto_user_INS-81-SG_02-03-16_152/Root/plugin_out/sampleID_out.415/"+barecode+"/on_target_stats.txt"
 	Fichier = open(NomFichier,"r")
-	fileContent = ReadFile(Fichier)
-	GetMeanReadDepth(fileContent)
-	GetCoverage1x(fileContent)
-	GetCoverage20x(fileContent)
-	GetCoverage100x(fileContent)
-
-
-
-	liste_finale.append(liste_echantillon)
-
-
-
+	fileContent = read_file(Fichier)
+	get_mean_read_depth(fileContent)
+	get_coverage_1x(fileContent)
+	get_coverage_20x(fileContent)
+	get_coverage_100x(fileContent)
+	finalList.append(sampleList)
 """
 Creation du fichier final summary.txt
 """
 #TODO// recuperer nom de l'echantillon +_summary.txt
 FileName = '../Resultats/Auto_user_INS-81-SG_02-03-16_152_summary.txt'
-OutputFile(FileName, liste_finale)
+output_file(FileName, finalList)
 
 
 

@@ -7,123 +7,123 @@ import re
 ###############################################################
 
 ########	Variable(s)	########
-legendes = ['AF=','AO=','DP=','FAO=','FDP=','FR=','FRO=','FSAF=','FSAR=','FSRF=','FSRR=','FWDB=','FXX=','HRUN=','LEN=','MLLD=','OALT=','OID=','OMAPLAT=','OPOS=','OREF=','QD=','RBI=','REFB=','REVB=','RO=','SAF=','SAR=','SRF=','SRR=','SSEN=','SSEP=','SSSB=','STB=','STBP=','TYPE=','VARB=','']
+LEGENDES = ['AF=','AO=','DP=','FAO=','FDP=','FR=','FRO=','FSAF=','FSAR=','FSRF=','FSRR=','FWDB=','FXX=','HRUN=','LEN=','MLLD=','OALT=','OID=','OMAPLAT=','OPOS=','OREF=','QD=','RBI=','REFB=','REVB=','RO=','SAF=','SAR=','SRF=','SRR=','SSEN=','SSEP=','SSSB=','STB=','STBP=','TYPE=','VARB=','']
 
 ########	Fonctions	########
 
-def ReadFile(File):
+def read_file(File):
 	contentFile = File.readlines()
 	File.close()
 	return contentFile
 
-def CheckIfMultipleID(contentFile):
+def check_if_multiple_ID(contentFile):
 	#creation d'une liste pour compter le nombre d'ID cosmic par ligne
-	contentFile_list=[]
+	contentFileList=[]
 	for k in contentFile:
-		contentFile_list.append(k)
+		contentFileList.append(k)
 	listOflist=[]
-	for k in contentFile_list:
+	for k in contentFileList:
 		lignesplit = k.split('\t')
 		listOflist.append(lignesplit)
 	cpt = -1
-	multiple_ID_list = []
+	multipleIDList = []
 	for i in listOflist:
 		cpt += 1
 		ligne = i[2].split(";")
 		#Si il y a plus que un seul ID cosmic, je cree une liste de ces ID.	
 		if len(ligne) != 1:
-			multiple_ID_list.append(contentFile[cpt])
-	return multiple_ID_list
+			multipleIDList.append(contentFile[cpt])
+	return multipleIDList
 
-def CreateListOfList(contentFile):
-	list_contentFile = [] #liste du contenu du fichier
+def create_list_of_list(contentFile):
+	listContentFile = [] #liste du contenu du fichier
 	#separation de contentFile par les tabulations
-	listFINALE =[]
+	listFinale =[]
 	for element in contentFile:
 		contentFile = element.split('\t')
-		list_contentFile.append(contentFile)
-	for ligne_chromosome in list_contentFile:
-		list_ligne_temp = [] #liste temporaire correspondant a une ligne (1 transcript)
-		list_INFO_temp = []	#liste de la cellule INFO du fichier VCF
-		list_ligne_info_trie = []	#liste finale correspondant aux informations triees pour chaque transcript
-		for element in ligne_chromosome:
+		listContentFile.append(contentFile)
+	for ligneChromosome in listContentFile:
+		listLigneTemp = [] #liste temporaire correspondant a une ligne (1 transcript)
+		listInfoTemp = []	#liste de la cellule INFO du fichier VCF
+		listLigneInfoTrie = []	#liste finale correspondant aux informations triees pour chaque transcript
+		for element in ligneChromosome:
 			#separation de contentFile par les ";"
 			if ";" in element:
 				temp = element.split(";")
-				list_INFO_temp.append(temp)
+				listInfoTemp.append(temp)
 			#separation de contentFile par les ","
 			elif "," in element:
 				temp = element.split(",")
-				list_INFO_temp.append(temp)
+				listInfoTemp.append(temp)
 			else:
-				list_INFO_temp.append(element)
+				listInfoTemp.append(element)
 		#traitement et separations des informations de la cellule INFO
-		list_INFO_temp[7][5] = list_INFO_temp[7][5].replace(",","")
-		for element in list_INFO_temp[7]:
-			list_ligne_temp_element7 = element.split(",")
-			list_ligne_info_trie.append(list_ligne_temp_element7)
-		for element in list_INFO_temp:
+		listInfoTemp[7][5] = listInfoTemp[7][5].replace(",","")
+		for element in listInfoTemp[7]:
+			listLigneTempElement7 = element.split(",")
+			listLigneInfoTrie.append(listLigneTempElement7)
+		for element in listInfoTemp:
 			if type(element) != list:
-				list_ligne_temp.append(element)
+				listLigneTemp.append(element)
 			elif type(element) == list:
-				if element == list_INFO_temp[7]:
-					list_ligne_info_trie = []
-					for element in list_INFO_temp[7]:
-						list_ligne_temp_element7 = element.split(",")
-						list_ligne_info_trie.append(list_ligne_temp_element7)
-					list_ligne_temp.append(list_ligne_info_trie)	
+				if element == listInfoTemp[7]:
+					listLigneInfoTrie = []
+					for element in listInfoTemp[7]:
+						listLigneTempElement7 = element.split(",")
+						listLigneInfoTrie.append(listLigneTempElement7)
+					listLigneTemp.append(listLigneInfoTrie)	
 				else:
-					list_ligne_temp.append(element)
+					listLigneTemp.append(element)
 		#verification pour eviter saut de ligne dans fichier VCF
-		if "\n" in list_ligne_temp[-1]:
-			list_ligne_temp[-1] = list_ligne_temp[-1].replace("\n","")
-			listFINALE.append(list_ligne_temp)
+		if "\n" in listLigneTemp[-1]:
+			listLigneTemp[-1] = listLigneTemp[-1].replace("\n","")
+			listFinale.append(listLigneTemp)
 		else:
-			listFINALE.append(list_ligne_temp)
-	return listFINALE
+			listFinale.append(listLigneTemp)
+	return listFinale
 
-def TrieInformations(list_ligne_temp):
-	#suppression des legendes (FAO,AF,AO,...) par recherche d'une expression reguliere
-	#pour uniformiser les contentFile_lists
-	for i in list_ligne_temp[7]:
+def trie_informations(listLigneTemp):
+	#suppression des LEGENDES (FAO,AF,AO,...) par recherche d'une expression reguliere
+	#pour uniformiser les contentFileLists
+	for i in listLigneTemp[7]:
 		temp = str(i[0])
 		temp = re.sub(r"([A-Z])+=","",temp)
 		i[0] = temp
 
-def CheckIfSameLength(list_ligne_temp):
+def check_if_same_length(listLigneTemp):
 	#nombre d'elements de la cellule INFO
-	cmpt = len(list_ligne_temp[7])
+	cmpt = len(listLigneTemp[7])
 	newLines = []
 	compteurID= 0
 	#Pour chaque lignes , je cree une liste que je mets dans newLines
 	#Verification si meme nombre ID cosmic que nombre de mutations
-	if len(list_ligne_temp[2]) == len(list_ligne_temp[4]):
+	if len(listLigneTemp[2]) == len(listLigneTemp[4]):
 		nbeBoucle = 4
-		CreationLignes(list_ligne_temp,cmpt,compteurID,newLines,nbeBoucle)
+		creation_lignes(listLigneTemp,cmpt,compteurID,newLines,nbeBoucle)
 	else:
 	#boucle sur le plus petit element
 		#boucle sur ID cosmic
-		if len(list_ligne_temp[2]) < len(list_ligne_temp[4]):
+		if len(listLigneTemp[2]) < len(listLigneTemp[4]):
 			nbeBoucle = 2
-			CreationLignes(list_ligne_temp,cmpt,compteurID,newLines,nbeBoucle)
+			creation_lignes(listLigneTemp,cmpt,compteurID,newLines,nbeBoucle)
 		#boucle sur le nombre de mutations (/!\ Possible perte du dernier ID cosmic)
 		else:
 			nbeBoucle = 4
-			CreationLignes(list_ligne_temp,cmpt,compteurID,newLines,nbeBoucle)
+			creation_lignes(listLigneTemp,cmpt,compteurID,newLines,nbeBoucle)
 	return newLines
 
-def CreationLignes(list_ligne_temp,cmpt,compteurID,newLines,a):
+def creation_lignes(listLigneTemp,cmpt,compteurID,newLines,a):
 	#pour chaque elements de la liste, recuperation des informations
-	for i in range(len(list_ligne_temp[a])):
-		ligne_temp = []
-		for element in list_ligne_temp:
-			# Si c'est une string, on ajoute dans list_ligne_temp.
+	for i in range(len(listLigneTemp[a])):
+		ligneTemp = []
+		for element in listLigneTemp:
+			# Si c'est une string, on ajoute dans listLigneTemp.
 			if type(element) == str:
-				ligne_temp.append(element)
+				ligneTemp.append(element)
 			# Si c'est une liste, on on traite chaque elements de la liste
 			if type(element) == list:
 				if type(element[compteurID]) == str:
-					ligne_temp.append(element[compteurID])
+					ligneTemp.append(element[compteurID])
 				else:
 					#boucle sur la longueur de la cellule info pour extraire chaque donnees
 					for number in range(cmpt):
@@ -133,19 +133,19 @@ def CreationLignes(list_ligne_temp,cmpt,compteurID,newLines,a):
 							temp = temp.replace("[","")
 							temp = temp.replace("]","")
 							temp = temp.replace("'","")
-							temp = legendes[number]+temp
-							ligne_temp.append(temp)
+							temp = LEGENDES[number]+temp
+							ligneTemp.append(temp)
 						else:
-							temp = legendes[number]+element[number][compteurID]
-							ligne_temp.append(temp)
+							temp = LEGENDES[number]+element[number][compteurID]
+							ligneTemp.append(temp)
 		#mise en forme comme VCF				
-		list_VCF = ligne_temp[:]
-		del list_VCF[7:]
-		del ligne_temp[0:7]
-		list_temptoString = ";".join(ligne_temp)
-		list_temptoString += "\n"
-		list_VCF.append(list_temptoString)
-		newLines.append(list_VCF)
+		listVCF = ligneTemp[:]
+		del listVCF[7:]
+		del ligneTemp[0:7]
+		listTemptoString = ";".join(ligneTemp)
+		listTemptoString += "\n"
+		listVCF.append(listTemptoString)
+		newLines.append(listVCF)
 		#incrementation pour passer a un nouveau transcript de la meme ligne
 		compteurID +=1
 	return newLines
@@ -157,15 +157,15 @@ def CreationLignes(list_ligne_temp,cmpt,compteurID,newLines,a):
 #Fonction qui traite les lignes composees de plusieurs ID cosmic
 
 def main_separation_transcripts(contentFile,ListOfList):
-	list_newLines = []
-	contentFileCleaned = CheckIfMultipleID(contentFile)
-	list_ligne_temp = CreateListOfList(contentFileCleaned)
+	listNewLines = []
+	contentFileCleaned = check_if_multiple_ID(contentFile)
+	listLigneTemp = create_list_of_list(contentFileCleaned)
 	cmpt = 0
-	for i in list_ligne_temp:
+	for i in listLigneTemp:
 		cmpt +=1
-		TrieInformations(i)
-		newLines = CheckIfSameLength(i)
-		list_newLines.append(newLines)
-	return list_newLines
+		trie_informations(i)
+		newLines = check_if_same_length(i)
+		listNewLines.append(newLines)
+	return listNewLines
 
 
