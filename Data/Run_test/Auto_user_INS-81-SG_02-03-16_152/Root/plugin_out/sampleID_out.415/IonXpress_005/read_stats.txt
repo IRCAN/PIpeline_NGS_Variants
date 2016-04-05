@@ -1,0 +1,9 @@
+Sample Name: 160088
+Sample ID:   F-YKGYGSRT
+Number of mapped reads:    353377
+Number of reads in sample ID regions: 25247
+Percent reads in sample ID regions:   7.14%
+Total base reads in sample ID regions:    38374582
+Percent base reads in sample ID regions: 6.64%
+Male sample ID region reads:   0
+Female sample ID region reads: 2274

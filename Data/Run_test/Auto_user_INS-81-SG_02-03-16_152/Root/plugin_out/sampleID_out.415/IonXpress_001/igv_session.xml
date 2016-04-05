@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<Global genome="hg19" locus="chr1:10000" version="3">
+	<Resources>
+		<Resource name="/results/analysis/output/Home/Auto_user_INS-81-SG_02-03-16_152_199/IonXpress_001_rawlib.bam" path="{plugin_url}//results/analysis/output/Home/Auto_user_INS-81-SG_02-03-16_152_199/IonXpress_001_rawlib.bam"/>
+	</Resources>
+	<Panel name="DataPanel" height="100">
+	</Panel>
+	<Panel height="525">
+		<Track displayMode="COLLAPSED" id="{plugin_url}//results/analysis/output/Home/Auto_user_INS-81-SG_02-03-16_152_199/IonXpress_001_rawlib.bam_coverage" name="Coverage" visible="true"/>
+		<Track displayMode="EXPANDED" id="{plugin_url}//results/analysis/output/Home/Auto_user_INS-81-SG_02-03-16_152_199/IonXpress_001_rawlib.bam" name="Alignments" visible="true"/>
+	</Panel>
+	<Panel name="FeaturePanel" height="75">
+		<Track displayMode="COLLAPSED" id="Reference sequence" name="Reference sequence" visible="true"/>	</Panel>
+	<PanelLayout dividerFractions="0.15,0.75"/>
+</Global>

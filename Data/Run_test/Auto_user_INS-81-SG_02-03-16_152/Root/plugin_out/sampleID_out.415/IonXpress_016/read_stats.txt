@@ -1,0 +1,9 @@
+Sample Name: 153281
+Sample ID:   M-CGRCGSRA
+Number of mapped reads:    674712
+Number of reads in sample ID regions: 30885
+Percent reads in sample ID regions:   4.58%
+Total base reads in sample ID regions:    73865858
+Percent base reads in sample ID regions: 4.21%
+Male sample ID region reads:   1094
+Female sample ID region reads: 1172

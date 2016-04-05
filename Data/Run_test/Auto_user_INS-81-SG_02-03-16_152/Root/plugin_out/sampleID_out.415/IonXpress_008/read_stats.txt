@@ -1,0 +1,9 @@
+Sample Name: 153636
+Sample ID:   F-TGRYRSGT
+Number of mapped reads:    266790
+Number of reads in sample ID regions: 17784
+Percent reads in sample ID regions:   6.67%
+Total base reads in sample ID regions:    31229738
+Percent base reads in sample ID regions: 5.82%
+Male sample ID region reads:   46
+Female sample ID region reads: 653

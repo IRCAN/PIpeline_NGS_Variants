@@ -1,0 +1,9 @@
+Sample Name: 153962
+Sample ID:   M-YTGCRCAA
+Number of mapped reads:    492854
+Number of reads in sample ID regions: 21790
+Percent reads in sample ID regions:   4.42%
+Total base reads in sample ID regions:    52920366
+Percent base reads in sample ID regions: 4.17%
+Male sample ID region reads:   892
+Female sample ID region reads: 949

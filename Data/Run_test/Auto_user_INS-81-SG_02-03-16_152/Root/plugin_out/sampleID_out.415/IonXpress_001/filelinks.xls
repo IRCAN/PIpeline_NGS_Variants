@@ -1,0 +1,7 @@
+Text	Link
+Download a hard-copy A4 PDF image of this report page.	IonXpress_001_R_2014_07_31_06_44_53_user_INS-81-SG_02-03-16_Auto_user_INS-81-SG_02-03-16_152.sampleID.pdf
+Download all variant calls as a table file.	allele_counts.xls
+Download the tracking target regions file.	tracking_regions.bed
+Download the tracking loci regions (SNPs) file.	tracking_loci.bed
+Download the aligned tracking reads (BAM) file.	IonXpress_001_R_2014_07_31_06_44_53_user_INS-81-SG_02-03-16_Auto_user_INS-81-SG_02-03-16_152.bam
+Download the aligned tracking reads index (BAI) file.	IonXpress_001_R_2014_07_31_06_44_53_user_INS-81-SG_02-03-16_Auto_user_INS-81-SG_02-03-16_152.bam.bai
