@@ -1,0 +1,195 @@
+## ENSEMBL VARIANT EFFECT PREDICTOR v84
+## Output produced at 2016-04-01 14:43:00
+## Connected to homo_sapiens_otherfeatures_84_38 on ensembldb.ensembl.org
+## Using cache in /home/ludovic/.vep/homo_sapiens_refseq/84_GRCh38
+## Using API version 84, DB version 84
+## regbuild version 13.0
+## assembly version GRCh38.p5
+## HGMD-PUBLIC version 20154
+## sift version sift5.2.2
+## gencode version GENCODE 24
+## polyphen version 2.2.2
+## ESP version 20141103
+## COSMIC version 75
+## dbSNP version 146
+## genebuild version 2014-07
+## ClinVar version 201601
+## Extra column keys:
+## IMPACT : Subjective impact classification of consequence type
+## DISTANCE : Shortest distance from variant to transcript
+## STRAND : Strand of the feature (1/-1)
+## FLAGS : Transcript quality flags
+## SYMBOL : Gene symbol (e.g. HGNC)
+## SYMBOL_SOURCE : Source of gene symbol
+## HGNC_ID : Stable identifer of HGNC gene symbol
+## CANONICAL : Indicates if transcript is canonical for this gene
+## REFSEQ_MATCH : RefSeq transcript match status
+## SIFT : SIFT prediction and/or score
+## PolyPhen : PolyPhen prediction and/or score
+## EXON : Exon number(s) / total
+## INTRON : Intron number(s) / total
+## HGVSc : HGVS coding sequence name
+## HGVSp : HGVS protein sequence name
+## HGVS_OFFSET : Indicates by how many bases the HGVS notations for this variant have been shifted
+## GMAF : Minor allele and frequency of existing variant in 1000 Genomes combined population
+## FREQS : Frequencies of overlapping variants used in filtering
+## CLIN_SIG : Clinical significance of variant from dbSNP
+## SOMATIC : Somatic status of existing variant
+## PHENO : Indicates if existing variant(s) is associated with a phenotype, disease or trait
+## MOTIF_NAME : The source and identifier of a transcription factor binding profile (TFBP) aligned at this position
+## MOTIF_POS : The relative position of the variation in the aligned TFBP
+## HIGH_INF_POS : A flag indicating if the variant falls in a high information position of the TFBP
+## MOTIF_SCORE_CHANGE : The difference in motif score of the reference and variant sequences for the TFBP
+#Uploaded_variation	Location	Allele	Gene	Feature	Feature_type	Consequence	cDNA_position	CDS_position	Protein_position	Amino_acids	Codons	Existing_variation	Extra
+COSM27286	1:43814979	A	6487	NM_174963.3	Transcript	intron_variant	-	-	-	-	-	-	IMPACT=MODIFIER;STRAND=1;SYMBOL=ST3GAL3;SYMBOL_SOURCE=EntrezGene;CANONICAL=YES;REFSEQ_MATCH=rseq_mrna_match,rseq_ens_match_wt;INTRON=4/12;HGVSc=NM_174963.3:c.254+46G>A
+COSM27287	1:43814981	A	6487	NM_174963.3	Transcript	intron_variant	-	-	-	-	-	-	IMPACT=MODIFIER;STRAND=1;SYMBOL=ST3GAL3;SYMBOL_SOURCE=EntrezGene;CANONICAL=YES;REFSEQ_MATCH=rseq_mrna_match,rseq_ens_match_wt;INTRON=4/12;HGVSc=NM_174963.3:c.254+48G>A
+COSM29008	1:43815008-43815010	AAA	6487	NM_174963.3	Transcript	intron_variant	-	-	-	-	-	-	IMPACT=MODIFIER;STRAND=1;SYMBOL=ST3GAL3;SYMBOL_SOURCE=EntrezGene;CANONICAL=YES;REFSEQ_MATCH=rseq_mrna_match,rseq_ens_match_wt;INTRON=4/12;HGVSc=NM_174963.3:c.254+75_254+77delAGCinsAAA
+COSM43212	1:43815008-43815010	AAG	6487	NM_174963.3	Transcript	intron_variant	-	-	-	-	-	-	IMPACT=MODIFIER;STRAND=1;SYMBOL=ST3GAL3;SYMBOL_SOURCE=EntrezGene;CANONICAL=YES;REFSEQ_MATCH=rseq_mrna_match,rseq_ens_match_wt;INTRON=4/12;HGVSc=NM_174963.3:c.254+75_254+77delAGCinsAAG
+COSM19193	1:43815008-43815010	AGG	6487	NM_174963.3	Transcript	intron_variant	-	-	-	-	-	-	IMPACT=MODIFIER;STRAND=1;SYMBOL=ST3GAL3;SYMBOL_SOURCE=EntrezGene;CANONICAL=YES;REFSEQ_MATCH=rseq_mrna_match,rseq_ens_match_wt;INTRON=4/12;HGVSc=NM_174963.3:c.254+75_254+77delAGCinsAGG
+COSM27289	1:43815008-43815010	CGG	6487	NM_174963.3	Transcript	intron_variant	-	-	-	-	-	-	IMPACT=MODIFIER;STRAND=1;SYMBOL=ST3GAL3;SYMBOL_SOURCE=EntrezGene;CANONICAL=YES;REFSEQ_MATCH=rseq_mrna_match,rseq_ens_match_wt;INTRON=4/12;HGVSc=NM_174963.3:c.254+75_254+77delAGCinsCGG
+COSM28487	1:43815008-43815010	GCG	6487	NM_174963.3	Transcript	intron_variant	-	-	-	-	-	-	IMPACT=MODIFIER;STRAND=1;SYMBOL=ST3GAL3;SYMBOL_SOURCE=EntrezGene;CANONICAL=YES;REFSEQ_MATCH=rseq_mrna_match,rseq_ens_match_wt;INTRON=4/12;HGVSc=NM_174963.3:c.254+75_254+77delAGCinsGCG
+COSM142839	1:43815009	C	6487	NM_174963.3	Transcript	intron_variant	-	-	-	-	-	-	IMPACT=MODIFIER;STRAND=1;SYMBOL=ST3GAL3;SYMBOL_SOURCE=EntrezGene;CANONICAL=YES;REFSEQ_MATCH=rseq_mrna_match,rseq_ens_match_wt;INTRON=4/12;HGVSc=NM_174963.3:c.254+76G>C
+COSM18918	1:43815009	T	6487	NM_174963.3	Transcript	intron_variant	-	-	-	-	-	-	IMPACT=MODIFIER;STRAND=1;SYMBOL=ST3GAL3;SYMBOL_SOURCE=EntrezGene;CANONICAL=YES;REFSEQ_MATCH=rseq_mrna_match,rseq_ens_match_wt;INTRON=4/12;HGVSc=NM_174963.3:c.254+76G>T
+COSM27290	1:43815020	A	6487	NM_174963.3	Transcript	intron_variant	-	-	-	-	-	-	IMPACT=MODIFIER;STRAND=1;SYMBOL=ST3GAL3;SYMBOL_SOURCE=EntrezGene;CANONICAL=YES;REFSEQ_MATCH=rseq_mrna_match,rseq_ens_match_wt;INTRON=4/12;HGVSc=NM_174963.3:c.254+87T>A
+COSM27174	1:115252204	T	105378917	XR_947724.1	Transcript	intron_variant,non_coding_transcript_variant	-	-	-	-	-	-	IMPACT=MODIFIER;STRAND=1;SYMBOL=LOC105378917;SYMBOL_SOURCE=EntrezGene;REFSEQ_MATCH=rseq_mrna_match,rseq_ens_no_match;INTRON=2/4;HGVSc=XR_947724.1:n.174+22730G>T
+COSM589	1:115256518	A	105378917	XR_947724.1	Transcript	intron_variant,non_coding_transcript_variant	-	-	-	-	-	-	IMPACT=MODIFIER;STRAND=1;SYMBOL=LOC105378917;SYMBOL_SOURCE=EntrezGene;REFSEQ_MATCH=rseq_mrna_match,rseq_ens_no_match;INTRON=2/4;HGVSc=XR_947724.1:n.175-18497T>A
+COSM585	1:115256528-115256530	ATG	105378917	XR_947724.1	Transcript	intron_variant,non_coding_transcript_variant	-	-	-	-	-	-	IMPACT=MODIFIER;STRAND=1;SYMBOL=LOC105378917;SYMBOL_SOURCE=EntrezGene;REFSEQ_MATCH=rseq_mrna_match,rseq_ens_no_match;INTRON=2/4;HGVSc=XR_947724.1:n.175-18487_175-18485delAAAinsATG
+COSM587	1:115256528-115256530	CAG	105378917	XR_947724.1	Transcript	intron_variant,non_coding_transcript_variant	-	-	-	-	-	-	IMPACT=MODIFIER;STRAND=1;SYMBOL=LOC105378917;SYMBOL_SOURCE=EntrezGene;REFSEQ_MATCH=rseq_mrna_match,rseq_ens_no_match;INTRON=2/4;HGVSc=XR_947724.1:n.175-18487_175-18485delAAAinsCAG
+COSM586	1:115256528-115256530	CCG	105378917	XR_947724.1	Transcript	intron_variant,non_coding_transcript_variant	-	-	-	-	-	-	IMPACT=MODIFIER;STRAND=1;SYMBOL=LOC105378917;SYMBOL_SOURCE=EntrezGene;REFSEQ_MATCH=rseq_mrna_match,rseq_ens_no_match;INTRON=2/4;HGVSc=XR_947724.1:n.175-18487_175-18485delAAAinsCCG
+COSM30646	1:115256528-115256530	CTG	105378917	XR_947724.1	Transcript	intron_variant,non_coding_transcript_variant	-	-	-	-	-	-	IMPACT=MODIFIER;STRAND=1;SYMBOL=LOC105378917;SYMBOL_SOURCE=EntrezGene;REFSEQ_MATCH=rseq_mrna_match,rseq_ens_no_match;INTRON=2/4;HGVSc=XR_947724.1:n.175-18487_175-18485delAAAinsCTG
+COSM33693	1:115256528-115256530	CTT	105378917	XR_947724.1	Transcript	intron_variant,non_coding_transcript_variant	-	-	-	-	-	-	IMPACT=MODIFIER;STRAND=1;SYMBOL=LOC105378917;SYMBOL_SOURCE=EntrezGene;REFSEQ_MATCH=rseq_mrna_match,rseq_ens_no_match;INTRON=2/4;HGVSc=XR_947724.1:n.175-18487_175-18485delAAAinsCTT
+COSM53223	1:115256528-115256530	GTG	105378917	XR_947724.1	Transcript	intron_variant,non_coding_transcript_variant	-	-	-	-	-	-	IMPACT=MODIFIER;STRAND=1;SYMBOL=LOC105378917;SYMBOL_SOURCE=EntrezGene;REFSEQ_MATCH=rseq_mrna_match,rseq_ens_no_match;INTRON=2/4;HGVSc=XR_947724.1:n.175-18487_175-18485delAAAinsGTG
+COSM583	1:115256529-115256530	AA	105378917	XR_947724.1	Transcript	intron_variant,non_coding_transcript_variant	-	-	-	-	-	-	IMPACT=MODIFIER;STRAND=1;SYMBOL=LOC105378917;SYMBOL_SOURCE=EntrezGene;REFSEQ_MATCH=rseq_mrna_match,rseq_ens_no_match;INTRON=2/4
+COSM584	1:115256529-115256530	AG	105378917	XR_947724.1	Transcript	intron_variant,non_coding_transcript_variant	-	-	-	-	-	-	IMPACT=MODIFIER;STRAND=1;SYMBOL=LOC105378917;SYMBOL_SOURCE=EntrezGene;REFSEQ_MATCH=rseq_mrna_match,rseq_ens_no_match;INTRON=2/4;HGVSc=XR_947724.1:n.175-18486_175-18485delAAinsAG
+COSM582	1:115256529-115256530	CG	105378917	XR_947724.1	Transcript	intron_variant,non_coding_transcript_variant	-	-	-	-	-	-	IMPACT=MODIFIER;STRAND=1;SYMBOL=LOC105378917;SYMBOL_SOURCE=EntrezGene;REFSEQ_MATCH=rseq_mrna_match,rseq_ens_no_match;INTRON=2/4;HGVSc=XR_947724.1:n.175-18486_175-18485delAAinsCG
+COSM12725	1:115256529-115256530	CT	105378917	XR_947724.1	Transcript	intron_variant,non_coding_transcript_variant	-	-	-	-	-	-	IMPACT=MODIFIER;STRAND=1;SYMBOL=LOC105378917;SYMBOL_SOURCE=EntrezGene;REFSEQ_MATCH=rseq_mrna_match,rseq_ens_no_match;INTRON=2/4;HGVSc=XR_947724.1:n.175-18486_175-18485delAAinsCT
+COSM579	1:115256529-115256530	GG	105378917	XR_947724.1	Transcript	intron_variant,non_coding_transcript_variant	-	-	-	-	-	-	IMPACT=MODIFIER;STRAND=1;SYMBOL=LOC105378917;SYMBOL_SOURCE=EntrezGene;REFSEQ_MATCH=rseq_mrna_match,rseq_ens_no_match;INTRON=2/4;HGVSc=XR_947724.1:n.175-18486_175-18485delAAinsGG
+COSM581	1:115256530-115256531	CT	105378917	XR_947724.1	Transcript	intron_variant,non_coding_transcript_variant	-	-	-	-	-	-	IMPACT=MODIFIER;STRAND=1;SYMBOL=LOC105378917;SYMBOL_SOURCE=EntrezGene;REFSEQ_MATCH=rseq_mrna_match,rseq_ens_no_match;INTRON=2/4;HGVSc=XR_947724.1:n.175-18485_175-18484delAAinsCT
+COSM580	1:115256530-115256531	TA	105378917	XR_947724.1	Transcript	intron_variant,non_coding_transcript_variant	-	-	-	-	-	-	IMPACT=MODIFIER;STRAND=1;SYMBOL=LOC105378917;SYMBOL_SOURCE=EntrezGene;REFSEQ_MATCH=rseq_mrna_match,rseq_ens_no_match;INTRON=2/4;HGVSc=XR_947724.1:n.175-18485_175-18484delAAinsTA
+COSM12730	1:115256530-115256531	TT	105378917	XR_947724.1	Transcript	intron_variant,non_coding_transcript_variant	-	-	-	-	-	-	IMPACT=MODIFIER;STRAND=1;SYMBOL=LOC105378917;SYMBOL_SOURCE=EntrezGene;REFSEQ_MATCH=rseq_mrna_match,rseq_ens_no_match;INTRON=2/4;HGVSc=XR_947724.1:n.175-18485_175-18484invAA
+COSM28673	1:115256532	T	105378917	XR_947724.1	Transcript	intron_variant,non_coding_transcript_variant	-	-	-	-	-	-	IMPACT=MODIFIER;STRAND=1;SYMBOL=LOC105378917;SYMBOL_SOURCE=EntrezGene;REFSEQ_MATCH=rseq_mrna_match,rseq_ens_no_match;INTRON=2/4
+COSM577	1:115258730	T	105378917	XR_947724.1	Transcript	intron_variant,non_coding_transcript_variant	-	-	-	-	-	-	IMPACT=MODIFIER;STRAND=1;SYMBOL=LOC105378917;SYMBOL_SOURCE=EntrezGene;REFSEQ_MATCH=rseq_mrna_match,rseq_ens_no_match;INTRON=2/4
+COSM576	1:115258743-115258744	GA	105378917	XR_947724.1	Transcript	intron_variant,non_coding_transcript_variant	-	-	-	-	-	-	IMPACT=MODIFIER;STRAND=1;SYMBOL=LOC105378917;SYMBOL_SOURCE=EntrezGene;REFSEQ_MATCH=rseq_mrna_match,rseq_ens_no_match;INTRON=2/4;HGVSc=XR_947724.1:n.175-16272_175-16271delAAinsGA
+COSM572	1:115258743-115258744	GC	105378917	XR_947724.1	Transcript	intron_variant,non_coding_transcript_variant	-	-	-	-	-	-	IMPACT=MODIFIER;STRAND=1;SYMBOL=LOC105378917;SYMBOL_SOURCE=EntrezGene;REFSEQ_MATCH=rseq_mrna_match,rseq_ens_no_match;INTRON=2/4;HGVSc=XR_947724.1:n.175-16272_175-16271delAAinsGC
+COSM574	1:115258744	A	105378917	XR_947724.1	Transcript	intron_variant,non_coding_transcript_variant	-	-	-	-	-	-	IMPACT=MODIFIER;STRAND=1;SYMBOL=LOC105378917;SYMBOL_SOURCE=EntrezGene;REFSEQ_MATCH=rseq_mrna_match,rseq_ens_no_match;INTRON=2/4
+COSM575	1:115258744	G	105378917	XR_947724.1	Transcript	intron_variant,non_coding_transcript_variant	-	-	-	-	-	-	IMPACT=MODIFIER;STRAND=1;SYMBOL=LOC105378917;SYMBOL_SOURCE=EntrezGene;REFSEQ_MATCH=rseq_mrna_match,rseq_ens_no_match;INTRON=2/4;HGVSc=XR_947724.1:n.175-16271A>G
+COSM573	1:115258744	T	105378917	XR_947724.1	Transcript	intron_variant,non_coding_transcript_variant	-	-	-	-	-	-	IMPACT=MODIFIER;STRAND=1;SYMBOL=LOC105378917;SYMBOL_SOURCE=EntrezGene;REFSEQ_MATCH=rseq_mrna_match,rseq_ens_no_match;INTRON=2/4;HGVSc=XR_947724.1:n.175-16271A>T
+COSM570	1:115258745	A	105378917	XR_947724.1	Transcript	intron_variant,non_coding_transcript_variant	-	-	-	-	-	-	IMPACT=MODIFIER;STRAND=1;SYMBOL=LOC105378917;SYMBOL_SOURCE=EntrezGene;REFSEQ_MATCH=rseq_mrna_match,rseq_ens_no_match;INTRON=2/4;HGVSc=XR_947724.1:n.175-16270G>A
+COSM569	1:115258745	G	105378917	XR_947724.1	Transcript	intron_variant,non_coding_transcript_variant	-	-	-	-	-	-	IMPACT=MODIFIER;STRAND=1;SYMBOL=LOC105378917;SYMBOL_SOURCE=EntrezGene;REFSEQ_MATCH=rseq_mrna_match,rseq_ens_no_match;INTRON=2/4
+COSM571	1:115258745	T	105378917	XR_947724.1	Transcript	intron_variant,non_coding_transcript_variant	-	-	-	-	-	-	IMPACT=MODIFIER;STRAND=1;SYMBOL=LOC105378917;SYMBOL_SOURCE=EntrezGene;REFSEQ_MATCH=rseq_mrna_match,rseq_ens_no_match;INTRON=2/4;HGVSc=XR_947724.1:n.175-16270G>T
+COSM567	1:115258746	G	105378917	XR_947724.1	Transcript	intron_variant,non_coding_transcript_variant	-	-	-	-	-	-	IMPACT=MODIFIER;STRAND=1;SYMBOL=LOC105378917;SYMBOL_SOURCE=EntrezGene;REFSEQ_MATCH=rseq_mrna_match,rseq_ens_no_match;INTRON=2/4;HGVSc=XR_947724.1:n.175-16269A>G
+COSM566	1:115258747-115258748	AC	105378917	XR_947724.1	Transcript	intron_variant,non_coding_transcript_variant	-	-	-	-	-	-	IMPACT=MODIFIER;STRAND=1;SYMBOL=LOC105378917;SYMBOL_SOURCE=EntrezGene;REFSEQ_MATCH=rseq_mrna_match,rseq_ens_no_match;INTRON=2/4
+COSM565	1:115258747-115258748	GC	105378917	XR_947724.1	Transcript	intron_variant,non_coding_transcript_variant	-	-	-	-	-	-	IMPACT=MODIFIER;STRAND=1;SYMBOL=LOC105378917;SYMBOL_SOURCE=EntrezGene;REFSEQ_MATCH=rseq_mrna_match,rseq_ens_no_match;INTRON=2/4;HGVSc=XR_947724.1:n.175-16268_175-16267delACinsGC
+COSM564	1:115258747-115258748	TC	105378917	XR_947724.1	Transcript	intron_variant,non_coding_transcript_variant	-	-	-	-	-	-	IMPACT=MODIFIER;STRAND=1;SYMBOL=LOC105378917;SYMBOL_SOURCE=EntrezGene;REFSEQ_MATCH=rseq_mrna_match,rseq_ens_no_match;INTRON=2/4;HGVSc=XR_947724.1:n.175-16268_175-16267delACinsTC
+COSM12723	1:115258747-115258748	TT	105378917	XR_947724.1	Transcript	intron_variant,non_coding_transcript_variant	-	-	-	-	-	-	IMPACT=MODIFIER;STRAND=1;SYMBOL=LOC105378917;SYMBOL_SOURCE=EntrezGene;REFSEQ_MATCH=rseq_mrna_match,rseq_ens_no_match;INTRON=2/4;HGVSc=XR_947724.1:n.175-16268_175-16267delACinsTT
+COSM562	1:115258748	A	105378917	XR_947724.1	Transcript	intron_variant,non_coding_transcript_variant	-	-	-	-	-	-	IMPACT=MODIFIER;STRAND=1;SYMBOL=LOC105378917;SYMBOL_SOURCE=EntrezGene;REFSEQ_MATCH=rseq_mrna_match,rseq_ens_no_match;INTRON=2/4;HGVSc=XR_947724.1:n.175-16267C>A
+COSM561	1:115258748	G	105378917	XR_947724.1	Transcript	intron_variant,non_coding_transcript_variant	-	-	-	-	-	-	IMPACT=MODIFIER;STRAND=1;SYMBOL=LOC105378917;SYMBOL_SOURCE=EntrezGene;REFSEQ_MATCH=rseq_mrna_match,rseq_ens_no_match;INTRON=2/4;HGVSc=XR_947724.1:n.175-16267C>G
+COSM563	1:115258748	T	105378917	XR_947724.1	Transcript	intron_variant,non_coding_transcript_variant	-	-	-	-	-	-	IMPACT=MODIFIER;STRAND=1;SYMBOL=LOC105378917;SYMBOL_SOURCE=EntrezGene;REFSEQ_MATCH=rseq_mrna_match,rseq_ens_no_match;INTRON=2/4;HGVSc=XR_947724.1:n.175-16267C>T
+COSM558	1:115258751	T	105378917	XR_947724.1	Transcript	intron_variant,non_coding_transcript_variant	-	-	-	-	-	-	IMPACT=MODIFIER;STRAND=1;SYMBOL=LOC105378917;SYMBOL_SOURCE=EntrezGene;REFSEQ_MATCH=rseq_mrna_match,rseq_ens_no_match;INTRON=2/4;HGVSc=XR_947724.1:n.175-16264A>T
+COSM28056	2:29432664	T	238	NM_004304.4	Transcript	intron_variant	-	-	-	-	-	-	IMPACT=MODIFIER;STRAND=-1;SYMBOL=ALK;SYMBOL_SOURCE=EntrezGene;CANONICAL=YES;REFSEQ_MATCH=rseq_ens_match_cds,rseq_mrna_match;INTRON=4/28
+COSM99137	2:29443631	T	238	NM_004304.4	Transcript	intron_variant	-	-	-	-	-	-	IMPACT=MODIFIER;STRAND=-1;SYMBOL=ALK;SYMBOL_SOURCE=EntrezGene;CANONICAL=YES;REFSEQ_MATCH=rseq_ens_match_cds,rseq_mrna_match;INTRON=4/28
+2_29443650_G/A	2:29443650	A	238	NM_004304.4	Transcript	intron_variant	-	-	-	-	-	-	IMPACT=MODIFIER;STRAND=-1;SYMBOL=ALK;SYMBOL_SOURCE=EntrezGene;CANONICAL=YES;REFSEQ_MATCH=rseq_ens_match_cds,rseq_mrna_match;INTRON=4/28;HGVSc=NM_004304.4:c.1155-59791C>T
+COSM28061	2:29443695	C	238	NM_004304.4	Transcript	intron_variant	-	-	-	-	-	-	IMPACT=MODIFIER;STRAND=-1;SYMBOL=ALK;SYMBOL_SOURCE=EntrezGene;CANONICAL=YES;REFSEQ_MATCH=rseq_ens_match_cds,rseq_mrna_match;INTRON=4/28;HGVSc=NM_004304.4:c.1155-59836T>G
+COSM28055	2:29443695	T	238	NM_004304.4	Transcript	intron_variant	-	-	-	-	-	-	IMPACT=MODIFIER;STRAND=-1;SYMBOL=ALK;SYMBOL_SOURCE=EntrezGene;CANONICAL=YES;REFSEQ_MATCH=rseq_ens_match_cds,rseq_mrna_match;INTRON=4/28;HGVSc=NM_004304.4:c.1155-59836T>A
+COSM28059	2:29443696	C	238	NM_004304.4	Transcript	intron_variant	-	-	-	-	-	-	IMPACT=MODIFIER;STRAND=-1;SYMBOL=ALK;SYMBOL_SOURCE=EntrezGene;CANONICAL=YES;REFSEQ_MATCH=rseq_ens_match_cds,rseq_mrna_match;INTRON=4/28
+COSM28054	2:29443697	C	238	NM_004304.4	Transcript	intron_variant	-	-	-	-	-	-	IMPACT=MODIFIER;STRAND=-1;SYMBOL=ALK;SYMBOL_SOURCE=EntrezGene;CANONICAL=YES;REFSEQ_MATCH=rseq_ens_match_cds,rseq_mrna_match;INTRON=4/28;HGVSc=NM_004304.4:c.1155-59838A>G
+COSM28057	2:29443697	G	238	NM_004304.4	Transcript	intron_variant	-	-	-	-	-	-	IMPACT=MODIFIER;STRAND=-1;SYMBOL=ALK;SYMBOL_SOURCE=EntrezGene;CANONICAL=YES;REFSEQ_MATCH=rseq_ens_match_cds,rseq_mrna_match;INTRON=4/28;HGVSc=NM_004304.4:c.1155-59838A>C
+COSM28491	2:29443697	T	238	NM_004304.4	Transcript	intron_variant	-	-	-	-	-	-	IMPACT=MODIFIER;STRAND=-1;SYMBOL=ALK;SYMBOL_SOURCE=EntrezGene;CANONICAL=YES;REFSEQ_MATCH=rseq_ens_match_cds,rseq_mrna_match;INTRON=4/28
+COSM96534	2:209113106	T	-	ENSR00001945974	RegulatoryFeature	regulatory_region_variant	-	-	-	-	-	-	IMPACT=MODIFIER;BIOTYPE=TF_binding_site
+COSM96533	2:209113108	T	-	ENSR00001945974	RegulatoryFeature	regulatory_region_variant	-	-	-	-	-	-	BIOTYPE=TF_binding_site;IMPACT=MODIFIER
+COSM86993	2:209113111-209113112	GT	-	ENSR00001945974	RegulatoryFeature	regulatory_region_variant	-	-	-	-	-	-	BIOTYPE=TF_binding_site;IMPACT=MODIFIER
+COSM28750	2:209113112-209113113	AC	-	ENSR00001945974	RegulatoryFeature	regulatory_region_variant	-	-	-	-	-	-	BIOTYPE=TF_binding_site;IMPACT=MODIFIER
+COSM28746	2:209113112-209113113	AG	-	ENSR00001945974	RegulatoryFeature	regulatory_region_variant	-	-	-	-	-	-	BIOTYPE=TF_binding_site;IMPACT=MODIFIER
+COSM28751	2:209113112-209113113	TG	-	ENSR00001945974	RegulatoryFeature	regulatory_region_variant	-	-	-	-	-	-	BIOTYPE=TF_binding_site;IMPACT=MODIFIER
+COSM28747	2:209113113	A	-	ENSR00001945974	RegulatoryFeature	regulatory_region_variant	-	-	-	-	-	-	IMPACT=MODIFIER;BIOTYPE=TF_binding_site
+COSM28749	2:209113113	C	-	ENSR00001945974	RegulatoryFeature	regulatory_region_variant	-	-	-	-	-	-	BIOTYPE=TF_binding_site;IMPACT=MODIFIER
+COSM28748	2:209113113	T	-	ENSR00001945974	RegulatoryFeature	regulatory_region_variant	-	-	-	-	-	-	IMPACT=MODIFIER;BIOTYPE=TF_binding_site
+COSM96532	2:209113117	C	-	ENSR00001945974	RegulatoryFeature	regulatory_region_variant	-	-	-	-	-	-	BIOTYPE=TF_binding_site;IMPACT=MODIFIER
+COSM51542	2:209113139	T	-	ENSR00001945974	RegulatoryFeature	regulatory_region_variant	-	-	-	-	-	-	BIOTYPE=TF_binding_site;IMPACT=MODIFIER
+COSM96922	2:209113140	T	-	ENSR00001945974	RegulatoryFeature	regulatory_region_variant	-	-	-	-	-	-	BIOTYPE=TF_binding_site;IMPACT=MODIFIER
+COSM242544	2:209113151	T	-	ENSR00001945974	RegulatoryFeature	regulatory_region_variant	-	-	-	-	-	-	IMPACT=MODIFIER;BIOTYPE=TF_binding_site
+COSM97049	2:209113160	C	-	ENSR00001945974	RegulatoryFeature	regulatory_region_variant	-	-	-	-	-	-	IMPACT=MODIFIER;BIOTYPE=TF_binding_site
+NOCOSMIC105	2:209113192	A	-	ENSR00001945974	RegulatoryFeature	regulatory_region_variant	-	-	-	-	-	-	IMPACT=MODIFIER;BIOTYPE=TF_binding_site
+COSM108015	2:212288940	T	2066	NM_005235.2	Transcript	intron_variant	-	-	-	-	-	-	IMPACT=MODIFIER;STRAND=-1;SYMBOL=ERBB4;SYMBOL_SOURCE=EntrezGene;CANONICAL=YES;REFSEQ_MATCH=rseq_ens_match_cds,rseq_mrna_match;INTRON=1/27;HGVSc=NM_005235.2:c.83-164037T>A
+COSM48361	2:212288942	A	2066	NM_005235.2	Transcript	intron_variant	-	-	-	-	-	-	IMPACT=MODIFIER;STRAND=-1;SYMBOL=ERBB4;SYMBOL_SOURCE=EntrezGene;CANONICAL=YES;REFSEQ_MATCH=rseq_ens_match_cds,rseq_mrna_match;INTRON=1/27
+COSM48362	2:212288955	A	2066	NM_005235.2	Transcript	intron_variant	-	-	-	-	-	-	IMPACT=MODIFIER;STRAND=-1;SYMBOL=ERBB4;SYMBOL_SOURCE=EntrezGene;CANONICAL=YES;REFSEQ_MATCH=rseq_ens_match_cds,rseq_mrna_match;INTRON=1/27;HGVSc=NM_005235.2:c.83-164052A>T
+COSM48363	2:212530066	G	2066	NM_005235.2	Transcript	intron_variant	-	-	-	-	-	-	IMPACT=MODIFIER;STRAND=-1;SYMBOL=ERBB4;SYMBOL_SOURCE=EntrezGene;CANONICAL=YES;REFSEQ_MATCH=rseq_ens_match_cds,rseq_mrna_match;INTRON=1/27;HGVSc=NM_005235.2:c.82+8383A>C
+COSM48364	2:212530135	A	2066	NM_005235.2	Transcript	intron_variant	-	-	-	-	-	-	IMPACT=MODIFIER;STRAND=-1;SYMBOL=ERBB4;SYMBOL_SOURCE=EntrezGene;CANONICAL=YES;REFSEQ_MATCH=rseq_ens_match_cds,rseq_mrna_match;INTRON=1/27;HGVSc=NM_005235.2:c.82+8314A>T
+COSM48365	2:212576857	A	-	-	-	intergenic_variant	-	-	-	-	-	-	IMPACT=MODIFIER
+COSM110095	2:212576877	A	-	-	-	intergenic_variant	-	-	-	-	-	-	IMPACT=MODIFIER
+COSM48366	2:212578341	T	-	-	-	intergenic_variant	-	-	-	-	-	-	IMPACT=MODIFIER
+COSM12833	2:212578349	T	-	-	-	intergenic_variant	-	-	-	-	-	-	IMPACT=MODIFIER
+COSM48367	2:212587147	C	-	-	-	intergenic_variant	-	-	-	-	-	-	IMPACT=MODIFIER
+COSM48368	2:212589811	C	-	-	-	intergenic_variant	-	-	-	-	-	-	IMPACT=MODIFIER
+COSM48369	2:212652764	C	-	-	-	intergenic_variant	-	-	-	-	-	-	IMPACT=MODIFIER
+COSM20392	2:212812157	A	102725079	XR_923847.1	Transcript	intron_variant,non_coding_transcript_variant	-	-	-	-	-	-	IMPACT=MODIFIER;STRAND=1;SYMBOL=LOC102725079;SYMBOL_SOURCE=EntrezGene;CANONICAL=YES;REFSEQ_MATCH=rseq_mrna_match,rseq_ens_no_match;INTRON=2/3;HGVSc=XR_923847.1:n.138+984T>A
+COSM17721	3:10183772	T	3656	NM_001570.3	Transcript	intron_variant	-	-	-	-	-	-	IMPACT=MODIFIER;STRAND=1;SYMBOL=IRAK2;SYMBOL_SOURCE=EntrezGene;CANONICAL=YES;REFSEQ_MATCH=rseq_mrna_match,rseq_ens_match_cds;INTRON=2/12;HGVSc=NM_001570.3:c.277+5752A>T
+COSM144971	3:10183775	G	3656	NM_001570.3	Transcript	intron_variant	-	-	-	-	-	-	IMPACT=MODIFIER;STRAND=1;SYMBOL=IRAK2;SYMBOL_SOURCE=EntrezGene;CANONICAL=YES;REFSEQ_MATCH=rseq_mrna_match,rseq_ens_match_cds;INTRON=2/12;HGVSc=NM_001570.3:c.277+5755C>G
+COSM14382	3:10183776	C	3656	NM_001570.3	Transcript	intron_variant	-	-	-	-	-	-	IMPACT=MODIFIER;STRAND=1;SYMBOL=IRAK2;SYMBOL_SOURCE=EntrezGene;CANONICAL=YES;REFSEQ_MATCH=rseq_mrna_match,rseq_ens_match_cds;INTRON=2/12;HGVSc=NM_001570.3:c.277+5756T>C
+COSM17859	3:10183785	C	3656	NM_001570.3	Transcript	intron_variant	-	-	-	-	-	-	IMPACT=MODIFIER;STRAND=1;SYMBOL=IRAK2;SYMBOL_SOURCE=EntrezGene;CANONICAL=YES;REFSEQ_MATCH=rseq_mrna_match,rseq_ens_match_cds;INTRON=2/12;HGVSc=NM_001570.3:c.277+5765A>C
+COSM18350	3:10183787	T	3656	NM_001570.3	Transcript	intron_variant	-	-	-	-	-	-	IMPACT=MODIFIER;STRAND=1;SYMBOL=IRAK2;SYMBOL_SOURCE=EntrezGene;CANONICAL=YES;REFSEQ_MATCH=rseq_mrna_match,rseq_ens_match_cds;INTRON=2/12;HGVSc=NM_001570.3:c.277+5767A>T
+COSM14405	3:10183788	A	3656	NM_001570.3	Transcript	intron_variant	-	-	-	-	-	-	IMPACT=MODIFIER;STRAND=1;SYMBOL=IRAK2;SYMBOL_SOURCE=EntrezGene;CANONICAL=YES;REFSEQ_MATCH=rseq_mrna_match,rseq_ens_match_cds;INTRON=2/12;HGVSc=NM_001570.3:c.277+5768G>A
+COSM18028	3:10183788	T	3656	NM_001570.3	Transcript	intron_variant	-	-	-	-	-	-	IMPACT=MODIFIER;STRAND=1;SYMBOL=IRAK2;SYMBOL_SOURCE=EntrezGene;CANONICAL=YES;REFSEQ_MATCH=rseq_mrna_match,rseq_ens_match_cds;INTRON=2/12;HGVSc=NM_001570.3:c.277+5768G>T
+COSM14349	3:10183790-10183795	-	3656	NM_001570.3	Transcript	intron_variant	-	-	-	-	-	-	IMPACT=MODIFIER;STRAND=1;SYMBOL=IRAK2;SYMBOL_SOURCE=EntrezGene;CANONICAL=YES;REFSEQ_MATCH=rseq_mrna_match,rseq_ens_match_cds;INTRON=2/12;HGVSc=NM_001570.3:c.277+5770_277+5775delAGCTAC
+COSM17881	3:10183793-10183794	AG	3656	NM_001570.3	Transcript	intron_variant	-	-	-	-	-	-	IMPACT=MODIFIER;STRAND=1;SYMBOL=IRAK2;SYMBOL_SOURCE=EntrezGene;CANONICAL=YES;REFSEQ_MATCH=rseq_mrna_match,rseq_ens_match_cds;INTRON=2/12;HGVSc=NM_001570.3:c.277+5773_277+5774delTAinsAG
+COSM17953	3:10183793-10183794	CG	3656	NM_001570.3	Transcript	intron_variant	-	-	-	-	-	-	IMPACT=MODIFIER;STRAND=1;SYMBOL=IRAK2;SYMBOL_SOURCE=EntrezGene;CANONICAL=YES;REFSEQ_MATCH=rseq_mrna_match,rseq_ens_match_cds;INTRON=2/12;HGVSc=NM_001570.3:c.277+5773_277+5774delTAinsCG
+COSM26785	3:10183794	-	3656	NM_001570.3	Transcript	intron_variant	-	-	-	-	-	-	IMPACT=MODIFIER;STRAND=1;SYMBOL=IRAK2;SYMBOL_SOURCE=EntrezGene;CANONICAL=YES;REFSEQ_MATCH=rseq_mrna_match,rseq_ens_match_cds;INTRON=2/12;HGVSc=NM_001570.3:c.277+5774delA
+COSM18070	3:10183794	A	3656	NM_001570.3	Transcript	intron_variant	-	-	-	-	-	-	IMPACT=MODIFIER;STRAND=1;SYMBOL=IRAK2;SYMBOL_SOURCE=EntrezGene;CANONICAL=YES;REFSEQ_MATCH=rseq_mrna_match,rseq_ens_match_cds;INTRON=2/12
+COSM18415	3:10183794	C	3656	NM_001570.3	Transcript	intron_variant	-	-	-	-	-	-	IMPACT=MODIFIER;STRAND=1;SYMBOL=IRAK2;SYMBOL_SOURCE=EntrezGene;CANONICAL=YES;REFSEQ_MATCH=rseq_mrna_match,rseq_ens_match_cds;INTRON=2/12;HGVSc=NM_001570.3:c.277+5774A>C
+COSM17807	3:10183795	C	3656	NM_001570.3	Transcript	intron_variant	-	-	-	-	-	-	IMPACT=MODIFIER;STRAND=1;SYMBOL=IRAK2;SYMBOL_SOURCE=EntrezGene;CANONICAL=YES;REFSEQ_MATCH=rseq_mrna_match,rseq_ens_match_cds;INTRON=2/12
+COSM14305	3:10183797	A	3656	NM_001570.3	Transcript	intron_variant	-	-	-	-	-	-	IMPACT=MODIFIER;STRAND=1;SYMBOL=IRAK2;SYMBOL_SOURCE=EntrezGene;CANONICAL=YES;REFSEQ_MATCH=rseq_mrna_match,rseq_ens_match_cds;INTRON=2/12;HGVSc=NM_001570.3:c.277+5777C>A
+COSM14346	3:10183797	C	3656	NM_001570.3	Transcript	intron_variant	-	-	-	-	-	-	IMPACT=MODIFIER;STRAND=1;SYMBOL=IRAK2;SYMBOL_SOURCE=EntrezGene;CANONICAL=YES;REFSEQ_MATCH=rseq_mrna_match,rseq_ens_match_cds;INTRON=2/12
+COSM14404	3:10183797	G	3656	NM_001570.3	Transcript	intron_variant	-	-	-	-	-	-	IMPACT=MODIFIER;STRAND=1;SYMBOL=IRAK2;SYMBOL_SOURCE=EntrezGene;CANONICAL=YES;REFSEQ_MATCH=rseq_mrna_match,rseq_ens_match_cds;INTRON=2/12;HGVSc=NM_001570.3:c.277+5777C>G
+COSM17882	3:10183799	-	3656	NM_001570.3	Transcript	intron_variant	-	-	-	-	-	-	IMPACT=MODIFIER;STRAND=1;SYMBOL=IRAK2;SYMBOL_SOURCE=EntrezGene;CANONICAL=YES;REFSEQ_MATCH=rseq_mrna_match,rseq_ens_match_cds;INTRON=2/12;HGVSc=NM_001570.3:c.277+5779delT
+COSM14390	3:10183800	T	3656	NM_001570.3	Transcript	intron_variant	-	-	-	-	-	-	IMPACT=MODIFIER;STRAND=1;SYMBOL=IRAK2;SYMBOL_SOURCE=EntrezGene;CANONICAL=YES;REFSEQ_MATCH=rseq_mrna_match,rseq_ens_match_cds;INTRON=2/12
+COSM18080	3:10183808	C	3656	NM_001570.3	Transcript	intron_variant	-	-	-	-	-	-	IMPACT=MODIFIER;STRAND=1;SYMBOL=IRAK2;SYMBOL_SOURCE=EntrezGene;CANONICAL=YES;REFSEQ_MATCH=rseq_mrna_match,rseq_ens_match_cds;INTRON=2/12
+COSM17699	3:10183815	G	3656	NM_001570.3	Transcript	intron_variant	-	-	-	-	-	-	IMPACT=MODIFIER;STRAND=1;SYMBOL=IRAK2;SYMBOL_SOURCE=EntrezGene;CANONICAL=YES;REFSEQ_MATCH=rseq_mrna_match,rseq_ens_match_cds;INTRON=2/12;HGVSc=NM_001570.3:c.277+5795A>G
+COSM17658	3:10183817	T	3656	NM_001570.3	Transcript	intron_variant	-	-	-	-	-	-	IMPACT=MODIFIER;STRAND=1;SYMBOL=IRAK2;SYMBOL_SOURCE=EntrezGene;CANONICAL=YES;REFSEQ_MATCH=rseq_mrna_match,rseq_ens_match_cds;INTRON=2/12;HGVSc=NM_001570.3:c.277+5797C>T
+COSM17956	3:10183820	-	3656	NM_001570.3	Transcript	intron_variant	-	-	-	-	-	-	IMPACT=MODIFIER;STRAND=1;SYMBOL=IRAK2;SYMBOL_SOURCE=EntrezGene;CANONICAL=YES;REFSEQ_MATCH=rseq_mrna_match,rseq_ens_match_cds;INTRON=2/12;HGVSc=NM_001570.3:c.277+5800delC
+COSM17885	3:10183825	-	3656	NM_001570.3	Transcript	intron_variant	-	-	-	-	-	-	IMPACT=MODIFIER;STRAND=1;SYMBOL=IRAK2;SYMBOL_SOURCE=EntrezGene;CANONICAL=YES;REFSEQ_MATCH=rseq_mrna_match,rseq_ens_match_cds;INTRON=2/12;HGVSc=NM_001570.3:c.277+5805delC
+COSM17886	3:10183824-10183825	TC	3656	NM_001570.3	Transcript	intron_variant	-	-	-	-	-	-	IMPACT=MODIFIER;STRAND=1;SYMBOL=IRAK2;SYMBOL_SOURCE=EntrezGene;CANONICAL=YES;REFSEQ_MATCH=rseq_mrna_match,rseq_ens_match_cds;INTRON=2/12;HGVSc=NM_001570.3:c.277+5804_277+5805delCCinsTC
+COSM17958	3:10183825	A	3656	NM_001570.3	Transcript	intron_variant	-	-	-	-	-	-	IMPACT=MODIFIER;STRAND=1;SYMBOL=IRAK2;SYMBOL_SOURCE=EntrezGene;CANONICAL=YES;REFSEQ_MATCH=rseq_mrna_match,rseq_ens_match_cds;INTRON=2/12;HGVSc=NM_001570.3:c.277+5805C>A
+COSM14325	3:10183825	G	3656	NM_001570.3	Transcript	intron_variant	-	-	-	-	-	-	IMPACT=MODIFIER;STRAND=1;SYMBOL=IRAK2;SYMBOL_SOURCE=EntrezGene;CANONICAL=YES;REFSEQ_MATCH=rseq_mrna_match,rseq_ens_match_cds;INTRON=2/12;HGVSc=NM_001570.3:c.277+5805C>G
+COSM14348	3:10183832	T	3656	NM_001570.3	Transcript	intron_variant	-	-	-	-	-	-	IMPACT=MODIFIER;STRAND=1;SYMBOL=IRAK2;SYMBOL_SOURCE=EntrezGene;CANONICAL=YES;REFSEQ_MATCH=rseq_mrna_match,rseq_ens_match_cds;INTRON=2/12;HGVSc=NM_001570.3:c.277+5812A>T
+COSM18255	3:10183833	C	3656	NM_001570.3	Transcript	intron_variant	-	-	-	-	-	-	IMPACT=MODIFIER;STRAND=1;SYMBOL=IRAK2;SYMBOL_SOURCE=EntrezGene;CANONICAL=YES;REFSEQ_MATCH=rseq_mrna_match,rseq_ens_match_cds;INTRON=2/12;HGVSc=NM_001570.3:c.277+5813G>C
+COSM14386	3:10183840	-	3656	NM_001570.3	Transcript	intron_variant	-	-	-	-	-	-	IMPACT=MODIFIER;STRAND=1;SYMBOL=IRAK2;SYMBOL_SOURCE=EntrezGene;CANONICAL=YES;REFSEQ_MATCH=rseq_mrna_match,rseq_ens_match_cds;INTRON=2/12;HGVSc=NM_001570.3:c.277+5822delT;HGVS_OFFSET=2
+COSM14414	3:10183841	-	3656	NM_001570.3	Transcript	intron_variant	-	-	-	-	-	-	IMPACT=MODIFIER;STRAND=1;SYMBOL=IRAK2;SYMBOL_SOURCE=EntrezGene;CANONICAL=YES;REFSEQ_MATCH=rseq_mrna_match,rseq_ens_match_cds;INTRON=2/12;HGVSc=NM_001570.3:c.277+5821delT
+3_10183852_C/A	3:10183852	A	3656	NM_001570.3	Transcript	intron_variant	-	-	-	-	-	-	IMPACT=MODIFIER;STRAND=1;SYMBOL=IRAK2;SYMBOL_SOURCE=EntrezGene;CANONICAL=YES;REFSEQ_MATCH=rseq_mrna_match,rseq_ens_match_cds;INTRON=2/12;HGVSc=NM_001570.3:c.277+5832G>A
+COSM30295	3:10188196	G	3656	NM_001570.3	Transcript	intron_variant	-	-	-	-	-	-	IMPACT=MODIFIER;STRAND=1;SYMBOL=IRAK2;SYMBOL_SOURCE=EntrezGene;CANONICAL=YES;REFSEQ_MATCH=rseq_mrna_match,rseq_ens_match_cds;INTRON=2/12
+COSM18290	3:10188197	A	3656	NM_001570.3	Transcript	intron_variant	-	-	-	-	-	-	IMPACT=MODIFIER;STRAND=1;SYMBOL=IRAK2;SYMBOL_SOURCE=EntrezGene;CANONICAL=YES;REFSEQ_MATCH=rseq_mrna_match,rseq_ens_match_cds;INTRON=2/12;HGVSc=NM_001570.3:c.277+10177G>A
+COSM17988	3:10188197	T	3656	NM_001570.3	Transcript	intron_variant	-	-	-	-	-	-	IMPACT=MODIFIER;STRAND=1;SYMBOL=IRAK2;SYMBOL_SOURCE=EntrezGene;CANONICAL=YES;REFSEQ_MATCH=rseq_mrna_match,rseq_ens_match_cds;INTRON=2/12;HGVSc=NM_001570.3:c.277+10177G>T
+COSM18346	3:10188198	C	3656	NM_001570.3	Transcript	intron_variant	-	-	-	-	-	-	IMPACT=MODIFIER;STRAND=1;SYMBOL=IRAK2;SYMBOL_SOURCE=EntrezGene;CANONICAL=YES;REFSEQ_MATCH=rseq_mrna_match,rseq_ens_match_cds;INTRON=2/12;HGVSc=NM_001570.3:c.277+10178G>C
+COSM17752	3:10188200-10188201	AA	3656	NM_001570.3	Transcript	intron_variant	-	-	-	-	-	-	IMPACT=MODIFIER;STRAND=1;SYMBOL=IRAK2;SYMBOL_SOURCE=EntrezGene;CANONICAL=YES;REFSEQ_MATCH=rseq_mrna_match,rseq_ens_match_cds;INTRON=2/12;HGVSc=NM_001570.3:c.277+10180_277+10181delGCinsAA
+COSM14375	3:10188201	-	3656	NM_001570.3	Transcript	intron_variant	-	-	-	-	-	-	IMPACT=MODIFIER;STRAND=1;SYMBOL=IRAK2;SYMBOL_SOURCE=EntrezGene;CANONICAL=YES;REFSEQ_MATCH=rseq_mrna_match,rseq_ens_match_cds;INTRON=2/12;HGVSc=NM_001570.3:c.277+10182delA;HGVS_OFFSET=1
+COSM17678	3:10188200-10188201	TA	3656	NM_001570.3	Transcript	intron_variant	-	-	-	-	-	-	IMPACT=MODIFIER;STRAND=1;SYMBOL=IRAK2;SYMBOL_SOURCE=EntrezGene;CANONICAL=YES;REFSEQ_MATCH=rseq_mrna_match,rseq_ens_match_cds;INTRON=2/12;HGVSc=NM_001570.3:c.277+10180_277+10181delGCinsTA
+COSM14310	3:10188206	C	3656	NM_001570.3	Transcript	intron_variant	-	-	-	-	-	-	IMPACT=MODIFIER;STRAND=1;SYMBOL=IRAK2;SYMBOL_SOURCE=EntrezGene;CANONICAL=YES;REFSEQ_MATCH=rseq_mrna_match,rseq_ens_match_cds;INTRON=2/12;HGVSc=NM_001570.3:c.277+10186G>C
+COSM17862	3:10188207	A	3656	NM_001570.3	Transcript	intron_variant	-	-	-	-	-	-	IMPACT=MODIFIER;STRAND=1;SYMBOL=IRAK2;SYMBOL_SOURCE=EntrezGene;CANONICAL=YES;REFSEQ_MATCH=rseq_mrna_match,rseq_ens_match_cds;INTRON=2/12;HGVSc=NM_001570.3:c.277+10187G>A
+COSM18192	3:10188207	T	3656	NM_001570.3	Transcript	intron_variant	-	-	-	-	-	-	IMPACT=MODIFIER;STRAND=1;SYMBOL=IRAK2;SYMBOL_SOURCE=EntrezGene;CANONICAL=YES;REFSEQ_MATCH=rseq_mrna_match,rseq_ens_match_cds;INTRON=2/12;HGVSc=NM_001570.3:c.277+10187G>T
+COSM14399	3:10188208	A	3656	NM_001570.3	Transcript	intron_variant	-	-	-	-	-	-	IMPACT=MODIFIER;STRAND=1;SYMBOL=IRAK2;SYMBOL_SOURCE=EntrezGene;CANONICAL=YES;REFSEQ_MATCH=rseq_mrna_match,rseq_ens_match_cds;INTRON=2/12;HGVSc=NM_001570.3:c.277+10188C>A
+COSM14328	3:10188208	T	3656	NM_001570.3	Transcript	intron_variant	-	-	-	-	-	-	IMPACT=MODIFIER;STRAND=1;SYMBOL=IRAK2;SYMBOL_SOURCE=EntrezGene;CANONICAL=YES;REFSEQ_MATCH=rseq_mrna_match,rseq_ens_match_cds;INTRON=2/12;HGVSc=NM_001570.3:c.277+10188C>T
+COSM14312	3:10188210	C	3656	NM_001570.3	Transcript	intron_variant	-	-	-	-	-	-	IMPACT=MODIFIER;STRAND=1;SYMBOL=IRAK2;SYMBOL_SOURCE=EntrezGene;CANONICAL=YES;REFSEQ_MATCH=rseq_mrna_match,rseq_ens_match_cds;INTRON=2/12
+COSM18022	3:10188214	G	3656	NM_001570.3	Transcript	intron_variant	-	-	-	-	-	-	IMPACT=MODIFIER;STRAND=1;SYMBOL=IRAK2;SYMBOL_SOURCE=EntrezGene;CANONICAL=YES;REFSEQ_MATCH=rseq_mrna_match,rseq_ens_match_cds;INTRON=2/12;HGVSc=NM_001570.3:c.277+10194C>G
+COSM34019	3:10188218	T	3656	NM_001570.3	Transcript	intron_variant	-	-	-	-	-	-	IMPACT=MODIFIER;STRAND=1;SYMBOL=IRAK2;SYMBOL_SOURCE=EntrezGene;CANONICAL=YES;REFSEQ_MATCH=rseq_mrna_match,rseq_ens_match_cds;INTRON=2/12;HGVSc=NM_001570.3:c.277+10198G>T
+COSM18009	3:10188219	G	3656	NM_001570.3	Transcript	intron_variant	-	-	-	-	-	-	IMPACT=MODIFIER;STRAND=1;SYMBOL=IRAK2;SYMBOL_SOURCE=EntrezGene;CANONICAL=YES;REFSEQ_MATCH=rseq_mrna_match,rseq_ens_match_cds;INTRON=2/12;HGVSc=NM_001570.3:c.277+10199A>G
+COSM17644	3:10188220	G	3656	NM_001570.3	Transcript	intron_variant	-	-	-	-	-	-	IMPACT=MODIFIER;STRAND=1;SYMBOL=IRAK2;SYMBOL_SOURCE=EntrezGene;CANONICAL=YES;REFSEQ_MATCH=rseq_mrna_match,rseq_ens_match_cds;INTRON=2/12
+COSM17967	3:10188222	A	3656	NM_001570.3	Transcript	intron_variant	-	-	-	-	-	-	IMPACT=MODIFIER;STRAND=1;SYMBOL=IRAK2;SYMBOL_SOURCE=EntrezGene;CANONICAL=YES;REFSEQ_MATCH=rseq_mrna_match,rseq_ens_match_cds;INTRON=2/12;HGVSc=NM_001570.3:c.277+10202G>A
+COSM17895	3:10188224	-	3656	NM_001570.3	Transcript	intron_variant	-	-	-	-	-	-	IMPACT=MODIFIER;STRAND=1;SYMBOL=IRAK2;SYMBOL_SOURCE=EntrezGene;CANONICAL=YES;REFSEQ_MATCH=rseq_mrna_match,rseq_ens_match_cds;INTRON=2/12;HGVSc=NM_001570.3:c.277+10205delG;HGVS_OFFSET=1
+COSM14392	3:10188234	G	3656	NM_001570.3	Transcript	intron_variant	-	-	-	-	-	-	IMPACT=MODIFIER;STRAND=1;SYMBOL=IRAK2;SYMBOL_SOURCE=EntrezGene;CANONICAL=YES;REFSEQ_MATCH=rseq_mrna_match,rseq_ens_match_cds;INTRON=2/12;HGVSc=NM_001570.3:c.277+10214A>G
+COSM14415	3:10188236	-	3656	NM_001570.3	Transcript	intron_variant	-	-	-	-	-	-	IMPACT=MODIFIER;STRAND=1;SYMBOL=IRAK2;SYMBOL_SOURCE=EntrezGene;CANONICAL=YES;REFSEQ_MATCH=rseq_mrna_match,rseq_ens_match_cds;INTRON=2/12;HGVSc=NM_001570.3:c.277+10216delC
+COSM25719	3:10188240	C	3656	NM_001570.3	Transcript	intron_variant	-	-	-	-	-	-	IMPACT=MODIFIER;STRAND=1;SYMBOL=IRAK2;SYMBOL_SOURCE=EntrezGene;CANONICAL=YES;REFSEQ_MATCH=rseq_mrna_match,rseq_ens_match_cds;INTRON=2/12;HGVSc=NM_001570.3:c.277+10220G>C
+COSM14362	3:10188240	G	3656	NM_001570.3	Transcript	intron_variant	-	-	-	-	-	-	IMPACT=MODIFIER;STRAND=1;SYMBOL=IRAK2;SYMBOL_SOURCE=EntrezGene;CANONICAL=YES;REFSEQ_MATCH=rseq_mrna_match,rseq_ens_match_cds;INTRON=2/12
+COSM14407	3:10188245-10188246	CT	3656	NM_001570.3	Transcript	intron_variant	-	-	-	-	-	-	IMPACT=MODIFIER;STRAND=1;SYMBOL=IRAK2;SYMBOL_SOURCE=EntrezGene;CANONICAL=YES;REFSEQ_MATCH=rseq_mrna_match,rseq_ens_match_cds;INTRON=2/12
+COSM18286	3:10188246	-	3656	NM_001570.3	Transcript	intron_variant	-	-	-	-	-	-	IMPACT=MODIFIER;STRAND=1;SYMBOL=IRAK2;SYMBOL_SOURCE=EntrezGene;CANONICAL=YES;REFSEQ_MATCH=rseq_mrna_match,rseq_ens_match_cds;INTRON=2/12;HGVSc=NM_001570.3:c.277+10226delT
+COSM17757	3:10188246	TT	3656	NM_001570.3	Transcript	intron_variant	-	-	-	-	-	-	IMPACT=MODIFIER;STRAND=1;SYMBOL=IRAK2;SYMBOL_SOURCE=EntrezGene;CANONICAL=YES;REFSEQ_MATCH=rseq_mrna_match,rseq_ens_match_cds;INTRON=2/12;HGVSc=NM_001570.3:c.277+10226dupT
+COSM14302	3:10188248-10188251	-	3656	NM_001570.3	Transcript	intron_variant	-	-	-	-	-	-	IMPACT=MODIFIER;STRAND=1;SYMBOL=IRAK2;SYMBOL_SOURCE=EntrezGene;CANONICAL=YES;REFSEQ_MATCH=rseq_mrna_match,rseq_ens_match_cds;INTRON=2/12;HGVSc=NM_001570.3:c.277+10228_277+10231delGCCT
+COSM17759	3:10188248-10188251	ACC	3656	NM_001570.3	Transcript	intron_variant	-	-	-	-	-	-	IMPACT=MODIFIER;STRAND=1;SYMBOL=IRAK2;SYMBOL_SOURCE=EntrezGene;CANONICAL=YES;REFSEQ_MATCH=rseq_mrna_match,rseq_ens_match_cds;INTRON=2/12;HGVSc=NM_001570.3:c.277+10228_277+10231delGCCTinsACC
+COSM25720	3:10188250	G	3656	NM_001570.3	Transcript	intron_variant	-	-	-	-	-	-	IMPACT=MODIFIER;STRAND=1;SYMBOL=IRAK2;SYMBOL_SOURCE=EntrezGene;CANONICAL=YES;REFSEQ_MATCH=rseq_mrna_match,rseq_ens_match_cds;INTRON=2/12;HGVSc=NM_001570.3:c.277+10230C>G
+COSM14356	3:10188252	-	3656	NM_001570.3	Transcript	intron_variant	-	-	-	-	-	-	IMPACT=MODIFIER;STRAND=1;SYMBOL=IRAK2;SYMBOL_SOURCE=EntrezGene;CANONICAL=YES;REFSEQ_MATCH=rseq_mrna_match,rseq_ens_match_cds;INTRON=2/12;HGVSc=NM_001570.3:c.277+10232delG
+COSM17857	3:10188251-10188252	TA	3656	NM_001570.3	Transcript	intron_variant	-	-	-	-	-	-	IMPACT=MODIFIER;STRAND=1;SYMBOL=IRAK2;SYMBOL_SOURCE=EntrezGene;CANONICAL=YES;REFSEQ_MATCH=rseq_mrna_match,rseq_ens_match_cds;INTRON=2/12;HGVSc=NM_001570.3:c.277+10231_277+10232delTGinsTA
+COSM14373	3:10188257	T	3656	NM_001570.3	Transcript	intron_variant	-	-	-	-	-	-	IMPACT=MODIFIER;STRAND=1;SYMBOL=IRAK2;SYMBOL_SOURCE=EntrezGene;CANONICAL=YES;REFSEQ_MATCH=rseq_mrna_match,rseq_ens_match_cds;INTRON=2/12;HGVSc=NM_001570.3:c.277+10237G>T
+COSM14406	3:10188260	-	3656	NM_001570.3	Transcript	intron_variant	-	-	-	-	-	-	IMPACT=MODIFIER;STRAND=1;SYMBOL=IRAK2;SYMBOL_SOURCE=EntrezGene;CANONICAL=YES;REFSEQ_MATCH=rseq_mrna_match,rseq_ens_match_cds;INTRON=2/12;HGVSc=NM_001570.3:c.277+10240delA
+COSM14279	3:10188262	-	3656	NM_001570.3	Transcript	intron_variant	-	-	-	-	-	-	IMPACT=MODIFIER;STRAND=1;SYMBOL=IRAK2;SYMBOL_SOURCE=EntrezGene;CANONICAL=YES;REFSEQ_MATCH=rseq_mrna_match,rseq_ens_match_cds;INTRON=2/12;HGVSc=NM_001570.3:c.277+10242delA
+COSM18014	3:10188263	-	3656	NM_001570.3	Transcript	intron_variant	-	-	-	-	-	-	IMPACT=MODIFIER;STRAND=1;SYMBOL=IRAK2;SYMBOL_SOURCE=EntrezGene;CANONICAL=YES;REFSEQ_MATCH=rseq_mrna_match,rseq_ens_match_cds;INTRON=2/12;HGVSc=NM_001570.3:c.277+10244delT;HGVS_OFFSET=1
+COSM18059	3:10188263	TT	3656	NM_001570.3	Transcript	intron_variant	-	-	-	-	-	-	IMPACT=MODIFIER;STRAND=1;SYMBOL=IRAK2;SYMBOL_SOURCE=EntrezGene;CANONICAL=YES;REFSEQ_MATCH=rseq_mrna_match,rseq_ens_match_cds;INTRON=2/12;HGVSc=NM_001570.3:c.277+10243dupT
+COSM18276	3:10188263	G	3656	NM_001570.3	Transcript	intron_variant	-	-	-	-	-	-	IMPACT=MODIFIER;STRAND=1;SYMBOL=IRAK2;SYMBOL_SOURCE=EntrezGene;CANONICAL=YES;REFSEQ_MATCH=rseq_mrna_match,rseq_ens_match_cds;INTRON=2/12;HGVSc=NM_001570.3:c.277+10243T>G
+COSM17765	3:10188266	-	3656	NM_001570.3	Transcript	intron_variant	-	-	-	-	-	-	IMPACT=MODIFIER;STRAND=1;SYMBOL=IRAK2;SYMBOL_SOURCE=EntrezGene;CANONICAL=YES;REFSEQ_MATCH=rseq_mrna_match,rseq_ens_match_cds;INTRON=2/12;HGVSc=NM_001570.3:c.277+10246delT
