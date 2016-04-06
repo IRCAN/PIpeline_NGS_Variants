@@ -1,0 +1,52 @@
+## ENSEMBL VARIANT EFFECT PREDICTOR v84
+## Output produced at 2016-04-06 15:19:06
+## Connected to homo_sapiens_core_84_38 on ensembldb.ensembl.org
+## Using cache in /home/ludovic/.vep/homo_sapiens/84_GRCh38
+## Using API version 84, DB version 84
+## COSMIC version 75
+## dbSNP version 146
+## HGMD-PUBLIC version 20154
+## polyphen version 2.2.2
+## genebuild version 2014-07
+## gencode version GENCODE 24
+## regbuild version 13.0
+## ClinVar version 201601
+## assembly version GRCh38.p5
+## sift version sift5.2.2
+## ESP version 20141103
+## Extra column keys:
+## IMPACT : Subjective impact classification of consequence type
+## DISTANCE : Shortest distance from variant to transcript
+## STRAND : Strand of the feature (1/-1)
+## FLAGS : Transcript quality flags
+## SYMBOL : Gene symbol (e.g. HGNC)
+## SYMBOL_SOURCE : Source of gene symbol
+## HGNC_ID : Stable identifer of HGNC gene symbol
+## BIOTYPE : Biotype of transcript or regulatory feature
+## SIFT : SIFT prediction and/or score
+## PolyPhen : PolyPhen prediction and/or score
+## HGVSc : HGVS coding sequence name
+## HGVSp : HGVS protein sequence name
+## HGVS_OFFSET : Indicates by how many bases the HGVS notations for this variant have been shifted
+## GMAF : Minor allele and frequency of existing variant in 1000 Genomes combined population
+## FREQS : Frequencies of overlapping variants used in filtering
+## CLIN_SIG : Clinical significance of variant from dbSNP
+## SOMATIC : Somatic status of existing variant
+## PHENO : Indicates if existing variant(s) is associated with a phenotype, disease or trait
+## PUBMED : Pubmed ID(s) of publications that cite existing variant
+## MOTIF_NAME : The source and identifier of a transcription factor binding profile (TFBP) aligned at this position
+## MOTIF_POS : The relative position of the variation in the aligned TFBP
+## HIGH_INF_POS : A flag indicating if the variant falls in a high information position of the TFBP
+## MOTIF_SCORE_CHANGE : The difference in motif score of the reference and variant sequences for the TFBP
+#Uploaded_variation	Location	Allele	Gene	Feature	Feature_type	Consequence	cDNA_position	CDS_position	Protein_position	Amino_acids	Codons	Existing_variation	Extra
+COSM28056	2:29432664	T	ENSG00000171094	ENST00000389048	Transcript	intron_variant	-	-	-	-	-	-	IMPACT=MODIFIER;STRAND=-1;SYMBOL=ALK;SYMBOL_SOURCE=HGNC;HGNC_ID=HGNC:427;BIOTYPE=protein_coding
+COSM28056	2:29432664	T	ENSG00000171094	ENST00000618119	Transcript	intron_variant	-	-	-	-	-	-	IMPACT=MODIFIER;STRAND=-1;SYMBOL=ALK;SYMBOL_SOURCE=HGNC;HGNC_ID=HGNC:427;BIOTYPE=protein_coding
+2_29443650_G/A	2:29443650	A	ENSG00000171094	ENST00000389048	Transcript	intron_variant	-	-	-	-	-	-	IMPACT=MODIFIER;STRAND=-1;SYMBOL=ALK;SYMBOL_SOURCE=HGNC;HGNC_ID=HGNC:427;BIOTYPE=protein_coding;HGVSc=ENST00000389048.7:c.1155-59791C>T
+2_29443650_G/A	2:29443650	A	ENSG00000171094	ENST00000618119	Transcript	intron_variant	-	-	-	-	-	-	IMPACT=MODIFIER;STRAND=-1;SYMBOL=ALK;SYMBOL_SOURCE=HGNC;HGNC_ID=HGNC:427;BIOTYPE=protein_coding;HGVSc=ENST00000618119.4:c.24-59791C>T
+2_29443650_G/A	2:29443650	A	-	ENSR00001921977	RegulatoryFeature	regulatory_region_variant	-	-	-	-	-	-	IMPACT=MODIFIER;BIOTYPE=enhancer
+NOCOSMIC105	2:209113192	A	-	ENSR00001945974	RegulatoryFeature	regulatory_region_variant	-	-	-	-	-	-	IMPACT=MODIFIER;BIOTYPE=TF_binding_site
+NOCOSMIC105	2:209113192	A	-	-	-	intergenic_variant	-	-	-	-	-	-	IMPACT=MODIFIER
+COSM14348	3:10183832	T	ENSG00000134070	ENST00000256458	Transcript	intron_variant	-	-	-	-	-	-	IMPACT=MODIFIER;STRAND=1;SYMBOL=IRAK2;SYMBOL_SOURCE=HGNC;HGNC_ID=HGNC:6113;BIOTYPE=protein_coding;HGVSc=ENST00000256458.4:c.277+5812A>T
+COSM14348	3:10183832	T	-	ENSR00001975004	RegulatoryFeature	regulatory_region_variant	-	-	-	-	-	-	IMPACT=MODIFIER;BIOTYPE=enhancer
+3_10183852_C/A	3:10183852	A	ENSG00000134070	ENST00000256458	Transcript	intron_variant	-	-	-	-	-	-	IMPACT=MODIFIER;STRAND=1;SYMBOL=IRAK2;SYMBOL_SOURCE=HGNC;HGNC_ID=HGNC:6113;BIOTYPE=protein_coding;HGVSc=ENST00000256458.4:c.277+5832G>A
+3_10183852_C/A	3:10183852	A	-	ENSR00001975004	RegulatoryFeature	regulatory_region_variant	-	-	-	-	-	-	IMPACT=MODIFIER;BIOTYPE=enhancer
