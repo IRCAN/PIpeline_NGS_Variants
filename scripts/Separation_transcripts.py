@@ -9,7 +9,6 @@ Ludovic KOSTHOWA (06/04/16)
 """
 ########	Variable(s)	########
 LEGENDES = ['AF=','AO=','DP=','FAO=','FDP=','FR=','FRO=','FSAF=','FSAR=','FSRF=','FSRR=','FWDB=','FXX=','HRUN=','LEN=','MLLD=','OALT=','OID=','OMAPLAT=','OPOS=','OREF=','QD=','RBI=','REFB=','REVB=','RO=','SAF=','SAR=','SRF=','SRR=','SSEN=','SSEP=','SSSB=','STB=','STBP=','TYPE=','VARB=','']
-
 ########	Fonctions	########
 
 def read_file(File):
@@ -168,7 +167,13 @@ def creation_lignes(listLigneTemp,cmpt,compteurID,newLines,a):
 ##############################################################
 #Fonction qui traite les lignes composees de plusieurs ID cosmic
 
-def main_separation_transcripts(contentFile,ListOfList):
+def main_separation_transcripts(contentFile):
+	"""Traite les lignes composees de plusieurs ID cosmic
+	et cree de nouvelles lignes pour chaque identifiant.
+	Retourne la liste des nouvelles lignes.
+
+	@param	contentFile : contenu du fichier VCF
+	@return listNewLines : liste des lignes ( un ID par ligne)."""
 	listNewLines = []
 	contentFileCleaned = check_if_multiple_ID(contentFile)
 	listLigneTemp = create_list_of_list(contentFileCleaned)

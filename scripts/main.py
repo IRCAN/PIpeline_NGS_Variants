@@ -91,7 +91,7 @@ for i in fichiers:
 	del listOfList[0:71]
 	del contentFile[0:71]
 	#Appel de la fonction qui separe les transcripts presents sur la meme ligne
-	ListdeNewLines = main_separation_transcripts(contentFile,listOfList)
+	ListdeNewLines = main_separation_transcripts(contentFile)
 	#Traitement de la liste et ecriture dans fichier VCF: recupere les lignes avec 1 seul ID
 	# dans listOfList et les autres dans ListdeNewLines + ajf_oute seulement les mutations
 	list_of_mutations = check_if_multiple_id(listOfList)
@@ -116,7 +116,6 @@ print("Fichier lignes separees crees !")
 #//TODO prendre chaque FAO = 0 et comparer si ds HS
 
 
-"""
 #verifie si le genome en local correspond a la derniere version du genome sur ensembl
 os.system('rsync -u rsync://ftp.ensembl.org/ensembl/pub/current_variation/VEP/homo_sapiens_vep_84_GRCh38.tar.gz ../Data/Ensembl/')
 for i in fichiers:
@@ -135,5 +134,5 @@ for i in fichiers:
 	#os.system(command2)
 	os.system(command3)
 print("Creation fichiers par VEP OK")
-"""
+
 ##//TODO realiser intersection avec fichiers tibo
