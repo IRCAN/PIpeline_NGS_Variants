@@ -47,19 +47,24 @@ def check_if_multiple_id(listOfList):
 	for i in listOfList:
 		ligne = i[2].split(";")
 		if len(ligne) == 1:
+			"""
 			if "AF=0;AO=" in i[7]: #verifie si presence de mutation
 				continue
 			else:
 				i="\t".join(i)
-				contentNewVFC.append(i)
+				contentNewVFC.append(i)"""
+			i="\t".join(i)
+			contentNewVFC.append(i)
 		else:
 			temp = []
 			for j in ListdeNewLines[cmpt]:
-				if "AF=0;AO=" in j[7]:	#verifie si presence de mutation
+				"""if "AF=0;AO=" in j[7]:	#verifie si presence de mutation
 					continue
 				else:
 					j="\t".join(j)
-					contentNewVFC.append(j)
+					contentNewVFC.append(j)"""
+				j="\t".join(j)
+				contentNewVFC.append(j)		
 			cmpt+=1
 	return contentNewVFC	
 
@@ -69,7 +74,8 @@ def check_if_multiple_id(listOfList):
 ##############################################################
 
 #//TODO A modifier lorsque arborescence finale connue
-fichiers = ['TSVC_variants_IonXpress_001.vcf','TSVC_variants_IonXpress_002.vcf','TSVC_variants_IonXpress_005.vcf','TSVC_variants_IonXpress_006.vcf','TSVC_variants_IonXpress_007.vcf','TSVC_variants_IonXpress_008.vcf','TSVC_variants_IonXpress_009.vcf','TSVC_variants_IonXpress_012.vcf','TSVC_variants_IonXpress_013.vcf','TSVC_variants_IonXpress_016.vcf']
+fichiers = ['TSVC_variants_IonXpress_001.vcf']
+#,'TSVC_variants_IonXpress_002.vcf','TSVC_variants_IonXpress_005.vcf','TSVC_variants_IonXpress_006.vcf','TSVC_variants_IonXpress_007.vcf','TSVC_variants_IonXpress_008.vcf','TSVC_variants_IonXpress_009.vcf','TSVC_variants_IonXpress_012.vcf','TSVC_variants_IonXpress_013.vcf','TSVC_variants_IonXpress_016.vcf']
 #//TODO FINAL: recuperer liste des  fichiers VCF du run en cours et boucler dessus
 for i in fichiers:
 	#//TODO A modifier lorsque arborescence finale connue
@@ -89,12 +95,28 @@ for i in fichiers:
 	#Traitement de la liste et ecriture dans fichier VCF: recupere les lignes avec 1 seul ID
 	# dans listOfList et les autres dans ListdeNewLines + ajf_oute seulement les mutations
 	list_of_mutations = check_if_multiple_id(listOfList)
+	#print(list_of_mutations)
 	#//TODO A modifier lorsque arborescence finale connue
 	f_out = "../Resultats/VariantCaller/RESULTAT_"+i+".vcf"
 	#creation du fichier de sortie: fichier VCF avec un transcript par ligne
 	output_file(f_out,list_of_mutations)
-print("Fichier triee crees !")
 
+	#je recupere tout les FAO = 0
+	for t in list_of_mutations:
+		if "FAO=0;" in list_of_mutations[7]:
+			print('t=\n',t)
+			#si chrt == chrHS et que startHS < POSt et que POSt < endHS
+				#alors t == HS non mute
+	#suppression des FAO = 0
+	#Pour chaque FAO != 0:
+	#regarde dans HS si il en fait parti ????
+	#lancer vep
+	#recup id cosmic et comparer à HS et variants NGS
+print("Fichier lignes separees crees !")
+#//TODO prendre chaque FAO = 0 et comparer si ds HS
+
+
+"""
 #verifie si le genome en local correspond a la derniere version du genome sur ensembl
 os.system('rsync -u rsync://ftp.ensembl.org/ensembl/pub/current_variation/VEP/homo_sapiens_vep_84_GRCh38.tar.gz ../Data/Ensembl/')
 for i in fichiers:
@@ -113,5 +135,5 @@ for i in fichiers:
 	#os.system(command2)
 	os.system(command3)
 print("Creation fichiers par VEP OK")
-
+"""
 ##//TODO realiser intersection avec fichiers tibo

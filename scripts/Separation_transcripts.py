@@ -1,23 +1,26 @@
 import re
 
-###############################################################
-######## Script pour separer une ligne du fichier VCF  ########
-########composee de plusieurs transcripts en plusieurs ########
-########        lignes: une ligne par transcript       ########
-###############################################################
+"""
+Script pour separer une ligne du fichier VCF
+composee de plusieurs transcripts en plusieurs
+lignes: une ligne par transcript.
 
+Ludovic KOSTHOWA (06/04/16)
+"""
 ########	Variable(s)	########
 LEGENDES = ['AF=','AO=','DP=','FAO=','FDP=','FR=','FRO=','FSAF=','FSAR=','FSRF=','FSRR=','FWDB=','FXX=','HRUN=','LEN=','MLLD=','OALT=','OID=','OMAPLAT=','OPOS=','OREF=','QD=','RBI=','REFB=','REVB=','RO=','SAF=','SAR=','SRF=','SRR=','SSEN=','SSEP=','SSSB=','STB=','STBP=','TYPE=','VARB=','']
 
 ########	Fonctions	########
 
 def read_file(File):
+	"""Ouvre et lit le fichier .vcf de chaque patients."""
 	contentFile = File.readlines()
 	File.close()
 	return contentFile
 
 def check_if_multiple_ID(contentFile):
-	#creation d'une liste pour compter le nombre d'ID cosmic par ligne
+	"""Cree une liste composee seulement des lignes possedants plusieurs
+	identifiants cosmics. """
 	contentFileList=[]
 	for k in contentFile:
 		contentFileList.append(k)
@@ -30,12 +33,16 @@ def check_if_multiple_ID(contentFile):
 	for i in listOflist:
 		cpt += 1
 		ligne = i[2].split(";")
-		#Si il y a plus que un seul ID cosmic, je cree une liste de ces ID.	
+		#Si il y a plus (+) que un seul ID cosmic, je cree une liste de ces ID.	
 		if len(ligne) != 1:
 			multipleIDList.append(contentFile[cpt])
 	return multipleIDList
 
 def create_list_of_list(contentFile):
+	"""Cree pour chaque ligne une liste de toutes les informations des
+	differents identifiants cosmics. Cette liste est ajoutee dans une liste globale.
+	Cette fonction permet de separer tout les elements necessaires a la
+	separation des lignes composees de plusirs ID cosmics."""
 	listContentFile = [] #liste du contenu du fichier
 	#separation de contentFile par les tabulations
 	listFinale =[]
@@ -80,17 +87,20 @@ def create_list_of_list(contentFile):
 			listFinale.append(listLigneTemp)
 		else:
 			listFinale.append(listLigneTemp)
+	#print(listFinale)
 	return listFinale
 
 def trie_informations(listLigneTemp):
-	#suppression des LEGENDES (FAO,AF,AO,...) par recherche d'une expression reguliere
-	#pour uniformiser les contentFileLists
+	"""Suppression des legendes (FAO,AF,AO,...) 
+	par recherche d'une expression reguliere."""
 	for i in listLigneTemp[7]:
 		temp = str(i[0])
 		temp = re.sub(r"([A-Z])+=","",temp)
 		i[0] = temp
 
 def check_if_same_length(listLigneTemp):
+	"""Verifie si la ligne possede le meme nombre d'ID cosmic
+	que de mutations."""
 	#nombre d'elements de la cellule INFO
 	cmpt = len(listLigneTemp[7])
 	newLines = []
@@ -113,6 +123,8 @@ def check_if_same_length(listLigneTemp):
 	return newLines
 
 def creation_lignes(listLigneTemp,cmpt,compteurID,newLines,a):
+	"""Recupere les informations correspondants a chaque ID cosmic
+	et cree une nouvelleœ ligne avec ces informations."""
 	#pour chaque elements de la liste, recuperation des informations
 	for i in range(len(listLigneTemp[a])):
 		ligneTemp = []
