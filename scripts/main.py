@@ -101,12 +101,18 @@ hotspots_temp = read_file(hotspots_file)
 hotspots = file_to_list(hotspots_temp)
 
 #//TODO A modifier lorsque arborescence finale connue
-fichiers = ['TSVC_variants_IonXpress_002.vcf']
+#fichiers = ['TSVC_variants_IonXpress_002.vcf']
 #,'TSVC_variants_IonXpress_002.vcf','TSVC_variants_IonXpress_005.vcf','TSVC_variants_IonXpress_006.vcf','TSVC_variants_IonXpress_007.vcf','TSVC_variants_IonXpress_008.vcf','TSVC_variants_IonXpress_009.vcf','TSVC_variants_IonXpress_012.vcf','TSVC_variants_IonXpress_013.vcf','TSVC_variants_IonXpress_016.vcf']
+barecode = ['IonXpress_001','IonXpress_002','IonXpress_003','IonXpress_004','IonXpress_005','IonXpress_006','IonXpress_007','IonXpress_008','IonXpress_009','IonXpress_011','IonXpress_012','IonXpress_013','IonXpress_015','IonXpress_016',]
 #//TODO FINAL: recuperer liste des  fichiers VCF du run en cours et boucler dessus
-for i in fichiers:
+
+#####//TODO verifier si le dossier existe deja, si oui, ne pas le creer, si non le creer
+os.mkdir("../Resultats/Auto_user_INS-80-TF_23-02-16_151_198/VariantCaller/")
+os.mkdir("../Resultats/Auto_user_INS-80-TF_23-02-16_151_198/VEP/")
+for i in barecode:
+	fichier = 'TSVC_variants_'+i+'.vcf'
 	#//TODO A modifier lorsque arborescence finale connue
-	j = "../Data/VariantCaller/"+i
+	j = "../Data/Run_test/Auto_user_INS-80-TF_23-02-16_151_198/plugin_out/variantCaller_out.411/"+i+'/'+fichier
 	print('Traitement du fichier: ',j)
 	File = open(j,'r')
 	contentFile = read_file(File)
@@ -124,7 +130,8 @@ for i in fichiers:
 	list_of_transcripts = check_if_multiple_id(listOfList)
 	#print(list_of_transcripts)
 	#//TODO A modifier lorsque arborescence finale connue
-	f_out = "../Resultats/VariantCaller/SEP_LIGNES_"+i
+	
+	f_out = "../Resultats/Auto_user_INS-80-TF_23-02-16_151_198/VariantCaller/SEP_LIGNES_"+fichier
 	#creation du fichier de sortie: fichier VCF avec un transcript par ligne
 	output_file(f_out,list_of_transcripts)
 	print('création de ',f_out)
@@ -135,7 +142,7 @@ for i in fichiers:
 		a = list_of_transcripts[l].split('\t')
 		if "FAO=0;" not in a[7]:
 			list_of_mutations.append(list_of_transcripts[l])
-	f_out2 = "../Resultats/VariantCaller/MUTATIONS_"+i
+	f_out2 = "../Resultats/Auto_user_INS-80-TF_23-02-16_151_198/VariantCaller/MUTATIONS_"+fichier
 	output_file(f_out2,list_of_mutations)
 	print('création de ',f_out2)
 	#suppression des FAO = 0
@@ -147,15 +154,16 @@ for i in fichiers:
 print("Fichier lignes separees crees !")
 #//TODO prendre chaque FAO = 0 et comparer si ds HS
 
-"""
+
 #verifie si le genome en local correspond a la derniere version du genome sur ensembl
 os.system('rsync -u rsync://ftp.ensembl.org/ensembl/pub/current_variation/VEP/homo_sapiens_vep_84_GRCh38.tar.gz ../Data/Ensembl/')
-for i in fichiers:
+for i in barecode:
+	fichier = 'TSVC_variants_'+i+'.vcf'
 	#//TODO faire la fonction dans script VEP + comparer resultats fichier debut et fichier fin
-	inputfile = "../Resultats/VariantCaller/MUTATIONS_"+i
-	output_file = "../Resultats/VEP/VEP_GAEL_"+i
-	output_file1 = "../Resultats/VEP/VEP_LUDO_"+i
-	output_file2 = "../Resultats/VEP/VEP_PERSO_SANS_REFSEQ_MUTATIONS_2_"+i
+	inputfile = "../Resultats/Auto_user_INS-80-TF_23-02-16_151_198/VariantCaller/MUTATIONS_"+fichier
+	output_file = "../Resultats/VEP/VEP_GAEL_"+fichier
+	output_file1 = "../Resultats/VEP/VEP_LUDO_"+fichier
+	output_file2 = "../Resultats/Auto_user_INS-80-TF_23-02-16_151_198/VEP/VEP_"+fichier
 	#gael = mieux que script perso , + d'informations
 	command = "perl ../Logiciels/ensembl-tools-release-84/scripts/variant_effect_predictor/variant_effect_predictor.pl  -cache --no_stats --pick --refseq --symbol --hgvs --gmaf --sift b --polyphen b --canonical --regulatory --numbers --filter_common --filter coding_change,splice,regulatory --input_file "+inputfile+ " --output_file "+output_file
 	#perso
@@ -166,5 +174,5 @@ for i in fichiers:
 	#os.system(command2)
 	os.system(command3)
 print("Creation fichiers par VEP OK")
-"""
+
 ##//TODO realiser intersection avec fichiers tibo

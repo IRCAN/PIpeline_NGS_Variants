@@ -5,8 +5,10 @@ import re
 sampleList=[]
 #creation d'une liste contenant tout les barcodes du run
 barcodeList=[]
+#creation d'une liste contenant tout les reads on target du run
+list_reads_on_target = []
 #creation d'une liste qui contiendra chaque sampleList
-finalList=[['Sample','Barcode','Kit','Run date','Chip','Mapped Reads','ID','Reads On-Target','Reads On-SampleID','Mean Read Depth','Base at 1x Coverage','Base at 20x Coverage','Base at 100x Coverage']]
+finalList=[['Sample','Barcode','Kit','Run date','Chip','Mapped Reads','ID','Reads On-Target','Reads On-SampleID','Mean Read Depth','Base at 1x Coverage','Base at 20x Coverage','Base at 100x Coverage','Base at 500x Coverage']]
 
 def get_list_barcode(fileContent):
 	#supprime la legende
@@ -62,11 +64,11 @@ def get_id(fileContent):
 	ID = ID.replace('Sample ID:   ','')
 	ID = ID.replace('\n','')
 	sampleList[6] = ID
-def get_reads_on_target():
-	readsOnTarget
-	##//TODO
-	pass
-	sampleList[7] = readsOnTarget
+def get_list_reads_on_target(fileContent):
+	for elements in fileContent:
+		reads = elements.split('\t')
+		reads = reads[3]
+		list_reads_on_target.append(reads)
 def get_reads_on_sample_ID(fileContent):
 	readsOnSampleID = fileContent[4]
 	##TODO// A ameliorer par recherche expression reguliere
@@ -74,29 +76,35 @@ def get_reads_on_sample_ID(fileContent):
 	readsOnSampleID = readsOnSampleID.replace('\n','')
 	sampleList[8] = readsOnSampleID
 def get_mean_read_depth(fileContent):
-	meanReadDepth = fileContent[1]
+	meanReadDepth = fileContent[26]
 	##TODO// A ameliorer par recherche expression reguliere
 	meanReadDepth = meanReadDepth.replace('Average base coverage depth: ','')
 	meanReadDepth = meanReadDepth.replace('\n','')
 	sampleList[9] = float(meanReadDepth)
 def get_coverage_1x(fileContent):
-	coverage1x = fileContent[3]
+	coverage1x = fileContent[28]
 	##TODO// A ameliorer par recherche expression reguliere
-	coverage1x = coverage1x.replace('Coverage at 1x:   ','')
+	coverage1x = coverage1x.replace('Target base coverage at 1x:   ','')
 	coverage1x = coverage1x.replace('\n','')
 	sampleList[10] = coverage1x
 def get_coverage_20x(fileContent):
-	coverage20x = fileContent[4]
+	coverage20x = fileContent[29]
 	##TODO// A ameliorer par recherche expression reguliere
-	coverage20x = coverage20x.replace('Coverage at 20x:  ','')
+	coverage20x = coverage20x.replace('Target base coverage at 20x:  ','')
 	coverage20x = coverage20x.replace('\n','')
 	sampleList[11] = coverage20x
 def get_coverage_100x(fileContent):
-	coverage100x = fileContent[5]
+	coverage100x = fileContent[30]
 	##TODO// A ameliorer par recherche expression reguliere
-	coverage100x = coverage100x.replace('Coverage at 100x: ','')
+	coverage100x = coverage100x.replace('Target base coverage at 100x: ','')
 	coverage100x = coverage100x.replace('\n','')
 	sampleList[12] = coverage100x
+def get_coverage_500x(fileContent):
+	coverage500x = fileContent[31]
+	##TODO// A ameliorer par recherche expression reguliere
+	coverage500x = coverage500x.replace('Target base coverage at 500x: ','')
+	coverage500x = coverage500x.replace('\n','')
+	sampleList[13] = coverage500x
 def output_file(FileName, finalList):
 	NomFichier = FileName
 	# création et ouverture du File
@@ -119,36 +127,38 @@ def output_file(FileName, finalList):
 """
 Ouverture et Analyse du fichier *summary.xls
 """
-Fichier = open("../Data/Run_test/Auto_user_INS-81-SG_02-03-16_152/Root/plugin_out/sampleID_out.415/R_2014_07_31_06_44_53_user_INS-81-SG_02-03-16_Auto_user_INS-81-SG_02-03-16_152.bc_summary.xls","r")
+Fichier = open("../Data/Run_test/Auto_user_INS-80-TF_23-02-16_151_198/plugin_out/coverageAnalysis_out.410/R_2014_07_31_04_21_49_user_INS-80-TF_23-02-16_Auto_user_INS-80-TF_23-02-16_151.bc_summary.xls","r")
 fileContent = read_file(Fichier)
 get_list_barcode(fileContent)
+get_list_reads_on_target(fileContent)
 Fichier.close()
 
 """
 Ouverture et Analyse du fichier explog_final.txt
 """
-NomFichier = "../Data/Run_test/Auto_user_INS-81-SG_02-03-16_152/explog_final.txt"
+NomFichier = "../Data/Run_test/Auto_user_INS-80-TF_23-02-16_151_198/explog_final.txt"
 Fichier = open(NomFichier,"r")
 fileContent = read_file(Fichier)
 kit = get_kit(fileContent)
 chip = get_chip(fileContent)
 Fichier.close()
-
+curentBarecodeNumber =-1
 for barecode in barcodeList:
-
-	sampleList=['NA','NA','NA','NA','NA','NA','NA','NA','NA','NA','NA','NA','NA']
+	curentBarecodeNumber += 1
+	sampleList=['NA','NA','NA','NA','NA','NA','NA','NA','NA','NA','NA','NA','NA','NA']
 
 	"""
 	Ouverture et Analyse du fichier read_stats.txt
 	"""
 
-	NomFichier = "../Data/Run_test/Auto_user_INS-81-SG_02-03-16_152/Root/plugin_out/sampleID_out.415/"+barecode+"/read_stats.txt"
+	NomFichier = "../Data/Run_test/Auto_user_INS-80-TF_23-02-16_151_198/plugin_out/sampleID_out.412/"+barecode+"/read_stats.txt"
 	Fichier = open(NomFichier,"r")
 	fileContent = read_file(Fichier)
 	get_sample(fileContent)
 	get_barcode(barecode)
 	get_id(fileContent)
 	get_mapped_reads(fileContent)
+	sampleList[7] = list_reads_on_target[curentBarecodeNumber]
 	get_reads_on_sample_ID(fileContent)
 	Fichier.close()
 	sampleList[2] = kit
@@ -156,22 +166,24 @@ for barecode in barcodeList:
 	sampleList[4] = chip
 
 	"""
-	Ouverture et Analyse du fichier on_target_stats.txt
+	Ouverture et Analyse du fichier .stats.cov.txt
 	"""
-
-	NomFichier = "../Data/Run_test/Auto_user_INS-81-SG_02-03-16_152/Root/plugin_out/sampleID_out.415/"+barecode+"/on_target_stats.txt"
+	NomFichier = "../Data/Run_test/Auto_user_INS-80-TF_23-02-16_151_198/plugin_out/coverageAnalysis_out.410/"+barecode+"/"+barecode+"_R_2014_07_31_04_21_49_user_INS-80-TF_23-02-16_Auto_user_INS-80-TF_23-02-16_151.stats.cov.txt"
 	Fichier = open(NomFichier,"r")
 	fileContent = read_file(Fichier)
+	#print(fileContent)
 	get_mean_read_depth(fileContent)
 	get_coverage_1x(fileContent)
 	get_coverage_20x(fileContent)
 	get_coverage_100x(fileContent)
+	get_coverage_500x(fileContent)
 	finalList.append(sampleList)
 """
 Creation du fichier final summary.txt
 """
 #TODO// recuperer nom de l'echantillon +_summary.txt
-FileName = '../Resultats/Auto_user_INS-81-SG_02-03-16_152_summary.txt'
+os.mkdir('../Resultats/Auto_user_INS-80-TF_23-02-16_151_198') 
+FileName = '../Resultats/Auto_user_INS-80-TF_23-02-16_151_198/Auto_user_INS-80-TF_23-02-16_151_198_summary.txt'
 output_file(FileName, finalList)
 
 
