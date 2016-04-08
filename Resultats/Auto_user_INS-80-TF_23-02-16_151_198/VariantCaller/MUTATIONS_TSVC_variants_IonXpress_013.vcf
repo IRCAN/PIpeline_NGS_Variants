@@ -1,0 +1,74 @@
+##fileformat=VCFv4.1
+##fileDate=20160224
+##fileUTCtime=2016-02-24T02:57:44
+##source="tvc 5.0-13 (e975447) - Torrent Variant Caller"
+##parametersName="CHP2 Panel - PGM - Somatic - Low Stringency"
+##parametersDetails="chp2_somatic_lowstringency_pgm, TS version: 4.4"
+##basecallerVersion="5.0-13/e975447"
+##tmapVersion="5.0.13 (e975447) (201510291545)"
+##reference=/results/referenceLibrary/tmap-f3/hg19/hg19.fasta
+##phasing=none
+##INFO=<ID=NS,Number=1,Type=Integer,Description="Number of samples with data">
+##INFO=<ID=HS,Number=0,Type=Flag,Description="Indicate it is at a hot spot">
+##INFO=<ID=DP,Number=1,Type=Integer,Description="Total read depth at the locus">
+##INFO=<ID=RO,Number=1,Type=Integer,Description="Reference allele observations">
+##INFO=<ID=AO,Number=A,Type=Integer,Description="Alternate allele observations">
+##INFO=<ID=SRF,Number=1,Type=Integer,Description="Number of reference observations on the forward strand">
+##INFO=<ID=SRR,Number=1,Type=Integer,Description="Number of reference observations on the reverse strand">
+##INFO=<ID=SAF,Number=A,Type=Integer,Description="Alternate allele observations on the forward strand">
+##INFO=<ID=SAR,Number=A,Type=Integer,Description="Alternate allele observations on the reverse strand">
+##INFO=<ID=FDP,Number=1,Type=Integer,Description="Flow Evaluator read depth at the locus">
+##INFO=<ID=FRO,Number=1,Type=Integer,Description="Flow Evaluator Reference allele observations">
+##INFO=<ID=FAO,Number=A,Type=Integer,Description="Flow Evaluator Alternate allele observations">
+##INFO=<ID=AF,Number=A,Type=Float,Description="Allele frequency based on Flow Evaluator observation counts">
+##INFO=<ID=QD,Number=1,Type=Float,Description="QualityByDepth as 4*QUAL/FDP (analogous to GATK)">
+##INFO=<ID=FSRF,Number=1,Type=Integer,Description="Flow Evaluator Reference observations on the forward strand">
+##INFO=<ID=FSRR,Number=1,Type=Integer,Description="Flow Evaluator Reference observations on the reverse strand">
+##INFO=<ID=FSAF,Number=A,Type=Integer,Description="Flow Evaluator Alternate allele observations on the forward strand">
+##INFO=<ID=FSAR,Number=A,Type=Integer,Description="Flow Evaluator Alternate allele observations on the reverse strand">
+##INFO=<ID=FXX,Number=1,Type=Float,Description="Flow Evaluator failed read ratio">
+##INFO=<ID=TYPE,Number=A,Type=String,Description="The type of allele, either snp, mnp, ins, del, or complex.">
+##INFO=<ID=LEN,Number=A,Type=Integer,Description="allele length">
+##INFO=<ID=HRUN,Number=A,Type=Integer,Description="Run length: the number of consecutive repeats of the alternate allele in the reference genome">
+##INFO=<ID=FR,Number=.,Type=String,Description="Reason why the variant was filtered.">
+##INFO=<ID=RBI,Number=A,Type=Float,Description="Distance of bias parameters from zero.">
+##INFO=<ID=FWDB,Number=A,Type=Float,Description="Forward strand bias in prediction.">
+##INFO=<ID=REVB,Number=A,Type=Float,Description="Reverse strand bias in prediction.">
+##INFO=<ID=REFB,Number=A,Type=Float,Description="Reference Hypothesis bias in prediction.">
+##INFO=<ID=VARB,Number=A,Type=Float,Description="Variant Hypothesis bias in prediction.">
+##INFO=<ID=SSSB,Number=A,Type=Float,Description="Strand-specific strand bias for allele.">
+##INFO=<ID=SSEN,Number=A,Type=Float,Description="Strand-specific-error prediction on negative strand.">
+##INFO=<ID=SSEP,Number=A,Type=Float,Description="Strand-specific-error prediction on positive strand.">
+##INFO=<ID=STB,Number=A,Type=Float,Description="Strand bias in variant relative to reference.">
+##INFO=<ID=STBP,Number=A,Type=Float,Description="Pval of Strand bias in variant relative to reference.">
+##INFO=<ID=PB,Number=A,Type=Float,Description="Bias of relative variant position in reference reads versus variant reads. Equals Mann-Whitney U rho statistic P(Y>X)+0.5P(Y=X)">
+##INFO=<ID=PBP,Number=A,Type=Float,Description="Pval of relative variant position in reference reads versus variant reads.  Related to GATK ReadPosRankSumTest">
+##INFO=<ID=MLLD,Number=A,Type=Float,Description="Mean log-likelihood delta per read.">
+##FILTER=<ID=NOCALL,Description="Generic filter. Filtering details stored in FR info tag.">
+##FORMAT=<ID=GT,Number=1,Type=String,Description="Genotype">
+##FORMAT=<ID=GQ,Number=1,Type=Integer,Description="Genotype Quality, the Phred-scaled marginal (or unconditional) probability of the called genotype">
+##FORMAT=<ID=DP,Number=1,Type=Integer,Description="Read Depth">
+##FORMAT=<ID=RO,Number=1,Type=Integer,Description="Reference allele observation count">
+##FORMAT=<ID=AO,Number=A,Type=Integer,Description="Alternate allele observation count">
+##FORMAT=<ID=SRF,Number=1,Type=Integer,Description="Number of reference observations on the forward strand">
+##FORMAT=<ID=SRR,Number=1,Type=Integer,Description="Number of reference observations on the reverse strand">
+##FORMAT=<ID=SAF,Number=A,Type=Integer,Description="Alternate allele observations on the forward strand">
+##FORMAT=<ID=SAR,Number=A,Type=Integer,Description="Alternate allele observations on the reverse strand">
+##FORMAT=<ID=FDP,Number=1,Type=Integer,Description="Flow Evaluator Read Depth">
+##FORMAT=<ID=FRO,Number=1,Type=Integer,Description="Flow Evaluator Reference allele observation count">
+##FORMAT=<ID=FAO,Number=A,Type=Integer,Description="Flow Evaluator Alternate allele observation count">
+##FORMAT=<ID=AF,Number=A,Type=Float,Description="Allele frequency based on Flow Evaluator observation counts">
+##FORMAT=<ID=FSRF,Number=1,Type=Integer,Description="Flow Evaluator reference observations on the forward strand">
+##FORMAT=<ID=FSRR,Number=1,Type=Integer,Description="Flow Evaluator reference observations on the reverse strand">
+##FORMAT=<ID=FSAF,Number=A,Type=Integer,Description="Flow Evaluator Alternate allele observations on the forward strand">
+##FORMAT=<ID=FSAR,Number=A,Type=Integer,Description="Flow Evaluator Alternate allele observations on the reverse strand">
+##INFO=<ID=OID,Number=.,Type=String,Description="List of original Hotspot IDs">
+##INFO=<ID=OPOS,Number=.,Type=Integer,Description="List of original allele positions">
+##INFO=<ID=OREF,Number=.,Type=String,Description="List of original reference bases">
+##INFO=<ID=OALT,Number=.,Type=String,Description="List of original variant bases">
+##INFO=<ID=OMAPALT,Number=.,Type=String,Description="Maps OID,OPOS,OREF,OALT entries to specific ALT alleles">
+##deamination_metric=0.657309
+#CHROM	POS	ID	REF	ALT	QUAL	FILTER	INFO	FORMAT	150175
+chr1	43815008	COSM27289	TGG	CGG	9.53412	PASS	AF=0.00776699;AO=3;DP=515;FAO=4;FDP=515;FR=.;FRO=511;FSAF=2;FSAR=2;FSRF=271;FSRR=240;FWDB=-0.0484617;FXX=0.0115161;HRUN=1;LEN=1;MLLD=83.905;OALT=C;OID=COSM43212;OMAPLAT=CGG;OPOS=43815008;OREF=T;QD=0.0740514;RBI=0.0608008;REFB=-0.000570811;REVB=-0.0367179;RO=496;SAF=1;SAR=2;SRF=256;SRR=240;SSEN=0;SSEP=0;SSSB=-0.041117;STB=0.529948;STBP=0.917;TYPE=snp;VARB=0.0791599;HS;GT:GQ:DP:FDP:RO:FRO:AO:FAO:AF:SAR:SAF:SRF:SRR:FSAR:FSAF:FSRF:FSRR;3
+chr1	43815009	COSM18918	G	T	14.8483	NOCALL	AF=0.00191571;AO=5;DP=512;FAO=1;FDP=522;FR=.REALIGNEDx0.05939STDBIAS0.989671>0.95STDBIASPVAL0.484<1;FRO=521;FSAF=1;FSAR=0;FSRF=275;FSRR=246;FWDB=-0.0835482;FXX=0;HRUN=2;LEN=1;MLLD=61.2705;OALT=T;OID=COSM18918;OMAPLAT=T;OPOS=43815009;OREF=G;QD=0.11378;RBI=0.112629;REFB=-0.00274247;REVB=0.0755318;RO=506;SAF=5;SAR=0;SRF=260;SRR=246;SSEN=0;SSEP=0;SSSB=0.166973;STB=0.989671;STBP=0.484;TYPE=snp;VARB=0.115452;HS;GT:GQ:DP:FDP:RO:FRO:AO:FAO:AF:SAR:SAF:SRF:SRR:FSAR:FSAF:FSRF:FSRR;5:0
+chr2	212578395	.	G	A	66.4902	PASS	AF=0.0602125;AO=39;DP=829;FAO=51;FDP=847;FR=.;FRO=796;FSAF=45;FSAR=6;FSRF=348;FSRR=448;FWDB=-0.0779131;FXX=0.0047003;HRUN=2;LEN=1;MLLD=49.9538;OALT=A;OID=.;OMAPALT=A;OPOS=212578395;OREF=G;QD=0.314003;RBI=0.102405;REFB=-0.00633462;REVB=-0.0664551;RO=765;SAF=33;SAR=6;SRF=317;SRR=448;SSEN=0;SSEP=0;SSSB=0.404415;STB=0.896378;STBP=0;TYPE=snp;VARB=0.118162	GT:GQ:DP:FDP:RO:FRO:AO:FAO:AF:SAR:SAF:SRF:SRR:FSAR:FSAF:FSRF:FSRR	0/1:66:829:847:765:796:39:51:0.0602125:6:33:317:448:6:45:348:448

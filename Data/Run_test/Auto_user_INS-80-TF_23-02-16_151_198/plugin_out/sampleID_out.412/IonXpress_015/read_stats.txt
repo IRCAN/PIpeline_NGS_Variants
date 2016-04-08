@@ -1,0 +1,9 @@
+Sample Name: 154038
+Sample ID:   F-TKATACRW
+Number of mapped reads:    1044453
+Number of reads in sample ID regions: 32908
+Percent reads in sample ID regions:   3.15%
+Total base reads in sample ID regions:    116299917
+Percent base reads in sample ID regions: 2.88%
+Male sample ID region reads:   0
+Female sample ID region reads: 1983

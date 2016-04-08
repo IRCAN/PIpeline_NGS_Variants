@@ -1,0 +1,9 @@
+Sample Name: 150732-1
+Sample ID:   F-TKAYGSGW
+Number of mapped reads:    246016
+Number of reads in sample ID regions: 9718
+Percent reads in sample ID regions:   3.95%
+Total base reads in sample ID regions:    26837987
+Percent base reads in sample ID regions: 3.69%
+Male sample ID region reads:   0
+Female sample ID region reads: 650

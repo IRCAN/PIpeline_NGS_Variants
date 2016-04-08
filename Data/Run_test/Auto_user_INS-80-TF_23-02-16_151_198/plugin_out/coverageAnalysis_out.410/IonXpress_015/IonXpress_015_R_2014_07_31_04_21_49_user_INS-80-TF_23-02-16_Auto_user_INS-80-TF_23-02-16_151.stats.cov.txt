@@ -1,0 +1,34 @@
+Coverage Analysis Report
+
+Sample Name: 154038
+Reference Genome: hg19
+Target Regions: CHP2.20131001.designed
+Alignments: IonXpress_015_R_2014_07_31_04_21_49_user_INS-80-TF_23-02-16_Auto_user_INS-80-TF_23-02-16_151
+
+Number of mapped reads:         1044453
+Percent reads on target:        90.02%
+
+Number of amplicons:                207
+Total assigned amplicon reads:      940246
+Percent assigned amplicon reads:    90.02%
+Average reads per amplicon:         4542
+Uniformity of amplicon coverage:    95.65%
+Amplicons with at least 1 read:     100.00%
+Amplicons with at least 20 reads:   100.00%
+Amplicons with at least 100 reads:  99.52%
+Amplicons with at least 500 reads:  97.58%
+Amplicons with no strand bias:       100.00%
+Amplicons reading end-to-end:        94.69%
+
+Total aligned base reads:          116299917
+Total base reads on target:        94710693
+Bases in target regions:           22027
+Percent base reads on target:      81.44%
+Average base coverage depth:       4300
+Uniformity of base coverage:       95.84%
+Target base coverage at 1x:        100.00%
+Target base coverage at 20x:       100.00%
+Target base coverage at 100x:      99.61%
+Target base coverage at 500x:      97.86%
+Target bases with no strand bias:  97.66%
+Percent end-to-end reads:          90.98%

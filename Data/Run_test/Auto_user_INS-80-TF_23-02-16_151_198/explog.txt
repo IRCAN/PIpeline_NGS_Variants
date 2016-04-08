@@ -1,0 +1,95 @@
+Project: Pedeutour_LungColon_CPv2
+Sample: 
+Library: hg19
+Start Time: Thu Jul 31 04:21:49 2014
+End Time:   
+Experiment Name: R_2014_07_31_04_21_49_user_INS-80-TF_23-02-16
+Run Number: 80
+Planned Run Short ID: O47ID
+Planned Run GUID: d80ba5ae-34f2-4367-a905-c4cfd99c84e3
+User Name: user
+Serial Number: sn11c110105
+Gain: 0.670
+Noise: 4.83
+Noise_90pct: 5.45
+PGM SW Release: 5.0.3
+Datacollect version: 488
+LiveView version: 643
+Firmware version: 134
+OS version: 21
+Graphics version: 36
+FPGA version: 81
+Driver version: 53
+Script version: 22.0.0
+TSLink version: 1.0.4
+Board version: 4 A.1
+Board serial: 001031
+Kernel Build: #50 PREEMPT Fri Nov 5 10:13:40 EDT 2010
+T0 Compression: Yes
+PreRun: Yes
+Frequency: 53333333
+Oversample: 1x
+Frame Time: 0.061075
+Num Frames: 81
+Ref Electrode: 0.581999999999999961808 V
+DAC: 24106 24071 24036 24069 0 0 0 0
+VREFS: 13688 13636
+Cal Chip Hist: 51 49773 1440 1413 1269 1305 1210 1233 1203 1224 1362 1398 1524 1821 2105 2506 3749 7739 21963 64294 165466 368593 692466 1102173 1486029 1709345 1681597 1428195 1054568 677258 387510 202008 98912 50746 27944 17303 11378 8171 5843 4376 3763 3315 3037 2964 3004 3210 3167 3397 3471 3451 252864 0 
+Cal Chip High/Low/InRange: 234568 42627 11356860
+Fluidic Data Chip: 0.024442 0.025000 0.000000 5.866000
+Fluidic Data Main: 0.036925 0.035000 0.000000 4.431000
+Fluidic Data HSChip: 0.100817 0.100000 0.000000 6.049000
+Fluidic Data W3: 0.658533 0.622000 0.000000 19.756000
+Fluidic Data W1: 0.656500 0.599000 0.000000 19.695000
+Fluidic Data R1: 0.365333 0.349000 0.000000 10.960000
+Fluidic Data R2: 0.362667 0.349000 0.000000 10.880000
+Fluidic Data R3: 0.366167 0.349000 0.000000 10.985000
+Fluidic Data R4: 0.367267 0.349000 0.000000 11.018000
+PGM HW: 1.0
+Image Map: 32 0 t 1 a 2 c 3 g 4 t 5 a 6 c 7 g 8 t 9 c 10 t 11 g 12 a 13 g 14 c 15 a 16 t 17 c 18 g 19 a 20 t 21 c 22 g 23 a 24 t 25 g 26 t 27 a 28 c 29 a 30 g 31 c
+Cycles: 15
+Flows: 500
+ChipType: 318C
+RunType: AMPS
+ChipBarCode: AA0443293
+SeqKitPart: A25592
+SeqKitDesc: Ion PGM Hi-Q Sequencing Kit
+SeqKitLot: NOT_SCANNED
+SeqKitName: IonPGMHiQ
+SeqKitPlanPart: NO_PLAN
+SeqKitPlanDesc: Ion PGM Hi-Q Sequencing Kit
+SeqKitPlanLot: NO_PLAN
+SeqKitPlanName: IonPGMHiQ
+OrigRunSeqKitPart: A25592
+OrigRunSeqKitDesc: Ion PGM Hi-Q Sequencing Kit
+OrigRunSeqKitLot: NOT_SCANNED
+OrigRunSeqKitName: IonPGMHiQ
+LibKit: Ion AmpliSeq 2.0 Library Kit
+LibBarCode: NOT_SCANNED
+AnalyzeEarly: Yes
+AutoAnalyze: Yes
+AutoAnalysisName: 
+PostBeadFind: Yes
+LibraryKeySequence: TCAG
+AutoSettleCalibrate: Yes
+CalibratePassed: Yes
+ChipTargetTemperature: 0.00
+ChipTemperature: 49.64 - 0.00
+PGMTemperature: 30.71 - 0.00
+PGMPressure: 10.26 - 0.00
+WetLoad: yes
+AdvScriptFeatures: 0x0
+Advanced User: no
+barcodeId: IonXpress
+R1pH: 6.91
+R2pH: 6.61
+R3pH: 6.81
+R4pH: 6.63
+W1pH: 10.42
+W2pH: 7.42
+RawTracesOK: 1
+HardDisk: /dev/sda, Read:0  UDMA_CRC:0  Multi_Zone:0  Uncorrect:0
+HardDisk: /dev/sdb, Read:0  UDMA_CRC:0  Multi_Zone:0  Uncorrect:0
+User Notes: 
+IsReverseRun: No
+FpgaTestResult: 

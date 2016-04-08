@@ -1,0 +1,64 @@
+## ENSEMBL VARIANT EFFECT PREDICTOR v84
+## Output produced at 2016-04-08 14:01:18
+## Connected to homo_sapiens_core_84_38 on ensembldb.ensembl.org
+## Using cache in /home/ludovic/.vep/homo_sapiens/84_GRCh38
+## Using API version 84, DB version 84
+## ClinVar version 201601
+## ESP version 20141103
+## HGMD-PUBLIC version 20154
+## gencode version GENCODE 24
+## regbuild version 13.0
+## COSMIC version 75
+## assembly version GRCh38.p5
+## dbSNP version 146
+## genebuild version 2014-07
+## polyphen version 2.2.2
+## sift version sift5.2.2
+## Extra column keys:
+## IMPACT : Subjective impact classification of consequence type
+## DISTANCE : Shortest distance from variant to transcript
+## STRAND : Strand of the feature (1/-1)
+## FLAGS : Transcript quality flags
+## SYMBOL : Gene symbol (e.g. HGNC)
+## SYMBOL_SOURCE : Source of gene symbol
+## HGNC_ID : Stable identifer of HGNC gene symbol
+## BIOTYPE : Biotype of transcript or regulatory feature
+## SIFT : SIFT prediction and/or score
+## PolyPhen : PolyPhen prediction and/or score
+## HGVSc : HGVS coding sequence name
+## HGVSp : HGVS protein sequence name
+## HGVS_OFFSET : Indicates by how many bases the HGVS notations for this variant have been shifted
+## GMAF : Minor allele and frequency of existing variant in 1000 Genomes combined population
+## FREQS : Frequencies of overlapping variants used in filtering
+## CLIN_SIG : Clinical significance of variant from dbSNP
+## SOMATIC : Somatic status of existing variant
+## PHENO : Indicates if existing variant(s) is associated with a phenotype, disease or trait
+## PUBMED : Pubmed ID(s) of publications that cite existing variant
+## MOTIF_NAME : The source and identifier of a transcription factor binding profile (TFBP) aligned at this position
+## MOTIF_POS : The relative position of the variation in the aligned TFBP
+## HIGH_INF_POS : A flag indicating if the variant falls in a high information position of the TFBP
+## MOTIF_SCORE_CHANGE : The difference in motif score of the reference and variant sequences for the TFBP
+#Uploaded_variation	Location	Allele	Gene	Feature	Feature_type	Consequence	cDNA_position	CDS_position	Protein_position	Amino_acids	Codons	Existing_variation	Extra
+COSM28057	2:29443697	G	ENSG00000171094	ENST00000389048	Transcript	intron_variant	-	-	-	-	-	-	IMPACT=MODIFIER;STRAND=-1;SYMBOL=ALK;SYMBOL_SOURCE=HGNC;HGNC_ID=HGNC:427;BIOTYPE=protein_coding;HGVSc=ENST00000389048.7:c.1155-59838A>C
+COSM28057	2:29443697	G	ENSG00000171094	ENST00000618119	Transcript	intron_variant	-	-	-	-	-	-	IMPACT=MODIFIER;STRAND=-1;SYMBOL=ALK;SYMBOL_SOURCE=HGNC;HGNC_ID=HGNC:427;BIOTYPE=protein_coding;HGVSc=ENST00000618119.4:c.24-59838A>C
+COSM28057	2:29443697	G	-	ENSR00001921977	RegulatoryFeature	regulatory_region_variant	-	-	-	-	-	-	IMPACT=MODIFIER;BIOTYPE=enhancer
+2_212530056_G/C	2:212530056	C	ENSG00000178568	ENST00000436443	Transcript	intron_variant	-	-	-	-	-	-	IMPACT=MODIFIER;STRAND=-1;SYMBOL=ERBB4;SYMBOL_SOURCE=HGNC;HGNC_ID=HGNC:3432;BIOTYPE=protein_coding;HGVSc=ENST00000436443.5:c.82+8393T>G
+2_212530056_G/C	2:212530056	C	ENSG00000178568	ENST00000484594	Transcript	intron_variant,non_coding_transcript_variant	-	-	-	-	-	-	IMPACT=MODIFIER;STRAND=-1;SYMBOL=ERBB4;SYMBOL_SOURCE=HGNC;HGNC_ID=HGNC:3432;BIOTYPE=retained_intron;HGVSc=ENST00000484594.5:n.134+8393T>G
+2_212530056_G/C	2:212530056	C	ENSG00000178568	ENST00000260943	Transcript	intron_variant	-	-	-	-	-	-	IMPACT=MODIFIER;STRAND=-1;FLAGS=cds_start_NF,cds_end_NF;SYMBOL=ERBB4;SYMBOL_SOURCE=HGNC;HGNC_ID=HGNC:3432;BIOTYPE=protein_coding;HGVSc=ENST00000260943.10:c.81+8393T>G
+2_212530056_G/C	2:212530056	C	ENSG00000178568	ENST00000342788	Transcript	intron_variant	-	-	-	-	-	-	IMPACT=MODIFIER;STRAND=-1;SYMBOL=ERBB4;SYMBOL_SOURCE=HGNC;HGNC_ID=HGNC:3432;BIOTYPE=protein_coding;HGVSc=ENST00000342788.8:c.82+8393T>G
+2_212530057_C/A	2:212530057	A	ENSG00000178568	ENST00000260943	Transcript	intron_variant	-	-	-	-	-	-	IMPACT=MODIFIER;STRAND=-1;FLAGS=cds_start_NF,cds_end_NF;SYMBOL=ERBB4;SYMBOL_SOURCE=HGNC;HGNC_ID=HGNC:3432;BIOTYPE=protein_coding;HGVSc=ENST00000260943.10:c.81+8392A>T
+2_212530057_C/A	2:212530057	A	ENSG00000178568	ENST00000342788	Transcript	intron_variant	-	-	-	-	-	-	IMPACT=MODIFIER;STRAND=-1;SYMBOL=ERBB4;SYMBOL_SOURCE=HGNC;HGNC_ID=HGNC:3432;BIOTYPE=protein_coding;HGVSc=ENST00000342788.8:c.82+8392A>T
+2_212530057_C/A	2:212530057	A	ENSG00000178568	ENST00000436443	Transcript	intron_variant	-	-	-	-	-	-	IMPACT=MODIFIER;STRAND=-1;SYMBOL=ERBB4;SYMBOL_SOURCE=HGNC;HGNC_ID=HGNC:3432;BIOTYPE=protein_coding;HGVSc=ENST00000436443.5:c.82+8392A>T
+2_212530057_C/A	2:212530057	A	ENSG00000178568	ENST00000484594	Transcript	intron_variant,non_coding_transcript_variant	-	-	-	-	-	-	IMPACT=MODIFIER;STRAND=-1;SYMBOL=ERBB4;SYMBOL_SOURCE=HGNC;HGNC_ID=HGNC:3432;BIOTYPE=retained_intron;HGVSc=ENST00000484594.5:n.134+8392A>T
+2_212576905_T/G	2:212576905	G	ENSG00000273118	ENST00000415387	Transcript	downstream_gene_variant	-	-	-	-	-	-	IMPACT=MODIFIER;DISTANCE=4452;STRAND=-1;SYMBOL=AC079610.1;SYMBOL_SOURCE=Clone_based_vega_gene;BIOTYPE=sense_overlapping
+2_212576908_A/C	2:212576908	C	ENSG00000273118	ENST00000415387	Transcript	downstream_gene_variant	-	-	-	-	-	-	IMPACT=MODIFIER;DISTANCE=4449;STRAND=-1;SYMBOL=AC079610.1;SYMBOL_SOURCE=Clone_based_vega_gene;BIOTYPE=sense_overlapping
+3_10183780_C/T	3:10183780	T	ENSG00000134070	ENST00000256458	Transcript	intron_variant	-	-	-	-	-	-	IMPACT=MODIFIER;STRAND=1;SYMBOL=IRAK2;SYMBOL_SOURCE=HGNC;HGNC_ID=HGNC:6113;BIOTYPE=protein_coding;HGVSc=ENST00000256458.4:c.277+5760A>T
+3_10183780_C/T	3:10183780	T	-	ENSR00001975004	RegulatoryFeature	regulatory_region_variant	-	-	-	-	-	-	IMPACT=MODIFIER;BIOTYPE=enhancer
+COSM14349	3:10183790-10183795	-	ENSG00000134070	ENST00000256458	Transcript	intron_variant	-	-	-	-	-	-	IMPACT=MODIFIER;STRAND=1;SYMBOL=IRAK2;SYMBOL_SOURCE=HGNC;HGNC_ID=HGNC:6113;BIOTYPE=protein_coding;HGVSc=ENST00000256458.4:c.277+5770_277+5775delAGCTAC
+COSM14349	3:10183790-10183795	GTATGT	ENSG00000134070	ENST00000256458	Transcript	intron_variant	-	-	-	-	-	-	IMPACT=MODIFIER;STRAND=1;SYMBOL=IRAK2;SYMBOL_SOURCE=HGNC;HGNC_ID=HGNC:6113;BIOTYPE=protein_coding;HGVSc=ENST00000256458.4:c.277+5770_277+5775delAGCTACinsGTATGT
+COSM14349	3:10183790-10183795	-	-	ENSR00001975004	RegulatoryFeature	regulatory_region_variant	-	-	-	-	-	-	IMPACT=MODIFIER;BIOTYPE=enhancer
+COSM14349	3:10183790-10183795	GTATGT	-	ENSR00001975004	RegulatoryFeature	regulatory_region_variant	-	-	-	-	-	-	IMPACT=MODIFIER;BIOTYPE=enhancer
+3_10183804_C/T	3:10183804	T	ENSG00000134070	ENST00000256458	Transcript	intron_variant	-	-	-	-	-	-	IMPACT=MODIFIER;STRAND=1;SYMBOL=IRAK2;SYMBOL_SOURCE=HGNC;HGNC_ID=HGNC:6113;BIOTYPE=protein_coding
+3_10183804_C/T	3:10183804	T	-	ENSR00001975004	RegulatoryFeature	regulatory_region_variant	-	-	-	-	-	-	IMPACT=MODIFIER;BIOTYPE=enhancer
+3_10183835_C/T	3:10183835	T	ENSG00000134070	ENST00000256458	Transcript	intron_variant	-	-	-	-	-	-	IMPACT=MODIFIER;STRAND=1;SYMBOL=IRAK2;SYMBOL_SOURCE=HGNC;HGNC_ID=HGNC:6113;BIOTYPE=protein_coding;HGVSc=ENST00000256458.4:c.277+5815C>T
+3_10183835_C/T	3:10183835	T	-	ENSR00001975004	RegulatoryFeature	regulatory_region_variant	-	-	-	-	-	-	IMPACT=MODIFIER;BIOTYPE=enhancer
