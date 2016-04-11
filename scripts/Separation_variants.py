@@ -167,7 +167,7 @@ def creation_lignes(listLigneTemp,cmpt,compteurID,newLines,a):
 ##############################################################
 #Fonction qui traite les lignes composees de plusieurs ID cosmic
 
-def main_separation_transcripts(contentFile):
+def main_separation_variants(contentFile):
 	"""Traite les lignes composees de plusieurs ID cosmic
 	et cree de nouvelles lignes pour chaque identifiant.
 	Retourne la liste des nouvelles lignes.

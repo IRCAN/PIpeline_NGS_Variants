@@ -1,4 +1,4 @@
-from Separation_transcripts import main_separation_transcripts
+from Separation_variants import main_separation_variants
 import os
 
 """
@@ -124,7 +124,7 @@ for i in barecode:
 	del listOfList[0:71]
 	del contentFile[0:71]
 	#Appel de la fonction qui separe les transcripts presents sur la meme ligne
-	ListdeNewLines = main_separation_transcripts(contentFile)
+	ListdeNewLines = main_separation_variants(contentFile)
 	#Traitement de la liste et ecriture dans fichier VCF: recupere les lignes avec 1 seul ID
 	# dans listOfList et les autres dans ListdeNewLines + ajf_oute seulement les mutations
 	list_of_transcripts = check_if_multiple_id(listOfList)
