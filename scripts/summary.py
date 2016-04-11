@@ -7,6 +7,10 @@ sampleList=[]
 barcodeList=[]
 #creation d'une liste contenant tout les reads on target du run
 list_reads_on_target = []
+#creation d'une liste contenant les noms des echantillons
+sampleNameList = []
+#creation d'une liste contenant les reads "mappés"
+mappedReadsList = []
 #creation d'une liste qui contiendra chaque sampleList
 finalList=[['Sample','Barcode','Kit','Run date','Chip','Mapped Reads','ID','Reads On-Target','Reads On-SampleID','Mean Read Depth','Base at 1x Coverage','Base at 20x Coverage','Base at 100x Coverage','Base at 500x Coverage']]
 
@@ -24,13 +28,11 @@ def read_file(File):
 	File.close() 
 	return fileContent
 def get_sample(fileContent):
-	sample = fileContent[0]
-	##TODO// A ameliorer par recherche expression reguliere
-	sample = sample.replace('Sample Name: ','')
-	sample = sample.replace('\n','')
-	sampleList[0] = sample
+	for elements in fileContent:
+		elements = elements.split('\t')
+		sampleNameList.append(elements[1])
 def get_barcode(barecode):
-	sampleList[1] = barecode
+	return barecode
 def get_kit(fileContent):
 	if 'LungColon_CPv2' in fileContent[0]:
 		kit = 'LungColon_CPv2' 
@@ -44,7 +46,7 @@ def get_run_date():
 		m =re.search('\d.-\d.-\d.', i)
 		if m is not None:
 			match = m.group()
-	sampleList[3] = match
+	return match
 def get_chip(fileContent):
 	for indice in fileContent:
 		if 'ChipType' in indice:
@@ -53,17 +55,16 @@ def get_chip(fileContent):
 		chip = 'Ion 318 Chip V2'
 	return chip
 def get_mapped_reads(fileContent):
-	mappedReads = fileContent[2]
-	##TODO// A ameliorer par recherche expression reguliere
-	mappedReads = mappedReads.replace('Number of mapped reads:    ','')
-	mappedReads = mappedReads.replace('\n','')
-	sampleList[5] = int(mappedReads)
+	for elements in fileContent:
+		elements = elements.split('\t')
+		mappedReadsList.append(elements[2])
 def get_id(fileContent):
 	ID = fileContent[1]
 	##TODO// A ameliorer par recherche expression reguliere
 	ID = ID.replace('Sample ID:   ','')
 	ID = ID.replace('\n','')
-	sampleList[6] = ID
+	return ID
+	#sampleList[6] = ID
 def get_list_reads_on_target(fileContent):
 	for elements in fileContent:
 		reads = elements.split('\t')
@@ -74,7 +75,8 @@ def get_reads_on_sample_ID(fileContent):
 	##TODO// A ameliorer par recherche expression reguliere
 	readsOnSampleID = readsOnSampleID.replace('Percent reads in sample ID regions:   ','')
 	readsOnSampleID = readsOnSampleID.replace('\n','')
-	sampleList[8] = readsOnSampleID
+	return readsOnSampleID
+	#sampleList[8] = readsOnSampleID
 def get_mean_read_depth(fileContent):
 	meanReadDepth = fileContent[26]
 	##TODO// A ameliorer par recherche expression reguliere
@@ -131,6 +133,8 @@ Fichier = open("../Data/Run_test/Auto_user_INS-80-TF_23-02-16_151_198/plugin_out
 fileContent = read_file(Fichier)
 get_list_barcode(fileContent)
 get_list_reads_on_target(fileContent)
+get_sample(fileContent)
+get_mapped_reads(fileContent)
 Fichier.close()
 
 """
@@ -146,32 +150,29 @@ curentBarecodeNumber =-1
 for barecode in barcodeList:
 	curentBarecodeNumber += 1
 	sampleList=['NA','NA','NA','NA','NA','NA','NA','NA','NA','NA','NA','NA','NA','NA']
-
+	"""Creation de la ligne pour chaque echantillons"""
+	sampleList[0] = sampleNameList[curentBarecodeNumber]
+	sampleList[1] = get_barcode(barecode)
+	sampleList[2] = kit
+	sampleList[3] = get_run_date()
+	sampleList[4] = chip
+	sampleList[5] = mappedReadsList[curentBarecodeNumber]
+	sampleList[7] = list_reads_on_target[curentBarecodeNumber]
 	"""
 	Ouverture et Analyse du fichier read_stats.txt
 	"""
-
 	NomFichier = "../Data/Run_test/Auto_user_INS-80-TF_23-02-16_151_198/plugin_out/sampleID_out.412/"+barecode+"/read_stats.txt"
 	Fichier = open(NomFichier,"r")
 	fileContent = read_file(Fichier)
-	get_sample(fileContent)
-	get_barcode(barecode)
-	get_id(fileContent)
-	get_mapped_reads(fileContent)
-	sampleList[7] = list_reads_on_target[curentBarecodeNumber]
-	get_reads_on_sample_ID(fileContent)
+	sampleList[6] = get_id(fileContent)
+	sampleList[8] = get_reads_on_sample_ID(fileContent)
 	Fichier.close()
-	sampleList[2] = kit
-	get_run_date()
-	sampleList[4] = chip
-
 	"""
 	Ouverture et Analyse du fichier .stats.cov.txt
 	"""
 	NomFichier = "../Data/Run_test/Auto_user_INS-80-TF_23-02-16_151_198/plugin_out/coverageAnalysis_out.410/"+barecode+"/"+barecode+"_R_2014_07_31_04_21_49_user_INS-80-TF_23-02-16_Auto_user_INS-80-TF_23-02-16_151.stats.cov.txt"
 	Fichier = open(NomFichier,"r")
 	fileContent = read_file(Fichier)
-	#print(fileContent)
 	get_mean_read_depth(fileContent)
 	get_coverage_1x(fileContent)
 	get_coverage_20x(fileContent)
@@ -182,7 +183,9 @@ for barecode in barcodeList:
 Creation du fichier final summary.txt
 """
 #TODO// recuperer nom de l'echantillon +_summary.txt
-os.mkdir('../Resultats/Auto_user_INS-80-TF_23-02-16_151_198') 
+if os.path.isdir('../Resultats/Auto_user_INS-80-TF_23-02-16_151_198') == False:
+	print("creation du repertoire")
+	os.mkdir('../Resultats/Auto_user_INS-80-TF_23-02-16_151_198') 
 FileName = '../Resultats/Auto_user_INS-80-TF_23-02-16_151_198/Auto_user_INS-80-TF_23-02-16_151_198_summary.txt'
 output_file(FileName, finalList)
 
