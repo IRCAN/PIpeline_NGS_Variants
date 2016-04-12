@@ -47,7 +47,7 @@ def check_if_multiple_id(listOfList):
 	contentNewVFC = []
 	cmpt = 0
 	for i in listOfList:
-		ligne = i[2].split(";")
+		ligne = i[4].split(",")
 		if len(ligne) == 1:
 			"""
 			if "AF=0;AO=" in i[7]: #verifie si presence de mutation
@@ -103,12 +103,16 @@ hotspots = file_to_list(hotspots_temp)
 #//TODO A modifier lorsque arborescence finale connue
 #fichiers = ['TSVC_variants_IonXpress_002.vcf']
 #,'TSVC_variants_IonXpress_002.vcf','TSVC_variants_IonXpress_005.vcf','TSVC_variants_IonXpress_006.vcf','TSVC_variants_IonXpress_007.vcf','TSVC_variants_IonXpress_008.vcf','TSVC_variants_IonXpress_009.vcf','TSVC_variants_IonXpress_012.vcf','TSVC_variants_IonXpress_013.vcf','TSVC_variants_IonXpress_016.vcf']
-barecode = ['IonXpress_001','IonXpress_002','IonXpress_003','IonXpress_004','IonXpress_005','IonXpress_006','IonXpress_007','IonXpress_008','IonXpress_009','IonXpress_011','IonXpress_012','IonXpress_013','IonXpress_015','IonXpress_016',]
+barecode = ['IonXpress_001']
+#,'IonXpress_002','IonXpress_003','IonXpress_004','IonXpress_005','IonXpress_006','IonXpress_007','IonXpress_008','IonXpress_009','IonXpress_011','IonXpress_012','IonXpress_013','IonXpress_015','IonXpress_016',]
 #//TODO FINAL: recuperer liste des  fichiers VCF du run en cours et boucler dessus
 
-#####//TODO verifier si le dossier existe deja, si oui, ne pas le creer, si non le creer
-os.mkdir("../Resultats/Auto_user_INS-80-TF_23-02-16_151_198/VariantCaller/")
-os.mkdir("../Resultats/Auto_user_INS-80-TF_23-02-16_151_198/VEP/")
+#Verification si repertoires existent deja (necessaire si script lance sur 1 run ?)
+if os.path.isdir("../Resultats/Auto_user_INS-80-TF_23-02-16_151_198/VariantCaller") == False:
+	os.mkdir("../Resultats/Auto_user_INS-80-TF_23-02-16_151_198/VariantCaller") 
+if os.path.isdir("../Resultats/Auto_user_INS-80-TF_23-02-16_151_198/VEP/") == False:
+	os.mkdir("../Resultats/Auto_user_INS-80-TF_23-02-16_151_198/VEP/") 
+
 for i in barecode:
 	fichier = 'TSVC_variants_'+i+'.vcf'
 	#//TODO A modifier lorsque arborescence finale connue
@@ -130,13 +134,14 @@ for i in barecode:
 	list_of_transcripts = check_if_multiple_id(listOfList)
 	#print(list_of_transcripts)
 	#//TODO A modifier lorsque arborescence finale connue
-	
 	f_out = "../Resultats/Auto_user_INS-80-TF_23-02-16_151_198/VariantCaller/SEP_LIGNES_"+fichier
 	#creation du fichier de sortie: fichier VCF avec un transcript par ligne
 	output_file(f_out,list_of_transcripts)
 	print('création de ',f_out)
 	#print(list_of_transcripts)
+
 	HSNONMUTE = find_HSnm(list_of_transcripts,hotspots)
+	print("Hotspots non mutés: (Gene , exon):  ",HSNONMUTE)
 	list_of_mutations = []
 	for l in range(len(list_of_transcripts)):
 		a = list_of_transcripts[l].split('\t')
@@ -153,7 +158,6 @@ for i in barecode:
 	#recup id cosmic et comparer à HS et variants NGS
 print("Fichier lignes separees crees !")
 #//TODO prendre chaque FAO = 0 et comparer si ds HS
-
 
 #verifie si le genome en local correspond a la derniere version du genome sur ensembl
 os.system('rsync -u rsync://ftp.ensembl.org/ensembl/pub/current_variation/VEP/homo_sapiens_vep_84_GRCh38.tar.gz ../Data/Ensembl/')
@@ -175,4 +179,4 @@ for i in barecode:
 	os.system(command3)
 print("Creation fichiers par VEP OK")
 
-##//TODO realiser intersection avec fichiers tibo
+##//TODO realiser intersection avec fichiers tibo"""

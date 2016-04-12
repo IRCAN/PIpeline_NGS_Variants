@@ -19,7 +19,7 @@ def read_file(File):
 
 def check_if_multiple_ID(contentFile):
 	"""Cree une liste composee seulement des lignes possedants plusieurs
-	identifiants cosmics. """
+	mutations. """
 	contentFileList=[]
 	for k in contentFile:
 		contentFileList.append(k)
@@ -31,8 +31,8 @@ def check_if_multiple_ID(contentFile):
 	multipleIDList = []
 	for i in listOflist:
 		cpt += 1
-		ligne = i[2].split(";")
-		#Si il y a plus (+) que un seul ID cosmic, je cree une liste de ces ID.	
+		ligne = i[4].split(",")
+		#Si il y a plus (+) que une seule mutations, je cree une liste de ces ID.	
 		if len(ligne) != 1:
 			multipleIDList.append(contentFile[cpt])
 	return multipleIDList
@@ -43,7 +43,7 @@ def create_list_of_list(contentFile):
 	Cette fonction permet de separer tout les elements necessaires a la
 	separation des lignes composees de plusirs ID cosmics."""
 	listContentFile = [] #liste du contenu du fichier
-	#separation de contentFile par les tabulations
+	#separation de contentFile par les tabulations!
 	listFinale =[]
 	for element in contentFile:
 		contentFile = element.split('\t')
@@ -86,7 +86,6 @@ def create_list_of_list(contentFile):
 			listFinale.append(listLigneTemp)
 		else:
 			listFinale.append(listLigneTemp)
-	#print(listFinale)
 	return listFinale
 
 def trie_informations(listLigneTemp):
