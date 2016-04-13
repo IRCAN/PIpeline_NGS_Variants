@@ -1,5 +1,10 @@
-import os
-import re
+import os,re
+
+"""
+Script creant un fichier resume et qualite pour chaque echantillon du run.
+
+Ludovic KOSTHOWA (Debut : 06/04/16)
+"""
 
 #creation d'une liste vide de 12 elements par echantillon
 sampleList=[]

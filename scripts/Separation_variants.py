@@ -183,5 +183,3 @@ def main_separation_variants(contentFile):
 		newLines = check_if_same_length(i)
 		listNewLines.append(newLines)
 	return listNewLines
-
-
