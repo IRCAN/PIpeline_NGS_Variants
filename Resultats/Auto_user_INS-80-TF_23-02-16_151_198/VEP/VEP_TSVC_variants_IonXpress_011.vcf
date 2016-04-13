@@ -1,19 +1,19 @@
 ## ENSEMBL VARIANT EFFECT PREDICTOR v84
-## Output produced at 2016-04-08 14:01:46
+## Output produced at 2016-04-12 15:54:48
 ## Connected to homo_sapiens_core_84_38 on ensembldb.ensembl.org
 ## Using cache in /home/ludovic/.vep/homo_sapiens/84_GRCh38
 ## Using API version 84, DB version 84
-## gencode version GENCODE 24
-## assembly version GRCh38.p5
-## dbSNP version 146
-## ESP version 20141103
-## genebuild version 2014-07
-## regbuild version 13.0
-## sift version sift5.2.2
 ## polyphen version 2.2.2
-## ClinVar version 201601
 ## HGMD-PUBLIC version 20154
+## ESP version 20141103
+## assembly version GRCh38.p5
+## ClinVar version 201601
+## regbuild version 13.0
+## dbSNP version 146
+## gencode version GENCODE 24
 ## COSMIC version 75
+## sift version sift5.2.2
+## genebuild version 2014-07
 ## Extra column keys:
 ## IMPACT : Subjective impact classification of consequence type
 ## DISTANCE : Shortest distance from variant to transcript

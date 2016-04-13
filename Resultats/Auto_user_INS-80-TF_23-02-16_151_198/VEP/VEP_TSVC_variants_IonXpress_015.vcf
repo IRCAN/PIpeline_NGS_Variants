@@ -1,19 +1,19 @@
 ## ENSEMBL VARIANT EFFECT PREDICTOR v84
-## Output produced at 2016-04-08 14:01:54
+## Output produced at 2016-04-12 15:54:56
 ## Connected to homo_sapiens_core_84_38 on ensembldb.ensembl.org
 ## Using cache in /home/ludovic/.vep/homo_sapiens/84_GRCh38
 ## Using API version 84, DB version 84
-## gencode version GENCODE 24
 ## dbSNP version 146
+## HGMD-PUBLIC version 20154
 ## regbuild version 13.0
-## sift version sift5.2.2
 ## ESP version 20141103
 ## COSMIC version 75
 ## polyphen version 2.2.2
-## genebuild version 2014-07
 ## assembly version GRCh38.p5
-## HGMD-PUBLIC version 20154
 ## ClinVar version 201601
+## gencode version GENCODE 24
+## sift version sift5.2.2
+## genebuild version 2014-07
 ## Extra column keys:
 ## IMPACT : Subjective impact classification of consequence type
 ## DISTANCE : Shortest distance from variant to transcript
@@ -39,8 +39,8 @@
 ## HIGH_INF_POS : A flag indicating if the variant falls in a high information position of the TFBP
 ## MOTIF_SCORE_CHANGE : The difference in motif score of the reference and variant sequences for the TFBP
 #Uploaded_variation	Location	Allele	Gene	Feature	Feature_type	Consequence	cDNA_position	CDS_position	Protein_position	Amino_acids	Codons	Existing_variation	Extra
-2_212812097_T/C	2:212812097	C	ENSG00000234308	ENST00000453965	Transcript	intron_variant,non_coding_transcript_variant	-	-	-	-	-	-	IMPACT=MODIFIER;STRAND=1;SYMBOL=AC093381.2;SYMBOL_SOURCE=Clone_based_vega_gene;BIOTYPE=lincRNA;HGVSc=ENST00000453965.2:n.118+924T>C
 2_212812097_T/C	2:212812097	C	ENSG00000273118	ENST00000415387	Transcript	intron_variant,non_coding_transcript_variant	-	-	-	-	-	-	IMPACT=MODIFIER;STRAND=-1;SYMBOL=AC079610.1;SYMBOL_SOURCE=Clone_based_vega_gene;BIOTYPE=sense_overlapping;HGVSc=ENST00000415387.1:n.381+80588A>G
+2_212812097_T/C	2:212812097	C	ENSG00000234308	ENST00000453965	Transcript	intron_variant,non_coding_transcript_variant	-	-	-	-	-	-	IMPACT=MODIFIER;STRAND=1;SYMBOL=AC093381.2;SYMBOL_SOURCE=Clone_based_vega_gene;BIOTYPE=lincRNA;HGVSc=ENST00000453965.2:n.118+924T>C
 2_212812097_T/C	2:212812097	C	-	ENSR00001946271	RegulatoryFeature	regulatory_region_variant	-	-	-	-	-	-	IMPACT=MODIFIER;BIOTYPE=enhancer
 3_10183852_C/A	3:10183852	A	ENSG00000134070	ENST00000256458	Transcript	intron_variant	-	-	-	-	-	-	IMPACT=MODIFIER;STRAND=1;SYMBOL=IRAK2;SYMBOL_SOURCE=HGNC;HGNC_ID=HGNC:6113;BIOTYPE=protein_coding;HGVSc=ENST00000256458.4:c.277+5832G>A
 3_10183852_C/A	3:10183852	A	-	ENSR00001975004	RegulatoryFeature	regulatory_region_variant	-	-	-	-	-	-	IMPACT=MODIFIER;BIOTYPE=enhancer
