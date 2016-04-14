@@ -27,4 +27,4 @@ __Repository:__
 If you download the repository for the first time, you need to download the  ["homo_sapiens_vep_84_GRCh37.tar.gz"](http://ftp.ensembl.org/pub/current_variation/VEP/") from ensembl website and ["CosmicCompleteExport.tsv"](http://cancer.sanger.ac.uk/cosmic/download) from Cosmic database. You must add this data respectively in Data/Ensembl and Data/Cosmic repository.
 
 - "__Logiciels__" repository contain all softwares used by scripts
-- "__Documents__" reposytory contain informations about pipeline like graph
+- "__Documents__" repository contain informations about pipeline like graph

@@ -226,7 +226,7 @@ for i in barecode:
 	#//TODO A modifier lorsque arborescence finale connue
 	j = "../Data/Run_test/Auto_user_INS-80-TF_23-02-16_151_198/plugin_out/variantCaller_out.411/"+i+'/'+fichier
 	print('Traitement du fichier: \n',j,'\n')
-	File = open(j,'r')
+	"""File = open(j,'r')
 	contentFile = read_file(File)
 	#Cree une liste avec chaque elements correspondant a une ligne du fichier
 	listOfList = file_to_list(contentFile)
@@ -239,7 +239,7 @@ for i in barecode:
 	ListdeNewLines = main_separation_variants(contentFile)
 	#Traitement de la liste et ecriture dans fichier VCF: recupere les lignes avec 1 seul ID
 	# dans listOfList et les autres dans ListdeNewLines + ajf_oute seulement les mutations
-	list_of_transcripts = check_if_multiple_id(listOfList)
+	list_of_transcripts = check_if_multiple_id(listOfList)"""
 	#//TODO A modifier lorsque arborescence finale connue
 	"""f_out = "../Resultats/Auto_user_INS-80-TF_23-02-16_151_198/VariantCaller/SEP_LIGNES_"+fichier
 	#creation du fichier de sortie: fichier VCF avec un transcript par ligne
@@ -250,7 +250,7 @@ for i in barecode:
 	# Etape de recherche de Hotspots non mutes
 	################################################################################
 	#creation d'un dictionnaire avec cle = gene-exon et valeurs vide.
-	dico = creation_dico_HS()
+	"""dico = creation_dico_HS()
 	#ajout dans le dictionnaire des profondeurs des variants
 	depthHotspotnm = find_depth_HSnm(list_of_transcripts,hotspots)
 	#calcul et ajout de la profondeur moyenne et minimale de chaque hotspot 
@@ -259,12 +259,12 @@ for i in barecode:
 	output_nmHS(fichier)
 	#//TODO a supprimer pour final
 	HSNONMUTE = find_HSnm(list_of_transcripts,hotspots)
-	#print("Hotspots non mutés: (Gene , exon): \n",listeNonMuteHs,"\n")
+	#print("Hotspots non mutés: (Gene , exon): \n",listeNonMuteHs,"\n")"""
 	
 	################################################################################
 	#Etape de creation du fichier ne contenant que les mutations
 	################################################################################
-
+	"""
 	list_of_mutations = []
 	for l in range(len(list_of_transcripts)):
 		a = list_of_transcripts[l].split('\t')
@@ -273,7 +273,7 @@ for i in barecode:
 	f_out2 = "../Resultats/Auto_user_INS-80-TF_23-02-16_151_198/VariantCaller/MUTATIONS_"+fichier
 	output_file(f_out2,list_of_mutations)
 	print('Création de ',f_out2,'\n')
-
+	"""
 	#//TODO
 	#Pour chaque FAO != 0:
 	#regarde dans HS si il en fait parti ????
@@ -285,11 +285,12 @@ for i in barecode:
 	################################################################################
 
 	inputfile = "../Resultats/Auto_user_INS-80-TF_23-02-16_151_198/VariantCaller/MUTATIONS_"+fichier
-	output_file2 = "../Resultats/Auto_user_INS-80-TF_23-02-16_151_198/VEP/VEP_"+fichier
-	command3 = "perl ../Logiciels/ensembl-tools-release-84/scripts/variant_effect_predictor/variant_effect_predictor.pl -cache --no_stats --symbol --sift b --hgvs --gmaf --polyphen b --regulatory --filter_common --biotype --pubmed --input_file "+inputfile+ " --output_file "+output_file2
+	output_file2 = "../Resultats/Auto_user_INS-80-TF_23-02-16_151_198/VEP/VEP_REFSEQ_CANONICAL_PROTEIN_"+fichier
+	command3 = "perl ../Logiciels/ensembl-tools-release-84/scripts/variant_effect_predictor/variant_effect_predictor.pl -cache --refseq --no_stats --symbol --sift b --hgvs --gmaf --polyphen b --regulatory --filter_common --biotype --pubmed --canonical --input_file "+inputfile+ " --output_file "+output_file2
 	os.system(command3)
 print("######################\n Fin du script!\n######################")
 #//TODO prendre chaque FAO = 0 et comparer si ds HS
+
 
 
 
