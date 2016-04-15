@@ -1,3 +1,5 @@
+#!/usr/bin/python
+# coding: utf-8 
 from Separation_variants import main_separation_variants
 import os,re
 
