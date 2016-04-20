@@ -18,7 +18,11 @@ Workspace of created pipeline for variants NGS analysis:
 	This pipeline is used to find and annotate variants from the Ion PGM.
 	This pipeline runs on each analysis made with the PGM.
 
-__Repository:__
+__Quick Start :__
+
+This part is currently being set up.
+
+__Repository :__
 - "__scripts__" repository contain all scripts
 
 - "__Resultats__" repository contain output file created by scripts
@@ -28,3 +32,11 @@ If you download the repository for the first time, you need to download the  ["h
 
 - "__Logiciels__" repository contain all softwares used by scripts
 - "__Documents__" repository contain informations about pipeline like graph
+
+__Documentations :__
+
+This part is currently being set up.
+
+__Contributors :__
+
+* ["Ludovic Kosthowa"](https://github.com/LudoKt), Master student.
