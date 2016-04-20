@@ -82,7 +82,6 @@ def find_depth_HSnm(lignes,hotspots):
 			l = l.split("\t")
 			for hs in hotspots:
 				if l[0] == hs[0] and int(hs[1]) <= int(l[1]) <= int(hs[2]):
-					print(hs[0],"    ", hs[3])
 					geneExon = hs[3]+'-'+hs[4]
 					#recherche de la profondeur du variant par expression reguliere
 					match = re.search(r"(FDP)=[0-9]*", l[7])
@@ -194,8 +193,8 @@ hotspots_temp = read_file(hotspots_file)
 hotspots = file_to_list(hotspots_temp)
 
 #//TODO A modifier lorsque arborescence finale connue
-barecode = ['IonXpress_001']
-#,'IonXpress_002','IonXpress_003','IonXpress_004','IonXpress_005','IonXpress_006','IonXpress_007','IonXpress_008','IonXpress_009','IonXpress_011','IonXpress_012','IonXpress_013','IonXpress_015','IonXpress_016',]
+barecode = ['IonXpress_002']
+#['IonXpress_001','IonXpress_002','IonXpress_003','IonXpress_004','IonXpress_005','IonXpress_006','IonXpress_007','IonXpress_008','IonXpress_009','IonXpress_011','IonXpress_012','IonXpress_013','IonXpress_015','IonXpress_016']
 
 #//TODO FINAL: recuperer liste des  fichiers VCF du run en cours et boucler dessus
 
@@ -267,7 +266,7 @@ for i in barecode:
 	################################################################################
 	#Etape de creation du fichier ne contenant que les mutations
 	################################################################################
-	"""
+	
 	list_of_mutations = []
 	for l in range(len(list_of_transcripts)):
 		a = list_of_transcripts[l].split('\t')
@@ -276,7 +275,7 @@ for i in barecode:
 	f_out2 = "../Resultats/Auto_user_INS-80-TF_23-02-16_151_198/VariantCaller/MUTATIONS_"+fichier
 	output_file(f_out2,list_of_mutations)
 	print('Création de ',f_out2,'\n')
-	"""
+	
 	#//TODO
 	#Pour chaque FAO != 0:
 	#regarde dans HS si il en fait parti ????
@@ -286,11 +285,11 @@ for i in barecode:
 	################################################################################
 	#Etape de lancement de VEP avec en input le fichier de mutations
 	################################################################################
-	"""
+	
 	inputfile = "../Resultats/Auto_user_INS-80-TF_23-02-16_151_198/VariantCaller/MUTATIONS_"+fichier
-	output_file2 = "../Resultats/Auto_user_INS-80-TF_23-02-16_151_198/VEP/VEP_REFSEQ_CANONICAL_PROTEIN_"+fichier
-	command3 = "perl ../Logiciels/ensembl-tools-release-84/scripts/variant_effect_predictor/variant_effect_predictor.pl -cache --refseq --no_stats --symbol --sift b --hgvs --gmaf --polyphen b --regulatory --filter_common --biotype --pubmed --canonical --input_file "+inputfile+ " --output_file "+output_file2
-	os.system(command3)"""
+	output_file2 = "../Resultats/Auto_user_INS-80-TF_23-02-16_151_198/VEP/VEP_everything+port+refseq_"+fichier
+	command3 = "perl ../Logiciels/ensembl-tools-release-84/scripts/variant_effect_predictor/variant_effect_predictor.pl -cache --no_stats --everything --refseq --port 3337 --input_file "+inputfile+ " --output_file "+output_file2
+	os.system(command3)
 print("######################\n Fin du script!\n######################")
 #//TODO prendre chaque FAO = 0 et comparer si ds HS
 
