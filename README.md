@@ -7,7 +7,7 @@
 ### Created 15/02/2016
 
 ---
-__INFORMATIONS :__
+__Informations :__
 
 This project is not finished. I'm currently working on this project so all code could be changed.
 Thank you for your understanding.
@@ -28,7 +28,7 @@ __Repository :__
 - "__Resultats__" repository contain output file created by scripts
 
 - "__Data__" repository contain necessary data for running scripts.
-If you download the repository for the first time, you need to download the  ["homo_sapiens_vep_84_GRCh37.tar.gz"](http://ftp.ensembl.org/pub/current_variation/VEP/") from ensembl website and ["CosmicCompleteExport.tsv"](http://cancer.sanger.ac.uk/cosmic/download) from Cosmic database. You must add this data respectively in Data/Ensembl and Data/Cosmic repository.
+If you download the repository for the first time, you need to download the  ["homo_sapiens_vep_84_GRCh37.tar.gz"](http://ftp.ensembl.org/pub/current_variation/VEP/) from ensembl website and ["CosmicCompleteExport.tsv"](http://cancer.sanger.ac.uk/cosmic/download) from Cosmic database. You must add this data respectively in Data/Ensembl and Data/Cosmic repository.
 
 - "__Logiciels__" repository contain all softwares used by scripts
 - "__Documents__" repository contain informations about pipeline like graph
@@ -39,4 +39,4 @@ This part is currently being set up.
 
 __Contributors :__
 
-* ["Ludovic Kosthowa"](https://github.com/LudoKt), Master student.
+* [Ludovic Kosthowa](https://github.com/LudoKt), Master student.
