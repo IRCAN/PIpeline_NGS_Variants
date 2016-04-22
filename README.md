@@ -28,3 +28,12 @@ If you download the repository for the first time, you need to download the  ["h
 
 - "__Logiciels__" repository contain all softwares used by scripts
 - "__Documents__" repository contain informations about pipeline like graph
+
+__Run:__
+
+To run analysis, enter this command:
+```
+python main.py --hot /path/to/list/listeHotspot.tsv --vcf Path/to/repertory/with_vcf_file/
+S
+```
+
