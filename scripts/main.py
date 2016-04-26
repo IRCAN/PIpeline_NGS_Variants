@@ -1,6 +1,9 @@
 #!/usr/bin/python
 # coding: utf-8 
 from Separation_variants import main_separation_variants
+from RefSeq_to_Ensembl import parse_gene2ensembl
+from RefSeq_to_Ensembl import parse_cosmic_lite
+from RefSeq_to_Ensembl import main_refseq_ensembl
 import os,re
 
 """
@@ -149,7 +152,7 @@ def find_HSnm(lignes,hotspots):
 					else:
 						nonMuteHs.append(l)
 						#verifie si element n'est pas dans la liste globale (si non ajout a
-						# chaque tour de boule des memes listeTemp...)
+						# chaque tour de boucle des memes listeTemp...)
 						if listTemp not in listeNonMuteHs:
 							listeNonMuteHs.append(listTemp)				
 	return nonMuteHs
@@ -193,7 +196,7 @@ hotspots_temp = read_file(hotspots_file)
 hotspots = file_to_list(hotspots_temp)
 
 #//TODO A modifier lorsque arborescence finale connue
-barecode = ['IonXpress_001','IonXpress_002','IonXpress_003','IonXpress_004','IonXpress_005','IonXpress_006','IonXpress_007','IonXpress_008','IonXpress_009','IonXpress_011','IonXpress_012','IonXpress_013','IonXpress_015','IonXpress_016']
+barecode = ['IonXpress_001']#,'IonXpress_002','IonXpress_003','IonXpress_004','IonXpress_005','IonXpress_006','IonXpress_007','IonXpress_008','IonXpress_009','IonXpress_011','IonXpress_012','IonXpress_013','IonXpress_015','IonXpress_016']
 
 #//TODO FINAL: recuperer liste des  fichiers VCF du run en cours et boucler dessus
 
@@ -220,6 +223,11 @@ if os.path.isdir("../Resultats/Auto_user_INS-80-TF_23-02-16_151_198/temp/") == F
 ################################################################################
 # Etape de separation des lignes de variants
 ################################################################################
+##test gene2ensembl
+#gene2ensembl_final_list = parse_gene2ensembl()
+parse_gene2ensembl()
+parse_cosmic_lite()
+
 
 for i in barecode:
 
@@ -289,8 +297,14 @@ for i in barecode:
 	output_file2 = "../Resultats/Auto_user_INS-80-TF_23-02-16_151_198/VEP/VEP_"+fichier
 	command3 = "perl ../Logiciels/ensembl-tools-release-84/scripts/variant_effect_predictor/variant_effect_predictor.pl -cache --no_stats --everything --refseq --port 3337 --input_file "+inputfile+ " --output_file "+output_file2
 	os.system(command3)
+
+	################################################################################
+	#Recherche equivalences RefSeq -> Ensembl
+	################################################################################
+	main_refseq_ensembl(fichier)
+
 print("######################\n Fin du script!\n######################")
-#//TODO prendre chaque FAO = 0 et comparer si ds HS
+
 
 
 

@@ -7,7 +7,8 @@ Script pour separer une ligne du fichier VCF
 composee de plusieurs transcripts en plusieurs
 lignes: une ligne par transcript.
 
-Ludovic KOSTHOWA (06/04/16)
+Ludovic KOSTHOWA (Debut : 06/04/16)
+Info: Creation en cours, script peut etre modifie a tout moment.
 """
 ########	Variable(s)	########
 LEGENDES = ['AF=','AO=','DP=','FAO=','FDP=','FR=','FRO=','FSAF=','FSAR=','FSRF=','FSRR=','FWDB=','FXX=','HRUN=','LEN=','MLLD=','OALT=','OID=','OMAPLAT=','OPOS=','OREF=','QD=','RBI=','REFB=','REVB=','RO=','SAF=','SAR=','SRF=','SRR=','SSEN=','SSEP=','SSSB=','STB=','STBP=','TYPE=','VARB=','']

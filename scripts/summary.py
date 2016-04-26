@@ -6,6 +6,7 @@ import os,re
 Script creant un fichier resume et qualite pour chaque echantillon du run.
 
 Ludovic KOSTHOWA (Debut : 06/04/16)
+Info: Creation en cours, script peut etre modifie a tout moment.
 """
 
 #creation d'une liste vide de 12 elements par echantillon
