@@ -129,7 +129,7 @@ def output_nmHS(nomFichier,globalInfoHSnm):
 	for i in HSnmGlobalList:	#ecriture des donnees
 		File.write(i)
 	File.close()
-	print 'Creation de ',f_out,'\n'
+	print('Création de ',f_out,'\n')
 
 
 ########################################

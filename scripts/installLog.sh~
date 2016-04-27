@@ -1,0 +1,28 @@
+#!/bin/bash
+
+#Script pour obtenir les logiciels necessaires au bon fonctionnement du pipeline variants
+
+#definir chemin ou s'execute le script
+execPath=$(readlink -f $(dirname $0))
+
+"""
+#telecharger tabix, l'extraire, le compiler, et creation du chemin
+
+wget -c https://sourceforge.net/projects/samtools/files/tabix/tabix-0.2.6.tar.bz2
+
+tar xvjf tabix-0.2.6.tar.bz2 ; rm tabix-0.2.6.tar.bz2 
+
+cd $execPath/tabix-0.2.6/ ; make ; cd $execPath
+
+export PATH=$PATH:$execPath/tabix-0.2.6
+"""
+#telecharger DBI
+
+wget -c http://www.cpan.org/authors/id/T/TI/TIMB/DBI-1.634.tar.gz
+
+tar xvjf DBI-1.634.tar.gz ; rm DBI-1.634.tar.gz
+
+cd $execPath/DBI-1.634/ ; Perl Makefile.pl; make ; make install ; cd $execPath
+
+# wget -c http://search.cpan.org/CPAN/authors/id/M/MI/MICHIELB/DBD-mysql-4.033_02.tar.gz
+#tar xvjf DBD-mysql-4.033_02.tar.gz ; rm DBD-mysql-4.033_02.tar.gz

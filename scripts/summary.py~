@@ -28,29 +28,24 @@ def get_list_barcode(fileContent):
 		#recupere le nom du barcode
 		elements = elements[0:13]
 		barcodeList.append(elements)
-
 def read_file(File):
 	# lit le fichier
 	fileContent = File.readlines()
 	# fermeture du fichier
 	File.close() 
 	return fileContent
-
 def get_sample(fileContent):
 	for elements in fileContent:
 		elements = elements.split('\t')
 		sampleNameList.append(elements[1])
-
 def get_barcode(barecode):
 	return barecode
-
 def get_kit(fileContent):
 	if 'LungColon_CPv2' in fileContent[0]:
 		kit = 'LungColon_CPv2' 
 	elif 'CCrenal' in fileContent[0]:
 		kit = 'CCrenal'
 	return kit
-
 def get_run_date():
 	listdir = []
 	listdir = os.listdir("../Data/Run_test/")
@@ -59,7 +54,6 @@ def get_run_date():
 		if m is not None:
 			match = m.group()
 	return match
-
 def get_chip(fileContent):
 	for indice in fileContent:
 		if 'ChipType' in indice:
@@ -67,12 +61,10 @@ def get_chip(fileContent):
 	if '318C' in chip:
 		chip = 'Ion 318 Chip V2'
 	return chip
-
 def get_mapped_reads(fileContent):
 	for elements in fileContent:
 		elements = elements.split('\t')
 		mappedReadsList.append(elements[2])
-
 def get_id(fileContent):
 	ID = fileContent[1]
 	##TODO// A ameliorer par recherche expression reguliere
@@ -80,13 +72,11 @@ def get_id(fileContent):
 	ID = ID.replace('\n','')
 	return ID
 	#sampleList[6] = ID
-
 def get_list_reads_on_target(fileContent):
 	for elements in fileContent:
 		reads = elements.split('\t')
 		reads = reads[3]
 		list_reads_on_target.append(reads)
-
 def get_reads_on_sample_ID(fileContent):
 	readsOnSampleID = fileContent[4]
 	##TODO// A ameliorer par recherche expression reguliere
@@ -94,42 +84,36 @@ def get_reads_on_sample_ID(fileContent):
 	readsOnSampleID = readsOnSampleID.replace('\n','')
 	return readsOnSampleID
 	#sampleList[8] = readsOnSampleID
-
 def get_mean_read_depth(fileContent):
 	meanReadDepth = fileContent[26]
 	##TODO// A ameliorer par recherche expression reguliere
 	meanReadDepth = meanReadDepth.replace('Average base coverage depth: ','')
 	meanReadDepth = meanReadDepth.replace('\n','')
 	sampleList[9] = float(meanReadDepth)
-
 def get_coverage_1x(fileContent):
 	coverage1x = fileContent[28]
 	##TODO// A ameliorer par recherche expression reguliere
 	coverage1x = coverage1x.replace('Target base coverage at 1x:   ','')
 	coverage1x = coverage1x.replace('\n','')
 	sampleList[10] = coverage1x
-
 def get_coverage_20x(fileContent):
 	coverage20x = fileContent[29]
 	##TODO// A ameliorer par recherche expression reguliere
 	coverage20x = coverage20x.replace('Target base coverage at 20x:  ','')
 	coverage20x = coverage20x.replace('\n','')
 	sampleList[11] = coverage20x
-
 def get_coverage_100x(fileContent):
 	coverage100x = fileContent[30]
 	##TODO// A ameliorer par recherche expression reguliere
 	coverage100x = coverage100x.replace('Target base coverage at 100x: ','')
 	coverage100x = coverage100x.replace('\n','')
 	sampleList[12] = coverage100x
-
 def get_coverage_500x(fileContent):
 	coverage500x = fileContent[31]
 	##TODO// A ameliorer par recherche expression reguliere
 	coverage500x = coverage500x.replace('Target base coverage at 500x: ','')
 	coverage500x = coverage500x.replace('\n','')
 	sampleList[13] = coverage500x
-
 def output_file(FileName, finalList):
 	NomFichier = FileName
 	# création et ouverture du File
