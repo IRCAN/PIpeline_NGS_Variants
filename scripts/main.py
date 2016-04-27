@@ -4,6 +4,7 @@ from Separation_variants import main_separation_variants
 from RefSeq_to_Ensembl import parse_gene2ensembl
 from RefSeq_to_Ensembl import parse_cosmic_lite
 from RefSeq_to_Ensembl import main_refseq_ensembl
+from compare_HS import main_compare_hs
 import os,re
 
 """
@@ -123,13 +124,13 @@ def output_nmHS(nomFichier):
 	#Trie de la liste de genes par ordre alphabetique pour meilleure lisibilite.
 	HSnmGlobalList = sorted(HSnmGlobalList)
 	HSnmGlobalList = "\n".join(HSnmGlobalList)
-	f_out = "../Resultats/Auto_user_INS-80-TF_23-02-16_151_198/temp/HSnonmuté_"+nomFichier
-	File = open(f_out,'w')	# creation et ouverture du File
+	fileOut = "../Resultats/Auto_user_INS-80-TF_23-02-16_151_198/temp/HSnonmuté_"+nomFichier
+	File = open(fileOut,'w')	# creation et ouverture du File
 	File.write("Gene\texon\tMean Depth\tMinimal Depth\n")	#Ecriture de la legende.
 	for i in HSnmGlobalList:	#ecriture des donnees
 		File.write(i)
 	File.close()
-	print('Création de ',f_out,'\n')
+	print('Création de ',fileOut,'\n')
 
 
 ########################################
@@ -191,12 +192,12 @@ listeNonMuteHs = []
 
 #Ouverture fichier liste_HS
 hs = "../Data/Thibault/liste_hotspots_TF.tsv"
-hotspots_file = open(hs,'r')
-hotspots_temp = read_file(hotspots_file)
-hotspots = file_to_list(hotspots_temp)
+hostpotsFile = open(hs,'r')
+hotspotsTemp = read_file(hostpotsFile)
+hotspots = file_to_list(hotspotsTemp)
 
 #//TODO A modifier lorsque arborescence finale connue
-barecode = ['IonXpress_001']#,'IonXpress_002','IonXpress_003','IonXpress_004','IonXpress_005','IonXpress_006','IonXpress_007','IonXpress_008','IonXpress_009','IonXpress_011','IonXpress_012','IonXpress_013','IonXpress_015','IonXpress_016']
+barecode = ['IonXpress_002']#,'IonXpress_002','IonXpress_003']#,'IonXpress_004','IonXpress_005','IonXpress_006','IonXpress_007','IonXpress_008','IonXpress_009','IonXpress_011','IonXpress_012','IonXpress_013','IonXpress_015','IonXpress_016']
 
 #//TODO FINAL: recuperer liste des  fichiers VCF du run en cours et boucler dessus
 
@@ -247,13 +248,13 @@ for i in barecode:
 	#Appel de la fonction qui separe les transcripts presents sur la meme ligne
 	ListdeNewLines = main_separation_variants(contentFile)
 	#Traitement de la liste et ecriture dans fichier VCF: recupere les lignes avec 1 seul ID
-	# dans listOfList et les autres dans ListdeNewLines + ajf_oute seulement les mutations
-	list_of_transcripts = check_if_multiple_id(listOfList)
+	# dans listOfList et les autres dans ListdeNewLines + ajfileOute seulement les mutations
+	listOfTranscripts = check_if_multiple_id(listOfList)
 	#//TODO A modifier lorsque arborescence finale connue
-	f_out = "../Resultats/Auto_user_INS-80-TF_23-02-16_151_198/VariantCaller/SEP_LIGNES_"+fichier
+	fileOut = "../Resultats/Auto_user_INS-80-TF_23-02-16_151_198/VariantCaller/SEP_LIGNES_"+fichier
 	#creation du fichier de sortie: fichier VCF avec un transcript par ligne
-	output_file(f_out,list_of_transcripts)
-	print('Création de ',f_out,'\n')
+	output_file(fileOut,listOfTranscripts)
+	print('Création de ',fileOut,'\n')
 
 	################################################################################
 	# Etape de recherche de Hotspots non mutes
@@ -261,27 +262,27 @@ for i in barecode:
 	#creation d'un dictionnaire avec cle = gene-exon et valeurs vide.
 	dico = creation_dico_HS()
 	#ajout dans le dictionnaire des profondeurs des variants
-	depthHotspotnm = find_depth_HSnm(list_of_transcripts,hotspots)
+	depthHotspotnm = find_depth_HSnm(listOfTranscripts,hotspots)
 	#calcul et ajout de la profondeur moyenne et minimale de chaque hotspot 
 	globalInfoHSnm = get_depth(dico)
 	#creation fichier de sortie du tableau Hotspots non mutés
 	output_nmHS(fichier)
 	#//TODO a supprimer pour final
-	HSNONMUTE = find_HSnm(list_of_transcripts,hotspots)
+	HSNONMUTE = find_HSnm(listOfTranscripts,hotspots)
 	#print("Hotspots non mutés: (Gene , exon): \n",listeNonMuteHs,"\n")
 	
 	################################################################################
 	#Etape de creation du fichier ne contenant que les mutations
 	################################################################################
 	
-	list_of_mutations = []
-	for l in range(len(list_of_transcripts)):
-		a = list_of_transcripts[l].split('\t')
+	listOfMutations = []
+	for l in range(len(listOfTranscripts)):
+		a = listOfTranscripts[l].split('\t')
 		if "FAO=0;" not in a[7]:
-			list_of_mutations.append(list_of_transcripts[l])
-	f_out2 = "../Resultats/Auto_user_INS-80-TF_23-02-16_151_198/VariantCaller/MUTATIONS_"+fichier
-	output_file(f_out2,list_of_mutations)
-	print('Création de ',f_out2,'\n')
+			listOfMutations.append(listOfTranscripts[l])
+	fileOut2 = "../Resultats/Auto_user_INS-80-TF_23-02-16_151_198/VariantCaller/MUTATIONS_"+fichier
+	output_file(fileOut2,listOfMutations)
+	print('Création de ',fileOut2,'\n')
 	
 	#//TODO
 	#Pour chaque FAO != 0:
@@ -294,14 +295,18 @@ for i in barecode:
 	################################################################################
 	
 	inputfile = "../Resultats/Auto_user_INS-80-TF_23-02-16_151_198/VariantCaller/MUTATIONS_"+fichier
-	output_file2 = "../Resultats/Auto_user_INS-80-TF_23-02-16_151_198/VEP/VEP_"+fichier
-	command3 = "perl ../Logiciels/ensembl-tools-release-84/scripts/variant_effect_predictor/variant_effect_predictor.pl -cache --no_stats --everything --refseq --port 3337 --input_file "+inputfile+ " --output_file "+output_file2
+	outputFile2 = "../Resultats/Auto_user_INS-80-TF_23-02-16_151_198/VEP/VEP_"+fichier
+	command3 = "perl ../Logiciels/ensembl-tools-release-84/scripts/variant_effect_predictor/variant_effect_predictor.pl -cache --no_stats --everything --refseq --port 3337 --input_file "+inputfile+ " --output_file "+outputFile2
 	os.system(command3)
 
 	################################################################################
 	#Recherche equivalences RefSeq -> Ensembl
 	################################################################################
 	main_refseq_ensembl(fichier)
+	################################################################################
+	#Comparaison transcrits annotes avec liste de HS
+	################################################################################
+	main_compare_hs(fichier)
 
 print("######################\n Fin du script!\n######################")
 
@@ -332,13 +337,13 @@ for i in barecode:
 	inputfile = "../Resultats/Auto_user_INS-80-TF_23-02-16_151_198/VariantCaller/MUTATIONS_"+fichier
 	output_file = "../Resultats/VEP/VEP_GAEL_"+fichier
 	output_file1 = "../Resultats/VEP/VEP_LUDO_"+fichier
-	output_file2 = "../Resultats/Auto_user_INS-80-TF_23-02-16_151_198/VEP/VEP_"+fichier
+	outputFile2 = "../Resultats/Auto_user_INS-80-TF_23-02-16_151_198/VEP/VEP_"+fichier
 	#gael = mieux que script perso , + d'informations
 	command = "perl ../Logiciels/ensembl-tools-release-84/scripts/variant_effect_predictor/variant_effect_predictor.pl  -cache --no_stats --pick --refseq --symbol --hgvs --gmaf --sift b --polyphen b --canonical --regulatory --numbers --filter_common --filter coding_change,splice,regulatory --input_file "+inputfile+ " --output_file "+output_file
 	#perso
 	command2 = "perl ../Logiciels/ensembl-tools-release-84/scripts/variant_effect_predictor/variant_effect_predictor.pl --appris --biotype --no_stats --check_existing --gmaf --maf_1kg --maf_esp --maf_exac --polyphen both --pubmed --regulatory --sift both --species homo_sapiens --symbol --tsl --cache --input_file "+inputfile+ " --output_file "+output_file1
 	#test mix commande
-	command3 = "perl ../Logiciels/ensembl-tools-release-84/scripts/variant_effect_predictor/variant_effect_predictor.pl -cache --no_stats --symbol --sift b --hgvs --gmaf --polyphen b --regulatory --filter_common --biotype --pubmed --input_file "+inputfile+ " --output_file "+output_file2
+	command3 = "perl ../Logiciels/ensembl-tools-release-84/scripts/variant_effect_predictor/variant_effect_predictor.pl -cache --no_stats --symbol --sift b --hgvs --gmaf --polyphen b --regulatory --filter_common --biotype --pubmed --input_file "+inputfile+ " --output_file "+outputFile2
 	#os.system(command)
 	#os.system(command2)
 	os.system(command3)

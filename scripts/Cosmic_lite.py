@@ -9,17 +9,17 @@ Info: Creation en cours, script peut etre modifie a tout moment.
 """
 
 File = "../Data/Cosmic/CosmicCompleteExport.tsv"
-content_file = open(File,"r")
-cosmic =  content_file.readlines()
-cosmic_id_list = set()
-cosmic_db_lite = []
+contentFile = open(File,"r")
+cosmic =  contentFile.readlines()
+cosmicIdList = set()
+cosmicDbLite = []
 f_out = "../Data/Cosmic/Cosmic_lite.txt"
 File_out = open(f_out,'w')
 print("Lecture de la base de données COSMIC...")
 print("Création de Cosmic_lite: merci de patienter...")
-for ligne_cosmic in cosmic:
-	ligne_cosmic_split = ligne_cosmic.split("\t")
-	if ligne_cosmic_split[16] not in cosmic_id_list:
-		cosmic_id_list.add(ligne_cosmic_split[16])
-		File_out.write(ligne_cosmic)
+for cosmicLigne in cosmic:
+	cosmicLigneSplit = cosmicLigne.split("\t")
+	if cosmicLigneSplit[16] not in cosmicIdList:
+		cosmicIdList.add(cosmicLigneSplit[16])
+		File_out.write(cosmicLigne)
 print("Création terminée !")

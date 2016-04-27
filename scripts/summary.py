@@ -14,7 +14,7 @@ sampleList=[]
 #creation d'une liste contenant tout les barcodes du run
 barcodeList=[]
 #creation d'une liste contenant tout les reads on target du run
-list_reads_on_target = []
+listReadsOnTarget = []
 #creation d'une liste contenant les noms des echantillons
 sampleNameList = []
 #creation d'une liste contenant les reads "mappés"
@@ -73,11 +73,11 @@ def get_id(fileContent):
 	ID = ID.replace('\n','')
 	return ID
 	#sampleList[6] = ID
-def get_list_reads_on_target(fileContent):
+def get_listReadsOnTarget(fileContent):
 	for elements in fileContent:
 		reads = elements.split('\t')
 		reads = reads[3]
-		list_reads_on_target.append(reads)
+		listReadsOnTarget.append(reads)
 def get_reads_on_sample_ID(fileContent):
 	readsOnSampleID = fileContent[4]
 	##TODO// A ameliorer par recherche expression reguliere
@@ -116,9 +116,9 @@ def get_coverage_500x(fileContent):
 	coverage500x = coverage500x.replace('\n','')
 	sampleList[13] = coverage500x
 def output_file(FileName, finalList):
-	NomFichier = FileName
+	Nomfichier = FileName
 	# création et ouverture du File
-	with open(NomFichier,"w") as fout:
+	with open(Nomfichier,"w") as fout:
 	# écriture dans le File
 		for i in finalList:
 			i = str(i).replace("'","")
@@ -137,23 +137,23 @@ def output_file(FileName, finalList):
 """
 Ouverture et Analyse du fichier *summary.xls
 """
-Fichier = open("../Data/Run_test/Auto_user_INS-80-TF_23-02-16_151_198/plugin_out/coverageAnalysis_out.410/R_2014_07_31_04_21_49_user_INS-80-TF_23-02-16_Auto_user_INS-80-TF_23-02-16_151.bc_summary.xls","r")
-fileContent = read_file(Fichier)
+fichier = open("../Data/Run_test/Auto_user_INS-80-TF_23-02-16_151_198/plugin_out/coverageAnalysis_out.410/R_2014_07_31_04_21_49_user_INS-80-TF_23-02-16_Auto_user_INS-80-TF_23-02-16_151.bc_summary.xls","r")
+fileContent = read_file(fichier)
 get_list_barcode(fileContent)
-get_list_reads_on_target(fileContent)
+get_listReadsOnTarget(fileContent)
 get_sample(fileContent)
 get_mapped_reads(fileContent)
-Fichier.close()
+fichier.close()
 
 """
 Ouverture et Analyse du fichier explog_final.txt
 """
-NomFichier = "../Data/Run_test/Auto_user_INS-80-TF_23-02-16_151_198/explog_final.txt"
-Fichier = open(NomFichier,"r")
-fileContent = read_file(Fichier)
+Nomfichier = "../Data/Run_test/Auto_user_INS-80-TF_23-02-16_151_198/explog_final.txt"
+fichier = open(Nomfichier,"r")
+fileContent = read_file(fichier)
 kit = get_kit(fileContent)
 chip = get_chip(fileContent)
-Fichier.close()
+fichier.close()
 curentBarecodeNumber =-1
 for barecode in barcodeList:
 	curentBarecodeNumber += 1
@@ -165,22 +165,22 @@ for barecode in barcodeList:
 	sampleList[3] = get_run_date()
 	sampleList[4] = chip
 	sampleList[5] = mappedReadsList[curentBarecodeNumber]
-	sampleList[7] = list_reads_on_target[curentBarecodeNumber]
+	sampleList[7] = listReadsOnTarget[curentBarecodeNumber]
 	"""
 	Ouverture et Analyse du fichier read_stats.txt
 	"""
-	NomFichier = "../Data/Run_test/Auto_user_INS-80-TF_23-02-16_151_198/plugin_out/sampleID_out.412/"+barecode+"/read_stats.txt"
-	Fichier = open(NomFichier,"r")
-	fileContent = read_file(Fichier)
+	Nomfichier = "../Data/Run_test/Auto_user_INS-80-TF_23-02-16_151_198/plugin_out/sampleID_out.412/"+barecode+"/read_stats.txt"
+	fichier = open(Nomfichier,"r")
+	fileContent = read_file(fichier)
 	sampleList[6] = get_id(fileContent)
 	sampleList[8] = get_reads_on_sample_ID(fileContent)
-	Fichier.close()
+	fichier.close()
 	"""
 	Ouverture et Analyse du fichier .stats.cov.txt
 	"""
-	NomFichier = "../Data/Run_test/Auto_user_INS-80-TF_23-02-16_151_198/plugin_out/coverageAnalysis_out.410/"+barecode+"/"+barecode+"_R_2014_07_31_04_21_49_user_INS-80-TF_23-02-16_Auto_user_INS-80-TF_23-02-16_151.stats.cov.txt"
-	Fichier = open(NomFichier,"r")
-	fileContent = read_file(Fichier)
+	Nomfichier = "../Data/Run_test/Auto_user_INS-80-TF_23-02-16_151_198/plugin_out/coverageAnalysis_out.410/"+barecode+"/"+barecode+"_R_2014_07_31_04_21_49_user_INS-80-TF_23-02-16_Auto_user_INS-80-TF_23-02-16_151.stats.cov.txt"
+	fichier = open(Nomfichier,"r")
+	fileContent = read_file(fichier)
 	get_mean_read_depth(fileContent)
 	get_coverage_1x(fileContent)
 	get_coverage_20x(fileContent)

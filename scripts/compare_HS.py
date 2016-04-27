@@ -1,35 +1,51 @@
 #!/usr/bin/python
 # coding: utf-8 
 
+"""Script qui trouve si un hotspot est present dans le fichier de correlation refseq et cosmic.
+
+Ludovic KOSTHOWA (Debut : 06/04/16)
+Info: Creation en cours, script peut etre modifie a tout moment.
+"""
+
 def read_file(File):
 	"""Ouvre et lit le fichier .vcf de chaque patients."""
 	contentFile = File.readlines()
 	File.close() 
 	return contentFile
 
-hs = "../Data/Thibault/liste_hotspots_TF.tsv"
-hotspots_file = open(hs,'r')
-hotspots = read_file(hotspots_file)
-del hotspots[0]
-#print(hotspots)
-#hotspots = file_to_list(hotspots_temp)
+def parse_hs_file():
+	hs = "../Data/Thibault/liste_hotspots_TF.tsv"
+	hotspotsFile = open(hs,'r')
+	hotspots = read_file(hotspotsFile)
+	del hotspots[0]
+	return hotspots
 
-File = "../Resultats/Auto_user_INS-80-TF_23-02-16_151_198/temp/resultats_correlation_refseq_vs_cosmic.txt"
-sample = open(File,'r')
-sample = read_file(sample)
-del sample[0]
+def main_compare_hs(fichier):
+	hotspots = parse_hs_file()
+	File = "../Resultats/Auto_user_INS-80-TF_23-02-16_151_198/temp/resultats_correlation_refseq_vs_cosmic_"+fichier
+	sample = open(File,'r')
+	sample = read_file(sample)
+	del sample[0]
+	outputFile = open("../Resultats/Auto_user_INS-80-TF_23-02-16_151_198/temp/HSm_"+fichier, 'w')
+	outputFile.write("gene\texon\ttranscript\tcoding\tprotein\tcosmic\tallele_cov\tallele_freq\tfunction\tmaf\tsift\tpolyphen\n")
+	for hsLigne in hotspots:
+		hsLigneSplit = hsLigne.split("\t")
+		for sampleLigne in sample:
+			sampleLigne = sampleLigne.replace("\n","")
+			sampleLigneSplit = sampleLigne.split("\t")
+			cosm_id = sampleLigneSplit[5][4:]
+			hgvsp = sampleLigneSplit[7]#.replace("\n","")
+			if hsLigneSplit[0] == sampleLigneSplit[0] and int(hsLigneSplit[1]) <= int(sampleLigneSplit[1])<= int(hsLigneSplit[2]) and hsLigneSplit[3] == sampleLigneSplit[2] and cosm_id in hsLigneSplit[6] and sampleLigneSplit[6] in hsLigneSplit[7]:
+				HSm = sampleLigneSplit[2]+"\t"+hsLigneSplit[4]+"\t"+sampleLigneSplit[4]+"\t"+sampleLigneSplit[6]+"\t"+hgvsp+"\t"+"COSM"+cosm_id+"\t"+sampleLigneSplit[11]+"\t"+sampleLigneSplit[12]+"\t"+sampleLigneSplit[8]+"\t"+"rien"+"\t"+sampleLigneSplit[9]+"\t"+sampleLigneSplit[10]+"\n"
+				outputFile.write(HSm)
+				print(HSm)
 
-output_file = open("../Resultats/Auto_user_INS-80-TF_23-02-16_151_198/temp/HSm.txt", 'w')
-output_file.write("gene\texon\ttranscript\tcoding\tprotein\tcosmic\tallele_cov\tallele_freq\tfunction\tmaf\tsift\tpolyphen\n")
-
-for ligne_hs in hotspots:
-	ligne_hs_split = ligne_hs.split("\t")
-	#ligne_hs_info_split = ligne_hs_split[5].split(";")
-	for ligne_sample in sample:
-		ligne_sample_split = ligne_sample.split("\t")
-		cosm_id = ligne_sample_split[5][4:]
-		if ligne_hs_split[0] == ligne_sample_split[0] and int(ligne_hs_split[1]) <= int(ligne_sample_split[1])<= int(ligne_hs_split[2]) and ligne_hs_split[3] == ligne_sample_split[2] and cosm_id in ligne_hs_split[6] and ligne_sample_split[6] in ligne_hs_split[7]:
-			HSm = ligne_hs_split[0]+"\t"+ligne_hs_split[4]+"\t"+ligne_sample_split[4]+"\t"+ligne_sample_split[6]+"\t"+ligne_sample_split[5]+"\n"
-			output_file.write(HSm)
-			print(HSm)
-
+#TODO// verifier si allele_cov ou allele freq dans les filtres pour determiner si polymorphisme ou autre
+#comparer avec fichier MUTATIONS
+#TODO fermier les fichier : close
+def parse_mutations_file(fichier):
+	File = "../Resultats/Auto_user_INS-80-TF_23-02-16_151_198/VariantCaller/MUTATIONS_"+fichier
+	mutationsFile = open(File,'r')
+	mutationsFile = read_file(mutationsFile)
+	del mutationsFile[0:71]
+	return mutationsFile
