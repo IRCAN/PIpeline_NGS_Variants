@@ -124,7 +124,7 @@ def check_if_same_length(listLigneTemp):
 
 def creation_lignes(listLigneTemp,cmpt,compteurID,newLines,a):
 	"""Recupere les informations correspondants a chaque ID cosmic
-	et cree une nouvelleœ ligne avec ces informations."""
+	et cree une nouvelle ligne avec ces informations."""
 	#pour chaque elements de la liste, recuperation des informations
 	for i in range(len(listLigneTemp[a])):
 		ligneTemp = []

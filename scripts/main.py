@@ -12,6 +12,7 @@ Info: Creation en cours, script peut etre modifie a tout moment.
 
 from Separation_variants import main_separation_variants
 import os,re
+import glob
 from argparse import ArgumentParser
 
 def read_file(File):
@@ -123,7 +124,7 @@ def output_nmHS(nomFichier,globalInfoHSnm):
 	#Trie de la liste de genes par ordre alphabetique pour meilleure lisibilite.
 	HSnmGlobalList = sorted(HSnmGlobalList)
 	HSnmGlobalList = "\n".join(HSnmGlobalList)
-	f_out = "../Resultats/Auto_user_INS-80-TF_23-02-16_151_198/temp/HSnonmuté_"+nomFichier
+	f_out = "../Resultats/"+repertoryVCF+"/temp/HSnonmuté_"+nomFichier
 	File = open(f_out,'w')	# creation et ouverture du File
 	File.write("Gene\texon\tMean Depth\tMinimal Depth\n")	#Ecriture de la legende.
 	for i in HSnmGlobalList:	#ecriture des donnees
@@ -187,10 +188,10 @@ def separation_ligne_variant(barecode,hotspots):
 		fichier = 'TSVC_variants_'+i+'.vcf'
 		#//TODO A modifier lorsque arborescence finale connuecheck_if_multiple_id
 		
-		j = "../Data/Run_test/Auto_user_INS-80-TF_23-02-16_151_198/plugin_out/variantCaller_out.411/"+i+'/'+fichier
-		print 'Traitement du fichier: \n',j,'\n'
+		j = glob.glob("../Data/Run_test/"+repertoryVCF+"/plugin_out/variantCaller_out.*/"+i+"/"+fichier)
+		print 'Traitement du fichier: \n',j[0],'\n'
 		
-		File = open(j,'r')
+		File = open(j[0],'r')
 		contentFile = read_file(File)
 		#Cree une liste avec chaque elements correspondant a une ligne du fichier
 		listOfList = file_to_list(contentFile)
@@ -205,7 +206,7 @@ def separation_ligne_variant(barecode,hotspots):
 		# dans listOfList et les autres dans ListdeNewLines + ajf_oute seulement les mutations
 		list_of_transcripts = check_if_multiple_id(listOfList,ListdeNewLines)
 		#//TODO A modifier lorsque arborescence finale connue
-		f_out = "../Resultats/Auto_user_INS-80-TF_23-02-16_151_198/VariantCaller/SEP_LIGNES_"+fichier
+		f_out = "../Resultats/"+repertoryVCF+"/VariantCaller/SEP_LIGNES_"+fichier
 		#creation du fichier de sortie: fichier VCF avec un transcript par ligne
 		output_file(f_out,list_of_transcripts,listeLegendes)
 		print 'Creation de ',f_out,'\n'
@@ -233,7 +234,7 @@ def separation_ligne_variant(barecode,hotspots):
 			a = list_of_transcripts[l].split('\t')
 			if "FAO=0;" not in a[7]:
 				list_of_mutations.append(list_of_transcripts[l])
-		f_out2 = "../Resultats/Auto_user_INS-80-TF_23-02-16_151_198/VariantCaller/MUTATIONS_"+fichier
+		f_out2 = "../Resultats/"+repertoryVCF+"/VariantCaller/MUTATIONS_"+fichier
 		output_file(f_out2,list_of_mutations,listeLegendes)
 		print 'Creation de ',f_out2,'\n'
 	
@@ -247,8 +248,8 @@ def separation_ligne_variant(barecode,hotspots):
 		#Etape de lancement de VEP avec en input le fichier de mutations
 		################################################################################
 	
-		inputfile = "../Resultats/Auto_user_INS-80-TF_23-02-16_151_198/VariantCaller/MUTATIONS_"+fichier
-		output_file2 = "../Resultats/Auto_user_INS-80-TF_23-02-16_151_198/VEP/VEP_REFSEQ_CANONICAL_PROTEIN_"+fichier
+		inputfile = "../Resultats/"+repertoryVCF+"/VariantCaller/MUTATIONS_"+fichier
+		output_file2 = "../Resultats/"+repertoryVCF+"/VEP/VEP_REFSEQ_CANONICAL_PROTEIN_"+fichier
 		command3 = "perl ../Logiciels/ensembl-tools-release-84/scripts/variant_effect_predictor/variant_effect_predictor.pl -cache --port 3337 --force_overwrite --refseq --no_stats --symbol --sift b --hgvs --gmaf --polyphen b --regulatory --filter_common --biotype --pubmed --canonical --input_file "+inputfile+ " --output_file "+output_file2
 		os.system(command3)
 
@@ -281,9 +282,15 @@ if __name__=='__main__':
 		hotspots = file_to_list(hotspots_temp)
 
 	#//TODO A modifier lorsque arborescence finale connue
-	barecode = ['IonXpress_001']
-	#barecode=os.listdir(args.vcf)
-
+	repertoryVCF=args.vcf
+	#barecode = ['IonXpress_001']
+	pathBarecode=glob.glob("../Data/Run_test/"+repertoryVCF+"/plugin_out/variantCaller_out.*/*")
+	barecode=[]
+	for element in pathBarecode:
+		a=element.split('/')
+		barecode.append(a[-1])
+	
+	
 	#//TODO FINAL: recuperer liste des  fichiers VCF du run en cours et boucler dessus
 
 	################################################################################
@@ -298,12 +305,12 @@ if __name__=='__main__':
 	################################################################################
 
 	#Verification si repertoires existent deja (necessaire si script lance sur 1 run ?)
-	if os.path.isdir("../Resultats/Auto_user_INS-80-TF_23-02-16_151_198/VariantCaller") == False:
-		os.mkdir("../Resultats/Auto_user_INS-80-TF_23-02-16_151_198/VariantCaller") 
-	if os.path.isdir("../Resultats/Auto_user_INS-80-TF_23-02-16_151_198/VEP/") == False:
-		os.mkdir("../Resultats/Auto_user_INS-80-TF_23-02-16_151_198/VEP/")
-	if os.path.isdir("../Resultats/Auto_user_INS-80-TF_23-02-16_151_198/temp/") == False:
-		os.mkdir("../Resultats/Auto_user_INS-80-TF_23-02-16_151_198/temp/")  
+	if os.path.isdir("../Resultats/"+repertoryVCF+"/VariantCaller") == False:
+		os.mkdir("../Resultats/"+repertoryVCF+"/VariantCaller") 
+	if os.path.isdir("../Resultats/"+repertoryVCF+"/VEP/") == False:
+		os.mkdir("../Resultats/"+repertoryVCF+"/VEP/")
+	if os.path.isdir("../Resultats/"+repertoryVCF+"/temp/") == False:
+		os.mkdir("../Resultats/"+repertoryVCF+"/temp/")  
 
 	################################################################################
 	# Etape de separation des lignes de variants
