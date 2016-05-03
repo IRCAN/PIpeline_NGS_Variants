@@ -285,7 +285,7 @@ if __name__=='__main__':
 	#//TODO A modifier lorsque arborescence finale connue
 	repertoryVCF=args.vcf
 	#barecode = ['IonXpress_001']
-	pathBarecode=glob.glob("../Data/Run_test/"+repertoryVCF+"/plugin_out/variantCaller_out.*/*")
+	pathBarecode=glob.glob("../Data/Run_test/"+repertoryVCF+"/plugin_out/variantCaller_out.*/IonXpress*")
 	barecode=[]
 	for element in pathBarecode:
 		a=element.split('/')
