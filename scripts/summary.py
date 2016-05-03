@@ -224,7 +224,7 @@ if __name__=='__main__':
 	"""
 	#TODO// recuperer nom de l'echantillon +_summary.txt
 	if os.path.isdir('../Resultats/'+repertoryVCF) == False:
-		print("creation du repertoire")
+		#print("creation du repertoire")
 		os.mkdir('../Resultats/'+repertoryVCF) 
 	FileName = '../Resultats/'+repertoryVCF+'/'+repertoryVCF+'_summary.txt'
 	resume.output_file(FileName, resume.finalList)

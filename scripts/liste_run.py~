@@ -33,7 +33,7 @@ class RechercheRun():
 				s.prompt()
 				print s.before
 				print "Liste des runs avec CoverageAnalysis \n" 
-				s.sendline('for file in *;do if test -f $file/plugin_out/coverageAnalysis_out*/*bc_summary.xls; then echo $file; fi; done')
+				s.sendline('for file in *;do if test -d $file/plugin_out/coverageAnalysis_out; then echo $file; fi; done')
 				s.readline()
 				
 				s.prompt()            
@@ -60,7 +60,7 @@ class RechercheRun():
 				s.prompt()
 				print s.before
 				print "Liste des runs avec CoverageAnalysis \n"
-				s.sendline('for file in *;do if test -f $file/plugin_out/coverageAnalysis_out*/*bc_summary.xls; then echo $file; fi; done')
+				s.sendline('for file in *;do if test -d $file/plugin_out/coverageAnalysis_out; then echo $file; fi; done')
 				s.readline()
 				s.prompt()         
 				print s.before

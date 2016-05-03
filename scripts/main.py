@@ -189,6 +189,7 @@ def separation_ligne_variant(barecode,hotspots):
 		#//TODO A modifier lorsque arborescence finale connuecheck_if_multiple_id
 		
 		j = glob.glob("../Data/Run_test/"+repertoryVCF+"/plugin_out/variantCaller_out.*/"+i+"/"+fichier)
+		print j
 		print 'Traitement du fichier: \n',j[0],'\n'
 		
 		File = open(j[0],'r')
@@ -284,12 +285,13 @@ if __name__=='__main__':
 	#//TODO A modifier lorsque arborescence finale connue
 	repertoryVCF=args.vcf
 	#barecode = ['IonXpress_001']
-	pathBarecode=glob.glob("../Data/Run_test/"+repertoryVCF+"/plugin_out/variantCaller_out.*/*")
+	pathBarecode=glob.glob("../Data/Run_test/"+repertoryVCF+"/plugin_out/variantCaller_out.*/IonXpress*")
 	barecode=[]
 	for element in pathBarecode:
 		a=element.split('/')
 		barecode.append(a[-1])
 	
+	print barecode
 	
 	#//TODO FINAL: recuperer liste des  fichiers VCF du run en cours et boucler dessus
 
