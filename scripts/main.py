@@ -6,7 +6,8 @@ from RefSeq_to_Ensembl import parse_cosmic_lite
 from RefSeq_to_Ensembl import main_refseq_ensembl
 from compare_HS import main_compare_hs
 import os,re
-
+import time  
+start_time = time.time()  
 """
 Script principal du pipeline qui traite le fichier .vcf de chaque patients d'un run
 afin d'obtenir un compte rendu de mutations.
@@ -197,7 +198,7 @@ hotspotsTemp = read_file(hostpotsFile)
 hotspots = file_to_list(hotspotsTemp)
 
 #//TODO A modifier lorsque arborescence finale connue
-barecode = ['IonXpress_002']#,'IonXpress_002','IonXpress_003']#,'IonXpress_004','IonXpress_005','IonXpress_006','IonXpress_007','IonXpress_008','IonXpress_009','IonXpress_011','IonXpress_012','IonXpress_013','IonXpress_015','IonXpress_016']
+barecode = ['IonXpress_002']#,'IonXpress_006','IonXpress_007','IonXpress_008','IonXpress_009','IonXpress_011','IonXpress_012','IonXpress_013','IonXpress_015','IonXpress_016']
 
 #//TODO FINAL: recuperer liste des  fichiers VCF du run en cours et boucler dessus
 
@@ -253,8 +254,9 @@ for i in barecode:
 	#//TODO A modifier lorsque arborescence finale connue
 	fileOut = "../Resultats/Auto_user_INS-80-TF_23-02-16_151_198/VariantCaller/SEP_LIGNES_"+fichier
 	#creation du fichier de sortie: fichier VCF avec un transcript par ligne
+	print('Création de ',fileOut)
 	output_file(fileOut,listOfTranscripts)
-	print('Création de ',fileOut,'\n')
+	print('OK')
 
 	################################################################################
 	# Etape de recherche de Hotspots non mutes
@@ -281,9 +283,9 @@ for i in barecode:
 		if "FAO=0;" not in a[7]:
 			listOfMutations.append(listOfTranscripts[l])
 	fileOut2 = "../Resultats/Auto_user_INS-80-TF_23-02-16_151_198/VariantCaller/MUTATIONS_"+fichier
+	print('Création de ',fileOut2)
 	output_file(fileOut2,listOfMutations)
-	print('Création de ',fileOut2,'\n')
-	
+	print('OK')
 	#//TODO
 	#Pour chaque FAO != 0:
 	#regarde dans HS si il en fait parti ????
@@ -307,10 +309,15 @@ for i in barecode:
 	#Comparaison transcrits annotes avec liste de HS
 	################################################################################
 	main_compare_hs(fichier)
-
+	################################################################################
+	#Suppression fichiers temporaires
+	################################################################################
+	#os.remove("../Resultats/Auto_user_INS-80-TF_23-02-16_151_198/temp/resultats_correlation_refseq_vs_cosmic_"+fichier)
 print("######################\n Fin du script!\n######################")
-
-
+interval = time.time() - start_time
+interval_in_min = interval/60
+print('Total time in seconds:', interval) 
+print('Total time in min:', interval_in_min) 
 
 
 
