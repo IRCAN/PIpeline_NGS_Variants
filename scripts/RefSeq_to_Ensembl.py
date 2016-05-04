@@ -35,12 +35,13 @@ def parse_gene2ensembl():
 		ligne = ligne.split(",")
 		gene2ensemblFinalList.append(ligne)
 	print('Parsing OK')
+
 def parse_cosmic_lite():
 	"""Parse le fichier DB Cosmic_lite et cree un dictionnaire:
 	cle = ID_ensembl
 	valeur = contenu de la (ou les) ligne(s) correspondant(s) à la cle."""
 	print('Parsing de la DB Cosmic lite en cours...')
-	File = "../Data/Cosmic/Cosmic_lite.txt"
+	File = "../Data/Cosmic/Cosmic_lite_2.txt"
 	cosmic = open(File,"r")
 	cosmic = read_file(cosmic)
 	idEnsemblFromCosmic = ""
@@ -48,6 +49,7 @@ def parse_cosmic_lite():
 	#Creation dictionnaire cosmic DB (cle = ENST)
 	########################################################
 	for cosmicLigne in cosmic:
+		cosmicLigne = cosmicLigne.replace("\n","")
 		cosmicLigneSplit = cosmicLigne.split("\t")
 		idEnsemblFromCosmic = cosmicLigneSplit[1]
 		#Si la cle n'est pas dans le dictionnaire je la cree
@@ -81,6 +83,7 @@ def get_allele_freq(string):
 	resultat = float(resultat[3:])
 	resultat = resultat*100
 	resultat = "%.1f" % resultat
+	#print(resultat)
 	return(resultat)
 
 def main_refseq_ensembl(fichier):
@@ -94,6 +97,10 @@ def main_refseq_ensembl(fichier):
 	VcfFileFinalList = []
 	VcfFileFinalList.append("chrom-pos\tRefSeq id\tensembl id\tHGVSc\tHGVSp\tfunction\tsift\tpolyphen\tallele_cov\tallele_freq\n")
 	idNotFindList = []
+	mutationsFile = parse_mutations_file(fichier)
+	####
+	#Recherche si correspondance entre ID refseq de gene2ensembl avec ID refseq du fichier VEP
+	####
 	for ligne in VcfFile:
 		#Supprime le retour a la ligne
 		ligne = ligne[0:len(ligne)-1]
@@ -101,9 +108,9 @@ def main_refseq_ensembl(fichier):
 		idRefseqSample = ligneSplit[4]
 		# valeur = 0 si l'id de matche pas , valur = 1 si l'id matche
 		idSampleNotInGene2ensembl = 0
-		#temp = None
 		for gene2ensemblLigne in gene2ensemblFinalList:
 			idRefseqFromGene2ensembl = gene2ensemblLigne[3]
+			#Si correspondance entre les ID
 			if idRefseqSample == idRefseqFromGene2ensembl:
 				idSampleNotInGene2ensembl = 1
 				ligneInfoVcf = ligneSplit[13]
@@ -111,50 +118,47 @@ def main_refseq_ensembl(fichier):
 				regex = "HGVSc="+idRefseqSample+":(.*);"
 				match = re.search(regex, ligneInfoVcf)
 				if match == None: HGVSc = "NA"
-				else: 
-					HGVSc = match.group(1)
+				else: HGVSc = match.group(1)
 				#Recuperation du HGVSp
 				regex2 = "HGVSp=(.*)"
 				match2 = re.search(regex2, ligneInfoVcf)
 				if match2 == None: HGVSp = "NA"
-				else: 
-					HGVSp = match2.group(1)
+				else: HGVSp = match2.group(1)
 				#Recuperation du SIFT
 				###Pas robuste car recherche par le P de Polyphen
 				regex3 = "SIFT=(.*);P"
 				match3 = re.search(regex3, ligneInfoVcf)
 				if match3 == None: SIFT = "NA"
-				else: 
-					SIFT = match3.group(1)
+				else: SIFT = match3.group(1)
 				#Recuperation du SIFT
 				###Pas robuste car recherche par le E de Exon
 				regex4 = "PolyPhen=(.*);E"
 				match4 = re.search(regex4, ligneInfoVcf)
 				if match4 == None: PolyPhen = "NA"
-				else: 
-					PolyPhen = match4.group(1)
+				else: PolyPhen = match4.group(1)
 				#Creation de la string resume
 				position = ligneSplit[1]
 				consequence = ligneSplit[6]
 				temp = position + "\t" + idRefseqSample + "\t" + str(gene2ensemblLigne[4]) + "\t" + HGVSc + "\t" + HGVSp + "\t" + consequence + "\t"+ SIFT + "\t" +PolyPhen + "\tcov_not_find\tfreq_not_find\n"
-
-				mutationsFile = parse_mutations_file(fichier)
+				####
+				#Comparaison avec les lignes de MUTATIONS pour récupérer les couvertures
+				####
+				
 				for mutation in mutationsFile:
 					mutationSplit = mutation.split("\t")
 					chromPos = mutationSplit[0].replace("chr","")+":"+mutationSplit[1]
-					#print(chromPos)
 					mut = mutationSplit[3]+">"+mutationSplit[4]
-					#print(mut)
 					if chromPos in temp:
 						if mut in temp:
 							alleleCov = get_allele_cov(mutationSplit[7])
 							alleleFreq = get_allele_freq(mutationSplit[7])
 							temp = temp.replace("cov_not_find",alleleCov)
 							temp = temp.replace("freq_not_find",alleleFreq+"%")
-							#temp = temp.replace("\n","\t")
-							#temp = temp+alleleCov+"\t"+alleleFreq+"%"+"\n"
+							#TODO verifier que exp reguliere fonctionne car pas FAO ni AF sur toutles variants
 						
-				#//TODO a modifier car probleme car NA pas sur toutes les lignes		
+				#//TODO a modifier car probleme car NA pas sur toutes les lignes
+				#Verifier si ID cosmic du VEP correspond a ID COSMIC trouve dans resultat final	
+				#TOTO verifier pourquoi couverture n'est pas sur tout les fichier de mutations.
 				#temp = temp.replace("\n","\t")
 				#temp = temp + "NA\tNA\n"
 				VcfFileFinalList.append(temp)
@@ -162,21 +166,41 @@ def main_refseq_ensembl(fichier):
 		###//TODO voir difference XN, NM XR et voir si on peut les supprimer		
 		if idSampleNotInGene2ensembl == 0:
 			idNotFindList.append(ligne+"\n")
-	#print("###############################\n",VcfFileFinalList,"\n########################\n")
-	fileOutRefSeqToEnsembl = "../Resultats/Auto_user_INS-80-TF_23-02-16_151_198/temp/RefSeqToEnsembl_"+fichier
-	output_file(fileOutRefSeqToEnsembl,VcfFileFinalList)
-	print('Création de RefseqtoEnsembl_',fichier)
+
+
 	fileOutIdNotFind = "../Resultats/Auto_user_INS-80-TF_23-02-16_151_198/temp/ID_not_find_"+fichier
-	output_file(fileOutIdNotFind,idNotFindList)
 	print('Création de ID_not_find_',fichier)
+	output_file(fileOutIdNotFind,idNotFindList)
+	print('OK')
+
 	########################################################
-	#Comparaison dico COSMIC avec resultats de VEP (.vcf)
+	#Suppression des doublons chr-pos-HGVSc
 	########################################################
-	resultsCorrelationList = ['chr\tpos\tgene\tensembl ID\tRefSeq ID\t Cosmic ID\t HGVSc\tHGVSp\tfunction\tsift\tpolyphen\tallele_cov\tallele_freq\n']
-	#print("###############################\n",VcfFileFinalList,"\n########################\n")
+	listeString = []
+	listeFinaleTriee = []
 	for ligne in VcfFileFinalList:
+		ligneVcfSplit = ligne.split("\t")
+		string = ligneVcfSplit[0]+"-"+ligneVcfSplit[3]
+		if string not in listeString:
+			listeString.append(string)
+			listeFinaleTriee.append(ligne)
+		else : continue
+
+	fileOutRefSeqToEnsembl = "../Resultats/Auto_user_INS-80-TF_23-02-16_151_198/temp/RefSeqToEnsembl_"+fichier
+	print('Création de RefseqtoEnsembl_',fichier)
+	#RefSeqToEnsembl reference toutes les informations connues sur les variants trouvés en commun dans gene2ensembl et le fichier VEP
+	output_file(fileOutRefSeqToEnsembl,listeFinaleTriee)
+	print('OK')
+
+	########################################################
+	#Comparaison dico COSMIC avec contenu de RefSeqToEnsembl (.vcf)
+	#Si ENST de RefSeqToEnsembl est dans le dico alors j'ecrit les data correspondantes
+	########################################################
+	print('Creation de '+fichier)
+	resultsCorrelationList = ['chr\tpos\tgene\tensembl ID\tRefSeq ID\t Cosmic ID\t HGVSc\tHGVSp\tfunction\tsift\tpolyphen\tallele_cov\tallele_freq\n']
+
+	for ligne in listeFinaleTriee:
 		ligneSplitVcf = ligne.split("\t")
-		#print("######################\n",ligneSplitVcf)
 		idEnsemblVcf = ligneSplitVcf[2]
 		if idEnsemblVcf in CosmicDict:
 			listes_interet = CosmicDict.get(idEnsemblVcf)
@@ -184,7 +208,9 @@ def main_refseq_ensembl(fichier):
 			indice = -1
 			for variant in listes_interet:
 				indice +=1
+				variant = variant.replace("\t\t","\tNone\t")
 				variantsplit = variant.split("\t")
+				#print(variantsplit)
 				geneId = variantsplit[0]
 				idEnsemblVariant = variantsplit[1]
 				########################################################
@@ -193,84 +219,27 @@ def main_refseq_ensembl(fichier):
 				regex = "(.*)_ENST"
 				match = re.search(regex, variant)
 				#Si pas de match
-				if match is None:
+				if match is None: # and variantsplit[5] == ligneSplitVcf[3]:
+					#print("variant:",variant)
 					infoChromPosition = ligneSplitVcf[0].split(":")
 					id_refseq = ligneSplitVcf[1]
-					id_cosmic = variantsplit[16]
-					id_HGVSc = variantsplit[17]
-					id_HGVSp = variantsplit[18]
+					id_cosmic = variantsplit[4]
+					id_HGVSc = variantsplit[5]
+					id_HGVSp = variantsplit[6].replace("\n","")
 					polyphen = ligneSplitVcf[7].replace("\n","")
 					alleleFreq = ligneSplitVcf[9].replace("\n","")
 					#print(ligneSplitVcf[7])
 					#Verifie si la position est un intervalle ou pas
 					if "-" in infoChromPosition[1]:
 						position = infoChromPosition[1].split("-")
-						string ="chr"+infoChromPosition[0] + "\t" + position[0] + "\t" + geneId+"\t"+idEnsemblVariant+"\t"+id_refseq+"\t"+id_cosmic+"\t"+id_HGVSc+"\t"+id_HGVSp+ligneSplitVcf[5]+"\t"+ligneSplitVcf[6]+"\t"+polyphen+"\t"+ligneSplitVcf[8]+"\t"+alleleFreq+"\n"
+						string ="chr"+infoChromPosition[0] + "\t" + position[0] + "\t" + geneId+"\t"+idEnsemblVariant+"\t"+id_refseq+"\t"+id_cosmic+"\t"+id_HGVSc+"\t"+id_HGVSp+"\t"+ligneSplitVcf[5]+"\t"+ligneSplitVcf[6]+"\t"+polyphen+"\t"+ligneSplitVcf[8]+"\t"+alleleFreq+"\n"
 					else:
 						string ="chr"+infoChromPosition[0] + "\t" + infoChromPosition[1] + "\t" + geneId+"\t"+idEnsemblVariant+"\t"+id_refseq+"\t"+id_cosmic+"\t"+id_HGVSc+"\t"+id_HGVSp+"\t"+ligneSplitVcf[5]+"\t"+ligneSplitVcf[6]+"\t"+polyphen+"\t"+ligneSplitVcf[8]+"\t"+alleleFreq+"\n"
 					if string in resultsCorrelationList: continue
 					else:
 						resultsCorrelationList.append(string)
+		else:
+			print("Pas dans le dico: "+idEnsemblVcf)
 	###Attention, manque les transcripts sans ID cosmic
 	output_file("../Resultats/Auto_user_INS-80-TF_23-02-16_151_198/temp/resultats_correlation_refseq_vs_cosmic_"+fichier,resultsCorrelationList)
-	print('Fichier de correlation pour '+fichier+' créé !!!')
-
-
-
-#Code de test a supprimer lorsque programme OK
-"""
-barecode = ['IonXpress_001']#,'IonXpress_002']
-#,'IonXpress_003','IonXpress_004','IonXpress_005','IonXpress_006','IonXpress_007','IonXpress_008','IonXpress_009','IonXpress_011','IonXpress_012','IonXpress_013','IonXpress_015','IonXpress_016']
-
-parse_gene2ensembl()
-parse_cosmic_lite()
-for i in barecode:
-	fichier = 'TSVC_variants_'+i+'.vcf' 
-	main_refseq_ensembl(fichier)
-
-for ligne in VcfFile:
-		#Supprime le retour a la ligne
-		ligne = ligne[0:len(ligne)-1]
-		ligneSplit = ligne.split("\t")
-		idRefseqSample = ligneSplit[4]
-		# valeur = 0 si l'id de matche pas , valur = 1 si l'id matche
-		idSampleNotInGene2ensembl = 0
-		for gene2ensemblLigne in gene2ensemblFinalList:
-			idRefseqFromGene2ensembl = gene2ensemblLigne[3]
-			if idRefseqSample == idRefseqFromGene2ensembl:
-				idSampleNotInGene2ensembl = 1
-				ligneInfoVcf = ligneSplit[13]
-				#Recuperation du HGVSc
-				regex = "HGVSc="+idRefseqSample+":(.*);"
-				match = re.search(regex, ligneInfoVcf)
-				if match == None: HGVSc = "NA"
-				else: 
-					HGVSc = match.group(1)
-				#Recuperation du HGVSp
-				regex2 = "HGVSp=(.*)"
-				match2 = re.search(regex2, ligneInfoVcf)
-				if match2 == None: HGVSp = "NA"
-				else: 
-					HGVSp = match2.group(1)
-				#Recuperation du SIFT
-				###Pas robuste car recherche par le P de Polyphen
-				regex3 = "SIFT=(.*);P"
-				match3 = re.search(regex3, ligneInfoVcf)
-				if match3 == None: SIFT = "NA"
-				else: 
-					SIFT = match3.group(1)
-				#Recuperation du SIFT
-				###Pas robuste car recherche par le E de Exon
-				regex4 = "PolyPhen=(.*);E"
-				match4 = re.search(regex4, ligneInfoVcf)
-				if match4 == None: PolyPhen = "NA"
-				else: 
-					PolyPhen = match4.group(1)
-				#Creation de la string resume
-				position = ligneSplit[1]
-				consequence = ligneSplit[6]
-				temp = position + "\t" + idRefseqSample + "\t" + str(gene2ensemblLigne[4]) + "\t" + HGVSc + "\t" + HGVSp + "\t" + consequence + "\t"+ SIFT + "\t" +PolyPhen+ "\n"
-				VcfFileFinalList.append(temp)
-
-
-"""
+	print('OK')
