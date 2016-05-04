@@ -22,7 +22,7 @@ def parse_hs_file():
 
 def main_compare_hs(fichier):
 	hotspots = parse_hs_file()
-	File = "../Resultats/Auto_user_INS-80-TF_23-02-16_151_198/temp/resultats_correlation_refseq_vs_cosmic_"+fichier
+	File = "../Resultats/Auto_user_INS-80-TF_23-02-16_151_198/temp/RefSeqToEnsembl_"+fichier
 	sample = open(File,'r')
 	sample = read_file(sample)
 	del sample[0]
@@ -38,7 +38,6 @@ def main_compare_hs(fichier):
 			if hsLigneSplit[0] == sampleLigneSplit[0] and int(hsLigneSplit[1]) <= int(sampleLigneSplit[1])<= int(hsLigneSplit[2]) and hsLigneSplit[3] == sampleLigneSplit[2] and cosm_id in hsLigneSplit[6] and sampleLigneSplit[6] in hsLigneSplit[7]:
 				HSm = sampleLigneSplit[2]+"\t"+hsLigneSplit[4]+"\t"+sampleLigneSplit[4]+"\t"+sampleLigneSplit[6]+"\t"+hgvsp+"\t"+"COSM"+cosm_id+"\t"+sampleLigneSplit[11]+"\t"+sampleLigneSplit[12]+"\t"+sampleLigneSplit[8]+"\t"+"rien"+"\t"+sampleLigneSplit[9]+"\t"+sampleLigneSplit[10]+"\n"
 				outputFile.write(HSm)
-				print(HSm)
 
 #TODO// verifier si allele_cov ou allele freq dans les filtres pour determiner si polymorphisme ou autre
 #comparer avec fichier MUTATIONS
