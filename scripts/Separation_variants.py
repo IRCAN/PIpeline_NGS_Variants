@@ -10,9 +10,9 @@ lignes: une ligne par transcript.
 Ludovic KOSTHOWA (Debut : 06/04/16)
 Info: Creation en cours, script peut etre modifie a tout moment.
 """
-########	Variable(s)	########
+########Variable(s)########
 LEGENDES = ['AF=','AO=','DP=','FAO=','FDP=','FR=','FRO=','FSAF=','FSAR=','FSRF=','FSRR=','FWDB=','FXX=','HRUN=','LEN=','MLLD=','OALT=','OID=','OMAPLAT=','OPOS=','OREF=','QD=','RBI=','REFB=','REVB=','RO=','SAF=','SAR=','SRF=','SRR=','SSEN=','SSEP=','SSSB=','STB=','STBP=','TYPE=','VARB=','']
-########	Fonctions	########
+########Fonctions########
 
 def read_file(File):
 	"""Ouvre et lit le fichier .vcf de chaque patients."""
@@ -46,7 +46,6 @@ def create_list_of_list(contentFile):
 	Cette fonction permet de separer tout les elements necessaires a la
 	separation des lignes composees de plusirs ID cosmics."""
 	listContentFile = [] #liste du contenu du fichier
-	#separation de contentFile par les tabulations!
 	listFinale =[]
 	for element in contentFile:
 		contentFile = element.split('\t')
@@ -118,6 +117,7 @@ def check_if_same_length(listLigneTemp):
 			nbeBoucle = 2
 			creation_lignes(listLigneTemp,cmpt,compteurID,newLines,nbeBoucle)
 		#boucle sur le nombre de mutations (/!\ Possible perte du dernier ID cosmic)
+		#TODO// A verifier 
 		else:
 			nbeBoucle = 4
 			creation_lignes(listLigneTemp,cmpt,compteurID,newLines,nbeBoucle)

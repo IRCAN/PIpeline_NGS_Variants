@@ -22,6 +22,7 @@ def parse_hs_file():
 
 def main_compare_hs(fichier):
 	hotspots = parse_hs_file()
+	#Modifier fichier de input pour comparer les variants trouves dans l'input au fichier de HS de reference de Tibo
 	File = "../Resultats/Auto_user_INS-80-TF_23-02-16_151_198/temp/RefSeqToEnsembl_"+fichier
 	sample = open(File,'r')
 	sample = read_file(sample)
@@ -34,14 +35,13 @@ def main_compare_hs(fichier):
 			sampleLigne = sampleLigne.replace("\n","")
 			sampleLigneSplit = sampleLigne.split("\t")
 			cosm_id = sampleLigneSplit[5][4:]
-			hgvsp = sampleLigneSplit[7]#.replace("\n","")
+			hgvsp = sampleLigneSplit[7]
 			if hsLigneSplit[0] == sampleLigneSplit[0] and int(hsLigneSplit[1]) <= int(sampleLigneSplit[1])<= int(hsLigneSplit[2]) and hsLigneSplit[3] == sampleLigneSplit[2] and cosm_id in hsLigneSplit[6] and sampleLigneSplit[6] in hsLigneSplit[7]:
 				HSm = sampleLigneSplit[2]+"\t"+hsLigneSplit[4]+"\t"+sampleLigneSplit[4]+"\t"+sampleLigneSplit[6]+"\t"+hgvsp+"\t"+"COSM"+cosm_id+"\t"+sampleLigneSplit[11]+"\t"+sampleLigneSplit[12]+"\t"+sampleLigneSplit[8]+"\t"+"rien"+"\t"+sampleLigneSplit[9]+"\t"+sampleLigneSplit[10]+"\n"
 				outputFile.write(HSm)
 
 #TODO// verifier si allele_cov ou allele freq dans les filtres pour determiner si polymorphisme ou autre
 #comparer avec fichier MUTATIONS
-#TODO fermier les fichier : close
 def parse_mutations_file(fichier):
 	File = "../Resultats/Auto_user_INS-80-TF_23-02-16_151_198/VariantCaller/MUTATIONS_"+fichier
 	mutationsFile = open(File,'r')

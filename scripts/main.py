@@ -5,8 +5,7 @@ from RefSeq_to_Ensembl import parse_gene2ensembl
 from RefSeq_to_Ensembl import parse_cosmic_lite
 from RefSeq_to_Ensembl import main_refseq_ensembl
 from compare_HS import main_compare_hs
-import os,re
-import time  
+import os,re,time  
 start_time = time.time()  
 """
 Script principal du pipeline qui traite le fichier .vcf de chaque patients d'un run
@@ -133,58 +132,6 @@ def output_nmHS(nomFichier):
 	File.close()
 	print('Création de ',fileOut,'\n')
 
-
-########################################
-####Pour verification, a supprimer plus tard
-def find_HSnm(lignes,hotspots):
-	"""Compare les transcripts du fichier avec le fichier liste_hotspots
-	et ressort les hs non mutes"""
-	#je recupere tout les FAO = 0
-	nonMuteHs = []
-	for l in lignes:
-		if "FAO=0;" in l:
-			l = l.split("\t")
-			for hs in hotspots:
-				if l[0] == hs[0] and int(hs[1]) <= int(l[1]) <= int(hs[2]):
-					listTemp=[]
-					listTemp.append(hs[3])
-					listTemp.append(hs[4])
-					if listTemp in nonMuteHs : 
-						continue
-					else:
-						nonMuteHs.append(l)
-						#verifie si element n'est pas dans la liste globale (si non ajout a
-						# chaque tour de boucle des memes listeTemp...)
-						if listTemp not in listeNonMuteHs:
-							listeNonMuteHs.append(listTemp)				
-	return nonMuteHs
-
-def profondeur_moyenne_HSnm():
-	"""Donne la profondeur moyenne des hotspots non mutés."""
-	listeProfondeur = []
-	for hs in HSNONMUTE:
-		match = re.search(r"(FDP)=[0-9]*", hs[7])
-		resultat = match.group(0)
-		resultat = int(resultat[4:])
-		listeProfondeur.append(resultat)
-	depthHSnm = sum(listeProfondeur) / len(listeProfondeur)
-	return depthHSnm
-
-def profondeur_min_HSnm():
-	"""Donne la profondeur minimale des hotspots non mutés."""
-	listeProfondeur = []
-	for hs in HSNONMUTE:
-		match = re.search(r"(FDP)=[0-9]*", hs[7])
-		resultat = match.group(0)
-		resultat = int(resultat[4:])
-		listeProfondeur.append(resultat)
-	minDepthHSnm = min(listeProfondeur)
-	return minDepthHSnm
-####FIN DE Pour verification, a supprimer plus tard
-########################################
-
-
-
 ##############################################################
 ########					MAIN					  ########
 ##############################################################
@@ -225,8 +172,6 @@ if os.path.isdir("../Resultats/Auto_user_INS-80-TF_23-02-16_151_198/temp/") == F
 ################################################################################
 # Etape de separation des lignes de variants
 ################################################################################
-##test gene2ensembl
-#gene2ensembl_final_list = parse_gene2ensembl()
 parse_gene2ensembl()
 parse_cosmic_lite()
 
@@ -318,42 +263,3 @@ interval = time.time() - start_time
 interval_in_min = interval/60
 print('Total time in seconds:', interval) 
 print('Total time in min:', interval_in_min) 
-
-
-
-
-
-
-
-
-
-
-
-
-################################################################################
-################################################################################
-#A supprimer plus tard, je le conserve maintenant par securite.
-"""
-#verifie si le genome en local correspond a la derniere version du genome sur ensembl
-print("Vérification version génome...")
-os.system('rsync -u rsync://ftp.ensembl.org/ensembl/pub/current_variation/VEP/homo_sapiens_vep_84_GRCh37.tar.gz ../Data/Ensembl/')
-print("Vérification génome OK")
-for i in barecode:
-	fichier = 'TSVC_variants_'+i+'.vcf'
-	#//TODO faire la fonction dans script VEP + comparer resultats fichier debut et fichier fin
-	inputfile = "../Resultats/Auto_user_INS-80-TF_23-02-16_151_198/VariantCaller/MUTATIONS_"+fichier
-	output_file = "../Resultats/VEP/VEP_GAEL_"+fichier
-	output_file1 = "../Resultats/VEP/VEP_LUDO_"+fichier
-	outputFile2 = "../Resultats/Auto_user_INS-80-TF_23-02-16_151_198/VEP/VEP_"+fichier
-	#gael = mieux que script perso , + d'informations
-	command = "perl ../Logiciels/ensembl-tools-release-84/scripts/variant_effect_predictor/variant_effect_predictor.pl  -cache --no_stats --pick --refseq --symbol --hgvs --gmaf --sift b --polyphen b --canonical --regulatory --numbers --filter_common --filter coding_change,splice,regulatory --input_file "+inputfile+ " --output_file "+output_file
-	#perso
-	command2 = "perl ../Logiciels/ensembl-tools-release-84/scripts/variant_effect_predictor/variant_effect_predictor.pl --appris --biotype --no_stats --check_existing --gmaf --maf_1kg --maf_esp --maf_exac --polyphen both --pubmed --regulatory --sift both --species homo_sapiens --symbol --tsl --cache --input_file "+inputfile+ " --output_file "+output_file1
-	#test mix commande
-	command3 = "perl ../Logiciels/ensembl-tools-release-84/scripts/variant_effect_predictor/variant_effect_predictor.pl -cache --no_stats --symbol --sift b --hgvs --gmaf --polyphen b --regulatory --filter_common --biotype --pubmed --input_file "+inputfile+ " --output_file "+outputFile2
-	#os.system(command)
-	#os.system(command2)
-	os.system(command3)
-print("Creation fichiers par VEP OK")
-
-##//TODO realiser intersection avec fichiers tibo"""

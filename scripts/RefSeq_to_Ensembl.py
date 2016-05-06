@@ -167,7 +167,9 @@ def main_refseq_ensembl(fichier):
 		if idSampleNotInGene2ensembl == 0:
 			idNotFindList.append(ligne+"\n")
 
-
+	########################################################
+	#Creation fichier de HS non trouves sur table gene2ensembl
+	########################################################
 	fileOutIdNotFind = "../Resultats/Auto_user_INS-80-TF_23-02-16_151_198/temp/ID_not_find_"+fichier
 	print('Création de ID_not_find_',fichier)
 	output_file(fileOutIdNotFind,idNotFindList)
@@ -186,9 +188,11 @@ def main_refseq_ensembl(fichier):
 			listeFinaleTriee.append(ligne)
 		else : continue
 
+	########################################################
+	#Creation fichier de correlation ID RefSeq de VEP avec ID ensembl
+	########################################################
 	fileOutRefSeqToEnsembl = "../Resultats/Auto_user_INS-80-TF_23-02-16_151_198/temp/RefSeqToEnsembl_"+fichier
 	print('Création de RefseqtoEnsembl_',fichier)
-	#RefSeqToEnsembl reference toutes les informations connues sur les variants trouvés en commun dans gene2ensembl et le fichier VEP
 	output_file(fileOutRefSeqToEnsembl,listeFinaleTriee)
 	print('OK')
 
@@ -210,7 +214,6 @@ def main_refseq_ensembl(fichier):
 				indice +=1
 				variant = variant.replace("\t\t","\tNone\t")
 				variantsplit = variant.split("\t")
-				#print(variantsplit)
 				geneId = variantsplit[0]
 				idEnsemblVariant = variantsplit[1]
 				########################################################
@@ -219,8 +222,7 @@ def main_refseq_ensembl(fichier):
 				regex = "(.*)_ENST"
 				match = re.search(regex, variant)
 				#Si pas de match
-				if match is None: # and variantsplit[5] == ligneSplitVcf[3]:
-					#print("variant:",variant)
+				if match is None:
 					infoChromPosition = ligneSplitVcf[0].split(":")
 					id_refseq = ligneSplitVcf[1]
 					id_cosmic = variantsplit[4]
@@ -228,7 +230,6 @@ def main_refseq_ensembl(fichier):
 					id_HGVSp = variantsplit[6].replace("\n","")
 					polyphen = ligneSplitVcf[7].replace("\n","")
 					alleleFreq = ligneSplitVcf[9].replace("\n","")
-					#print(ligneSplitVcf[7])
 					#Verifie si la position est un intervalle ou pas
 					if "-" in infoChromPosition[1]:
 						position = infoChromPosition[1].split("-")
@@ -239,7 +240,9 @@ def main_refseq_ensembl(fichier):
 					else:
 						resultsCorrelationList.append(string)
 		else:
+			###Attention, manque les transcripts sans ID cosmic
+			###TODO// obtenir informations sur les transcrits non references sur COSMIC
 			print("Pas dans le dico: "+idEnsemblVcf)
-	###Attention, manque les transcripts sans ID cosmic
+			
 	output_file("../Resultats/Auto_user_INS-80-TF_23-02-16_151_198/temp/resultats_correlation_refseq_vs_cosmic_"+fichier,resultsCorrelationList)
 	print('OK')
