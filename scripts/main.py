@@ -4,7 +4,8 @@ from Separation_variants import main_separation_variants
 from RefSeq_to_Ensembl import parse_gene2ensembl
 from RefSeq_to_Ensembl import parse_cosmic_lite
 from RefSeq_to_Ensembl import main_refseq_ensembl
-from compare_HS import main_compare_hs
+#from compare_HS import main_compare_hs
+from filtre_variants import main_filtre
 import os,re,time  
 start_time = time.time()  
 """
@@ -214,9 +215,6 @@ for i in barecode:
 	globalInfoHSnm = get_depth(dico)
 	#creation fichier de sortie du tableau Hotspots non mutés
 	output_nmHS(fichier)
-	#//TODO a supprimer pour final
-	HSNONMUTE = find_HSnm(listOfTranscripts,hotspots)
-	#print("Hotspots non mutés: (Gene , exon): \n",listeNonMuteHs,"\n")
 	
 	################################################################################
 	#Etape de creation du fichier ne contenant que les mutations
@@ -231,19 +229,14 @@ for i in barecode:
 	print('Création de ',fileOut2)
 	output_file(fileOut2,listOfMutations)
 	print('OK')
-	#//TODO
-	#Pour chaque FAO != 0:
-	#regarde dans HS si il en fait parti ????
-	#lancer vep
-	#recup id cosmic et comparer à HS et variants NGS
 
 	################################################################################
 	#Etape de lancement de VEP avec en input le fichier de mutations
 	################################################################################
-	
+	####TODO// Trouver GMAF pour trier les HS
 	inputfile = "../Resultats/Auto_user_INS-80-TF_23-02-16_151_198/VariantCaller/MUTATIONS_"+fichier
 	outputFile2 = "../Resultats/Auto_user_INS-80-TF_23-02-16_151_198/VEP/VEP_"+fichier
-	command3 = "perl ../Logiciels/ensembl-tools-release-84/scripts/variant_effect_predictor/variant_effect_predictor.pl -cache --no_stats --everything --refseq --port 3337 --input_file "+inputfile+ " --output_file "+outputFile2
+	command3 = "perl ../Logiciels/ensembl-tools-release-84/scripts/variant_effect_predictor/variant_effect_predictor.pl -cache --no_stats --everything --refseq --port 3337 --gmaf --input_file "+inputfile+ " --output_file "+outputFile2
 	os.system(command3)
 
 	################################################################################
@@ -253,7 +246,8 @@ for i in barecode:
 	################################################################################
 	#Comparaison transcrits annotes avec liste de HS
 	################################################################################
-	main_compare_hs(fichier)
+	#main_compare_hs(fichier)
+	main_filtre(fichier)
 	################################################################################
 	#Suppression fichiers temporaires
 	################################################################################

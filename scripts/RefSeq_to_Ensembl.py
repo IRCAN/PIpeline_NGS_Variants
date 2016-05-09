@@ -83,7 +83,6 @@ def get_allele_freq(string):
 	resultat = float(resultat[3:])
 	resultat = resultat*100
 	resultat = "%.1f" % resultat
-	#print(resultat)
 	return(resultat)
 
 def main_refseq_ensembl(fichier):
@@ -92,7 +91,7 @@ def main_refseq_ensembl(fichier):
 	File = "../Resultats/Auto_user_INS-80-TF_23-02-16_151_198/VEP/VEP_"+fichier
 	VcfFile = open(File,'r')
 	VcfFile = read_file(VcfFile)
-	# supprime les lignes d'information du VCF.
+	# supprime les lignes d'informations globales du VCF.
 	del VcfFile[0:70]
 	VcfFileFinalList = []
 	VcfFileFinalList.append("chrom-pos\tRefSeq id\tensembl id\tHGVSc\tHGVSp\tfunction\tsift\tpolyphen\tallele_cov\tallele_freq\n")
@@ -106,7 +105,7 @@ def main_refseq_ensembl(fichier):
 		ligne = ligne[0:len(ligne)-1]
 		ligneSplit = ligne.split("\t")
 		idRefseqSample = ligneSplit[4]
-		# valeur = 0 si l'id de matche pas , valur = 1 si l'id matche
+		# valeur = 0 si l'id de match pas , valeur = 1 si l'id match
 		idSampleNotInGene2ensembl = 0
 		for gene2ensemblLigne in gene2ensemblFinalList:
 			idRefseqFromGene2ensembl = gene2ensemblLigne[3]
@@ -115,10 +114,17 @@ def main_refseq_ensembl(fichier):
 				idSampleNotInGene2ensembl = 1
 				ligneInfoVcf = ligneSplit[13]
 				#Recuperation du HGVSc
-				regex = "HGVSc="+idRefseqSample+":(.*);"
+				regex = "HGVSc="+idRefseqSample+":(.*)"
 				match = re.search(regex, ligneInfoVcf)
 				if match == None: HGVSc = "NA"
-				else: HGVSc = match.group(1)
+				else: 
+					#Dans le cas ou la regex a match avec HGVSp
+					if "HGVSp=" in match.group(1):
+						temp = match.group(1)
+						tempSplit = temp.split(";")
+						HGVSc = tempSplit[0]
+					else:
+						HGVSc = match.group(1)
 				#Recuperation du HGVSp
 				regex2 = "HGVSp=(.*)"
 				match2 = re.search(regex2, ligneInfoVcf)
@@ -137,30 +143,48 @@ def main_refseq_ensembl(fichier):
 				if match4 == None: PolyPhen = "NA"
 				else: PolyPhen = match4.group(1)
 				#Creation de la string resume
-				position = ligneSplit[1]
+				if "-" in ligneSplit[1]:
+					ligneSplit1 = ligneSplit[1].split("-")
+					position = ligneSplit1[0]
+				else:
+					position = ligneSplit[1]
 				consequence = ligneSplit[6]
 				temp = position + "\t" + idRefseqSample + "\t" + str(gene2ensemblLigne[4]) + "\t" + HGVSc + "\t" + HGVSp + "\t" + consequence + "\t"+ SIFT + "\t" +PolyPhen + "\tcov_not_find\tfreq_not_find\n"
 				####
 				#Comparaison avec les lignes de MUTATIONS pour récupérer les couvertures
 				####
-				
 				for mutation in mutationsFile:
 					mutationSplit = mutation.split("\t")
 					chromPos = mutationSplit[0].replace("chr","")+":"+mutationSplit[1]
 					mut = mutationSplit[3]+">"+mutationSplit[4]
 					if chromPos in temp:
-						if mut in temp:
+						alleleCov = get_allele_cov(mutationSplit[7])
+						alleleFreq = get_allele_freq(mutationSplit[7])
+						temp = temp.replace("cov_not_find",alleleCov)
+						temp = temp.replace("freq_not_find",alleleFreq+"%")
+
+					"""else :
+						mutationPos = int(mutationSplit[1])+1
+						chromPos1 = mutationSplit[0].replace("chr","")+":"+str(mutationPos)
+						print(chromPos)
+						print("chr pos +1 =", chromPos1)
+						if chromPos1 in temp:
 							alleleCov = get_allele_cov(mutationSplit[7])
 							alleleFreq = get_allele_freq(mutationSplit[7])
 							temp = temp.replace("cov_not_find",alleleCov)
 							temp = temp.replace("freq_not_find",alleleFreq+"%")
-							#TODO verifier que exp reguliere fonctionne car pas FAO ni AF sur toutles variants
-						
-				#//TODO a modifier car probleme car NA pas sur toutes les lignes
+						else:
+							mutationPos = int(mutationSplit[1])-1
+							chromPos = mutationSplit[0].replace("chr","")+":"+str(mutationPos)
+							if chromPos in temp:
+								alleleCov = get_allele_cov(mutationSplit[7])
+								alleleFreq = get_allele_freq(mutationSplit[7])
+								temp = temp.replace("cov_not_find",alleleCov)
+								temp = temp.replace("freq_not_find",alleleFreq+"%")"""
+
+
+				#TODO verifier que exp reguliere fonctionne car pas FAO ni AF sur tout les variants
 				#Verifier si ID cosmic du VEP correspond a ID COSMIC trouve dans resultat final	
-				#TOTO verifier pourquoi couverture n'est pas sur tout les fichier de mutations.
-				#temp = temp.replace("\n","\t")
-				#temp = temp + "NA\tNA\n"
 				VcfFileFinalList.append(temp)
 		#si identifiant refseq n'est pas trouve:
 		###//TODO voir difference XN, NM XR et voir si on peut les supprimer		
@@ -216,33 +240,34 @@ def main_refseq_ensembl(fichier):
 				variantsplit = variant.split("\t")
 				geneId = variantsplit[0]
 				idEnsemblVariant = variantsplit[1]
-				########################################################
-				# Suppression des Gene_ENST
-				########################################################
-				regex = "(.*)_ENST"
-				match = re.search(regex, variant)
-				#Si pas de match
-				if match is None:
-					infoChromPosition = ligneSplitVcf[0].split(":")
-					id_refseq = ligneSplitVcf[1]
-					id_cosmic = variantsplit[4]
-					id_HGVSc = variantsplit[5]
-					id_HGVSp = variantsplit[6].replace("\n","")
-					polyphen = ligneSplitVcf[7].replace("\n","")
-					alleleFreq = ligneSplitVcf[9].replace("\n","")
-					#Verifie si la position est un intervalle ou pas
-					if "-" in infoChromPosition[1]:
-						position = infoChromPosition[1].split("-")
-						string ="chr"+infoChromPosition[0] + "\t" + position[0] + "\t" + geneId+"\t"+idEnsemblVariant+"\t"+id_refseq+"\t"+id_cosmic+"\t"+id_HGVSc+"\t"+id_HGVSp+"\t"+ligneSplitVcf[5]+"\t"+ligneSplitVcf[6]+"\t"+polyphen+"\t"+ligneSplitVcf[8]+"\t"+alleleFreq+"\n"
-					else:
-						string ="chr"+infoChromPosition[0] + "\t" + infoChromPosition[1] + "\t" + geneId+"\t"+idEnsemblVariant+"\t"+id_refseq+"\t"+id_cosmic+"\t"+id_HGVSc+"\t"+id_HGVSp+"\t"+ligneSplitVcf[5]+"\t"+ligneSplitVcf[6]+"\t"+polyphen+"\t"+ligneSplitVcf[8]+"\t"+alleleFreq+"\n"
-					if string in resultsCorrelationList: continue
-					else:
-						resultsCorrelationList.append(string)
-		else:
+				if variantsplit[5] == ligneSplitVcf[3]:
+					########################################################
+					# Suppression des Gene_ENST
+					########################################################
+					regex = "(.*)_ENST"
+					match = re.search(regex, variant)
+					#Si pas de match
+					if match is None:
+						infoChromPosition = ligneSplitVcf[0].split(":")
+						id_refseq = ligneSplitVcf[1]
+						id_cosmic = variantsplit[4]
+						id_HGVSc = variantsplit[5]
+						id_HGVSp = variantsplit[6].replace("\n","")
+						polyphen = ligneSplitVcf[7].replace("\n","")
+						alleleFreq = ligneSplitVcf[9].replace("\n","")
+						#Verifie si la position est un intervalle ou pas
+						if "-" in infoChromPosition[1]:
+							position = infoChromPosition[1].split("-")
+							string ="chr"+infoChromPosition[0] + "\t" + position[0] + "\t" + geneId+"\t"+idEnsemblVariant+"\t"+id_refseq+"\t"+id_cosmic+"\t"+id_HGVSc+"\t"+id_HGVSp+"\t"+ligneSplitVcf[5]+"\t"+ligneSplitVcf[6]+"\t"+polyphen+"\t"+ligneSplitVcf[8]+"\t"+alleleFreq+"\n"
+						else:
+							string ="chr"+infoChromPosition[0] + "\t" + infoChromPosition[1] + "\t" + geneId+"\t"+idEnsemblVariant+"\t"+id_refseq+"\t"+id_cosmic+"\t"+id_HGVSc+"\t"+id_HGVSp+"\t"+ligneSplitVcf[5]+"\t"+ligneSplitVcf[6]+"\t"+polyphen+"\t"+ligneSplitVcf[8]+"\t"+alleleFreq+"\n"
+						if string in resultsCorrelationList: continue
+						else:
+							resultsCorrelationList.append(string)
+		#else:
 			###Attention, manque les transcripts sans ID cosmic
 			###TODO// obtenir informations sur les transcrits non references sur COSMIC
-			print("Pas dans le dico: "+idEnsemblVcf)
+			#print("Pas dans le dico: "+idEnsemblVcf)
 			
 	output_file("../Resultats/Auto_user_INS-80-TF_23-02-16_151_198/temp/resultats_correlation_refseq_vs_cosmic_"+fichier,resultsCorrelationList)
 	print('OK')
