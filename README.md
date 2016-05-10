@@ -23,7 +23,7 @@ __Quick Start :__
 This part is currently being set up.
 
 __Repository :__
-- "__scripts__" repository contain all scripts
+- "__scripts__" repository contain all python3 scripts
 
 - "__Resultats__" repository contain output file created by scripts
 
