@@ -1,13 +1,6 @@
 #!/usr/bin/python
 # coding: utf-8 
-from Separation_variants import main_separation_variants
-from RefSeq_to_Ensembl import parse_gene2ensembl
-from RefSeq_to_Ensembl import parse_cosmic_lite
-from RefSeq_to_Ensembl import main_refseq_ensembl
-#from compare_HS import main_compare_hs
-from filtre_variants import main_filtre
-import os,re,time  
-start_time = time.time()  
+
 """
 Script principal du pipeline qui traite le fichier .vcf de chaque patients d'un run
 afin d'obtenir un compte rendu de mutations.
@@ -15,6 +8,12 @@ afin d'obtenir un compte rendu de mutations.
 Ludovic KOSTHOWA (Debut : 06/04/16)
 Info: Creation en cours, script peut etre modifie a tout moment.
 """
+
+from summary import main
+from Separation_variants import main_separation_variants
+import os,re
+import glob
+from argparse import ArgumentParser
 
 def read_file(File):
 	"""Ouvre et lit le fichier .vcf de chaque patients."""
@@ -34,7 +33,7 @@ def file_to_list(contentFile):
 		liste2liste.append(lignesplit)
 	return liste2liste
 
-def output_file(FileName, Final_List):
+def output_file(FileName, Final_List,listeLegendes):
 	"""Cree un fichier resultat et ecrit dans ce fichier."""
 	NomFile = FileName
 	File = open(NomFile,'w')	# creation et ouverture du File
@@ -45,7 +44,7 @@ def output_file(FileName, Final_List):
 		File.write(str(i))
 	File.close()
 
-def check_if_multiple_id(listOfList):
+def check_if_multiple_id(listOfList,ListdeNewLines):
 	"""Regarde sur fichier original si plusieurs ID cosmic sur meme ligne
 	si plusieurs ID, recupere les lignes separees dans ListdeNewLignes.
 	Verifie en meme temps si la ligne correspond a une mutation et ajoute
@@ -77,7 +76,7 @@ def creation_dico_HS():
 	del dico["gene-exon"]
 	return dico
 
-def find_depth_HSnm(lignes,hotspots):
+def find_depth_HSnm(lignes,hotspots,dico):
 	"""Compare les variants non mutes (FAO = 0) du fichier avec le fichier liste_hotspots
 	et ressort dans un dictionnaire les profondeurs des hotspots non mutes.
 	cle = nomGene-numeroExon
@@ -110,7 +109,7 @@ def get_depth(dico):
 			dico[cle] = valeur
 	return dico
 
-def output_nmHS(nomFichier):
+def output_nmHS(nomFichier,globalInfoHSnm):
 	"""Traitement du dictionnaire contenant les HS et leurs profondeurs puis ecriture dans un fichier tabulé (utile pour le rapport final)."""
 	HSnmGlobalList = []
 	for cle, valeur in globalInfoHSnm.items():
@@ -125,135 +124,205 @@ def output_nmHS(nomFichier):
 	#Trie de la liste de genes par ordre alphabetique pour meilleure lisibilite.
 	HSnmGlobalList = sorted(HSnmGlobalList)
 	HSnmGlobalList = "\n".join(HSnmGlobalList)
-	fileOut = "../Resultats/Auto_user_INS-80-TF_23-02-16_151_198/temp/HSnonmuté_"+nomFichier
-	File = open(fileOut,'w')	# creation et ouverture du File
+	f_out = "../Resultats/"+repertoryVCF+"/temp/HSnonmuté_"+nomFichier
+	File = open(f_out,'w')	# creation et ouverture du File
 	File.write("Gene\texon\tMean Depth\tMinimal Depth\n")	#Ecriture de la legende.
 	for i in HSnmGlobalList:	#ecriture des donnees
 		File.write(i)
 	File.close()
-	print('Création de ',fileOut,'\n')
+	print 'Creation de ',f_out,'\n'
+
+
+########################################
+####Pour verification, a supprimer plus tard
+def find_HSnm(lignes,hotspots):
+	"""Compare les transcripts du fichier avec le fichier liste_hotspots
+	et ressort les hs non mutes"""
+	#je recupere tout les FAO = 0
+	nonMuteHs = []
+	for l in lignes:
+		if "FAO=0;" in l:
+			l = l.split("\t")
+			for hs in hotspots:
+				if l[0] == hs[0] and int(hs[1]) <= int(l[1]) <= int(hs[2]):
+					listTemp=[]
+					listTemp.append(hs[3])
+					listTemp.append(hs[4])
+					if listTemp in nonMuteHs : 
+						continue
+					else:
+						nonMuteHs.append(l)
+						#verifie si element n'est pas dans la liste globale (si non ajout a
+						# chaque tour de boule des memes listeTemp...)
+						if listTemp not in listeNonMuteHs:
+							listeNonMuteHs.append(listTemp)				
+	return nonMuteHs
+
+def profondeur_moyenne_HSnm():
+	"""Donne la profondeur moyenne des hotspots non mutés."""
+	listeProfondeur = []
+	for hs in HSNONMUTE:
+		match = re.search(r"(FDP)=[0-9]*", hs[7])
+		resultat = match.group(0)
+		resultat = int(resultat[4:])
+		listeProfondeur.append(resultat)
+	depthHSnm = sum(listeProfondeur) / len(listeProfondeur)
+	return depthHSnm
+
+def profondeur_min_HSnm():
+	"""Donne la profondeur minimale des hotspots non mutés."""
+	listeProfondeur = []
+	for hs in HSNONMUTE:
+		match = re.search(r"(FDP)=[0-9]*", hs[7])
+		resultat = match.group(0)
+		resultat = int(resultat[4:])
+		listeProfondeur.append(resultat)
+	minDepthHSnm = min(listeProfondeur)
+	return minDepthHSnm
+####FIN DE Pour verification, a supprimer plus tard
+########################################
+
+def separation_ligne_variant(barecode,hotspots):
+	for i in barecode:
+		
+		fichier = 'TSVC_variants_'+i+'.vcf'
+		#//TODO A modifier lorsque arborescence finale connuecheck_if_multiple_id
+		
+		j = glob.glob("../Data/Run_test/"+repertoryVCF+"/plugin_out/variantCaller_out.*/"+i+"/"+fichier)
+		print j
+		print 'Traitement du fichier: \n',j[0],'\n'
+		
+		File = open(j[0],'r')
+		contentFile = read_file(File)
+		#Cree une liste avec chaque elements correspondant a une ligne du fichier
+		listOfList = file_to_list(contentFile)
+		#Supprime les informations inutiles du fichier VCF
+		listeLegendes = listOfList[0:71]
+		listeLegendes[70] = "\t".join(listeLegendes[70])
+		del listOfList[0:71]
+		del contentFile[0:71]
+		#Appel de la fonction qui separe les transcripts presents sur la meme ligne
+		ListdeNewLines = main_separation_variants(contentFile)
+		#Traitement de la liste et ecriture dans fichier VCF: recupere les lignes avec 1 seul ID
+		# dans listOfList et les autres dans ListdeNewLines + ajf_oute seulement les mutations
+		list_of_transcripts = check_if_multiple_id(listOfList,ListdeNewLines)
+		#//TODO A modifier lorsque arborescence finale connue
+		f_out = "../Resultats/"+repertoryVCF+"/VariantCaller/SEP_LIGNES_"+fichier
+		#creation du fichier de sortie: fichier VCF avec un transcript par ligne
+		output_file(f_out,list_of_transcripts,listeLegendes)
+		print 'Creation de ',f_out,'\n'
+		################################################################################
+		# Etape de recherche de Hotspots non mutes
+		################################################################################
+		#creation d'un dictionnaire avec cle = gene-exon et valeurs vide.
+		dico = creation_dico_HS()
+		#ajout dans le dictionnaire des profondeurs des variants
+		depthHotspotnm = find_depth_HSnm(list_of_transcripts,hotspots,dico)
+		#calcul et ajout de la profondeur moyenne et minimale de chaque hotspot 
+		globalInfoHSnm = get_depth(dico)
+		#creation fichier de sortie du tableau Hotspots non mutés
+		output_nmHS(fichier,globalInfoHSnm)
+		#//TODO a supprimer pour final
+		HSNONMUTE = find_HSnm(list_of_transcripts,hotspots)
+		#print("Hotspots non mutés: (Gene , exon): \n",listeNonMuteHs,"\n")"""
+
+		################################################################################
+		#Etape de creation du fichier ne contenant que les mutations
+		################################################################################
+	
+		list_of_mutations = []
+		for l in range(len(list_of_transcripts)):
+			a = list_of_transcripts[l].split('\t')
+			if "FAO=0;" not in a[7]:
+				list_of_mutations.append(list_of_transcripts[l])
+		f_out2 = "../Resultats/"+repertoryVCF+"/VariantCaller/MUTATIONS_"+fichier
+		output_file(f_out2,list_of_mutations,listeLegendes)
+		print 'Creation de ',f_out2,'\n'
+	
+		#//TODO
+		#Pour chaque FAO != 0:
+		#regarde dans HS si il en fait parti ????
+		#lancer vep
+		#recup id cosmic et comparer à HS et variants NGS
+
+		################################################################################
+		#Etape de lancement de VEP avec en input le fichier de mutations
+		################################################################################
+	
+		inputfile = "../Resultats/"+repertoryVCF+"/VariantCaller/MUTATIONS_"+fichier
+		output_file2 = "../Resultats/"+repertoryVCF+"/VEP/VEP_REFSEQ_CANONICAL_PROTEIN_"+fichier
+		command3 = "perl ../Logiciels/ensembl-tools-release-84/scripts/variant_effect_predictor/variant_effect_predictor.pl -cache --port 3337 --force_overwrite --refseq --no_stats --symbol --sift b --hgvs --gmaf --polyphen b --regulatory --filter_common --biotype --pubmed --canonical --input_file "+inputfile+ " --output_file "+output_file2
+		os.system(command3)
+
+
+
+
 
 ##############################################################
 ########					MAIN					  ########
 ##############################################################
-#//TODO a supprimer pour final
-listeNonMuteHs = []
 
-#Ouverture fichier liste_HS
-hs = "../Data/Thibault/liste_hotspots_TF.tsv"
-hostpotsFile = open(hs,'r')
-hotspotsTemp = read_file(hostpotsFile)
-hotspots = file_to_list(hotspotsTemp)
+if __name__=='__main__':
 
-#//TODO A modifier lorsque arborescence finale connue
-barecode = ['IonXpress_002']#,'IonXpress_006','IonXpress_007','IonXpress_008','IonXpress_009','IonXpress_011','IonXpress_012','IonXpress_013','IonXpress_015','IonXpress_016']
+	#TODO: better description :p	
+	description = ("Use a .... with ...... for .........")
+		 
+	parser = ArgumentParser(description=description)
+	parser.add_argument('-r','--run', required=True, help="run repertory")
+	parser.add_argument('-lh','--listHotspot', required=True, help="hotspot")
+	parser.add_argument('-s','--summary', action='store_true', default=False, help="need result of plugin CoverageAnalysis")
+	args = parser.parse_args()
+	repertoryVCF=args.run
 
-#//TODO FINAL: recuperer liste des  fichiers VCF du run en cours et boucler dessus
+	if args.summary:
+		main(repertoryVCF)
+		print "creation resume ok"
+	#//TODO a supprimer pour final
+	listeNonMuteHs = []
 
-################################################################################
-# Etape de verification de MAJ du genome local avec la derniere version du genome sur ensembl
-################################################################################
+	#Ouverture fichier liste_HS
+	#hs = "../Data/Thibault/liste_hotspots_TF.tsv"
+	with open(args.listHotspot, 'r') as hotspots_temp:
+	    # Opérations sur le fichier
+		hotspots = file_to_list(hotspots_temp)
 
-print("Vérification version génome...")
-os.system('rsync -u rsync://ftp.ensembl.org/ensembl/pub/current_variation/VEP/homo_sapiens_vep_84_GRCh37.tar.gz ../Data/Ensembl/')
-print("Vérification génome OK")
-
-################################################################################
-# Etape de creation des repertoires
-################################################################################
-
-#Verification si repertoires existent deja (necessaire si script lance sur 1 run ?)
-if os.path.isdir("../Resultats/Auto_user_INS-80-TF_23-02-16_151_198/VariantCaller") == False:
-	os.mkdir("../Resultats/Auto_user_INS-80-TF_23-02-16_151_198/VariantCaller") 
-if os.path.isdir("../Resultats/Auto_user_INS-80-TF_23-02-16_151_198/VEP/") == False:
-	os.mkdir("../Resultats/Auto_user_INS-80-TF_23-02-16_151_198/VEP/")
-if os.path.isdir("../Resultats/Auto_user_INS-80-TF_23-02-16_151_198/temp/") == False:
-	os.mkdir("../Resultats/Auto_user_INS-80-TF_23-02-16_151_198/temp/")  
-
-################################################################################
-# Etape de separation des lignes de variants
-################################################################################
-parse_gene2ensembl()
-parse_cosmic_lite()
-
-
-for i in barecode:
-
-	fichier = 'TSVC_variants_'+i+'.vcf'
 	#//TODO A modifier lorsque arborescence finale connue
-	j = "../Data/Run_test/Auto_user_INS-80-TF_23-02-16_151_198/plugin_out/variantCaller_out.411/"+i+'/'+fichier
-	print('Traitement du fichier: \n',j,'\n')
-	File = open(j,'r')
-	contentFile = read_file(File)
-	#Cree une liste avec chaque elements correspondant a une ligne du fichier
-	listOfList = file_to_list(contentFile)
-	#Supprime les informations inutiles du fichier VCF
-	listeLegendes = listOfList[0:71]
-	listeLegendes[70] = "\t".join(listeLegendes[70])
-	del listOfList[0:71]
-	del contentFile[0:71]
-	#Appel de la fonction qui separe les transcripts presents sur la meme ligne
-	ListdeNewLines = main_separation_variants(contentFile)
-	#Traitement de la liste et ecriture dans fichier VCF: recupere les lignes avec 1 seul ID
-	# dans listOfList et les autres dans ListdeNewLines + ajfileOute seulement les mutations
-	listOfTranscripts = check_if_multiple_id(listOfList)
-	#//TODO A modifier lorsque arborescence finale connue
-	fileOut = "../Resultats/Auto_user_INS-80-TF_23-02-16_151_198/VariantCaller/SEP_LIGNES_"+fichier
-	#creation du fichier de sortie: fichier VCF avec un transcript par ligne
-	print('Création de ',fileOut)
-	output_file(fileOut,listOfTranscripts)
-	print('OK')
-
-	################################################################################
-	# Etape de recherche de Hotspots non mutes
-	################################################################################
-	#creation d'un dictionnaire avec cle = gene-exon et valeurs vide.
-	dico = creation_dico_HS()
-	#ajout dans le dictionnaire des profondeurs des variants
-	depthHotspotnm = find_depth_HSnm(listOfTranscripts,hotspots)
-	#calcul et ajout de la profondeur moyenne et minimale de chaque hotspot 
-	globalInfoHSnm = get_depth(dico)
-	#creation fichier de sortie du tableau Hotspots non mutés
-	output_nmHS(fichier)
+	repertoryVCF=args.run
+	#barecode = ['IonXpress_001']
+	pathBarecode=glob.glob("../Data/Run_test/"+repertoryVCF+"/plugin_out/variantCaller_out.*/IonXpress*")
+	barecode=[]
+	for element in pathBarecode:
+		a=element.split('/')
+		barecode.append(a[-1])
 	
-	################################################################################
-	#Etape de creation du fichier ne contenant que les mutations
-	################################################################################
+	print barecode
 	
-	listOfMutations = []
-	for l in range(len(listOfTranscripts)):
-		a = listOfTranscripts[l].split('\t')
-		if "FAO=0;" not in a[7]:
-			listOfMutations.append(listOfTranscripts[l])
-	fileOut2 = "../Resultats/Auto_user_INS-80-TF_23-02-16_151_198/VariantCaller/MUTATIONS_"+fichier
-	print('Création de ',fileOut2)
-	output_file(fileOut2,listOfMutations)
-	print('OK')
+	#//TODO FINAL: recuperer liste des  fichiers VCF du run en cours et boucler dessus
 
 	################################################################################
-	#Etape de lancement de VEP avec en input le fichier de mutations
+	# Etape de verification de MAJ du genome local avec la derniere version du genome sur ensembl
 	################################################################################
-	####TODO// Trouver GMAF pour trier les HS
-	inputfile = "../Resultats/Auto_user_INS-80-TF_23-02-16_151_198/VariantCaller/MUTATIONS_"+fichier
-	outputFile2 = "../Resultats/Auto_user_INS-80-TF_23-02-16_151_198/VEP/VEP_"+fichier
-	command3 = "perl ../Logiciels/ensembl-tools-release-84/scripts/variant_effect_predictor/variant_effect_predictor.pl -cache --no_stats --everything --refseq --port 3337 --gmaf --input_file "+inputfile+ " --output_file "+outputFile2
-	os.system(command3)
+	print "Verification version génome..."
+	os.system('rsync -u rsync://ftp.ensembl.org/ensembl/pub/current_variation/VEP/homo_sapiens_vep_84_GRCh37.tar.gz ../Data/Ensembl/')
+	print "Verification génome OK"
 
 	################################################################################
-	#Recherche equivalences RefSeq -> Ensembl
+	# Etape de creation des repertoires
 	################################################################################
-	main_refseq_ensembl(fichier)
+
+	#Verification si repertoires existent deja (necessaire si script lance sur 1 run ?)
+	if os.path.isdir("../Resultats/"+repertoryVCF+"/VariantCaller") == False:
+		os.mkdir("../Resultats/"+repertoryVCF+"/VariantCaller") 
+	if os.path.isdir("../Resultats/"+repertoryVCF+"/VEP/") == False:
+		os.mkdir("../Resultats/"+repertoryVCF+"/VEP/")
+	if os.path.isdir("../Resultats/"+repertoryVCF+"/temp/") == False:
+		os.mkdir("../Resultats/"+repertoryVCF+"/temp/")  
+
 	################################################################################
-	#Comparaison transcrits annotes avec liste de HS
+	# Etape de separation des lignes de variants
 	################################################################################
-	#main_compare_hs(fichier)
-	main_filtre(fichier)
-	################################################################################
-	#Suppression fichiers temporaires
-	################################################################################
-	#os.remove("../Resultats/Auto_user_INS-80-TF_23-02-16_151_198/temp/resultats_correlation_refseq_vs_cosmic_"+fichier)
-print("######################\n Fin du script!\n######################")
-interval = time.time() - start_time
-interval_in_min = interval/60
-print('Total time in seconds:', interval) 
-print('Total time in min:', interval_in_min) 
+	separation_ligne_variant(barecode,hotspots)
+	
+	#//TODO prendre chaque FAO = 0 et comparer si ds HS
+
+
