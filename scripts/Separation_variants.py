@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 # coding: utf-8 
 import re
 
@@ -41,10 +41,12 @@ def check_if_multiple_ID(contentFile):
 	return multipleIDList
 
 def create_list_of_list(contentFile):
-	"""Cree pour chaque ligne une liste de toutes les informations des
+	"""
+	Cree pour chaque ligne une liste de toutes les informations des
 	differents identifiants cosmics. Cette liste est ajoutee dans une liste globale.
 	Cette fonction permet de separer tout les elements necessaires a la
-	separation des lignes composees de plusirs ID cosmics."""
+	separation des lignes composees de plusirs ID cosmics.
+	"""
 	listContentFile = [] #liste du contenu du fichier
 	listFinale =[]
 	for element in contentFile:

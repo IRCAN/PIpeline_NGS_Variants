@@ -1,13 +1,14 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 # coding: utf-8 
 from Separation_variants import main_separation_variants
 from RefSeq_to_Ensembl import parse_gene2ensembl
 from RefSeq_to_Ensembl import parse_cosmic_lite
 from RefSeq_to_Ensembl import main_refseq_ensembl
-#from compare_HS import main_compare_hs
 from filtre_variants import main_filtre
 import os,re,time  
+#A supprimer Final
 start_time = time.time()  
+#A supprimer Final
 """
 Script principal du pipeline qui traite le fichier .vcf de chaque patients d'un run
 afin d'obtenir un compte rendu de mutations.
@@ -125,7 +126,7 @@ def output_nmHS(nomFichier):
 	#Trie de la liste de genes par ordre alphabetique pour meilleure lisibilite.
 	HSnmGlobalList = sorted(HSnmGlobalList)
 	HSnmGlobalList = "\n".join(HSnmGlobalList)
-	fileOut = "../Resultats/Auto_user_INS-80-TF_23-02-16_151_198/temp/HSnonmuté_"+nomFichier
+	fileOut = "../Resultats/Auto_user_INS-92-SG_19-5-16_159_208/temp/HSnonmuté_"+nomFichier
 	File = open(fileOut,'w')	# creation et ouverture du File
 	File.write("Gene\texon\tMean Depth\tMinimal Depth\n")	#Ecriture de la legende.
 	for i in HSnmGlobalList:	#ecriture des donnees
@@ -136,9 +137,6 @@ def output_nmHS(nomFichier):
 ##############################################################
 ########					MAIN					  ########
 ##############################################################
-#//TODO a supprimer pour final
-listeNonMuteHs = []
-
 #Ouverture fichier liste_HS
 hs = "../Data/Thibault/liste_hotspots_TF.tsv"
 hostpotsFile = open(hs,'r')
@@ -146,9 +144,9 @@ hotspotsTemp = read_file(hostpotsFile)
 hotspots = file_to_list(hotspotsTemp)
 
 #//TODO A modifier lorsque arborescence finale connue
-barecode = ['IonXpress_002']#,'IonXpress_006','IonXpress_007','IonXpress_008','IonXpress_009','IonXpress_011','IonXpress_012','IonXpress_013','IonXpress_015','IonXpress_016']
+barecode = ['IonXpress_004']
+#['IonXpress_001','IonXpress_002','IonXpress_006','IonXpress_007','IonXpress_008','IonXpress_009','IonXpress_011','IonXpress_012','IonXpress_013','IonXpress_015','IonXpress_016']
 
-#//TODO FINAL: recuperer liste des  fichiers VCF du run en cours et boucler dessus
 
 ################################################################################
 # Etape de verification de MAJ du genome local avec la derniere version du genome sur ensembl
@@ -163,12 +161,12 @@ print("Vérification génome OK")
 ################################################################################
 
 #Verification si repertoires existent deja (necessaire si script lance sur 1 run ?)
-if os.path.isdir("../Resultats/Auto_user_INS-80-TF_23-02-16_151_198/VariantCaller") == False:
-	os.mkdir("../Resultats/Auto_user_INS-80-TF_23-02-16_151_198/VariantCaller") 
-if os.path.isdir("../Resultats/Auto_user_INS-80-TF_23-02-16_151_198/VEP/") == False:
-	os.mkdir("../Resultats/Auto_user_INS-80-TF_23-02-16_151_198/VEP/")
-if os.path.isdir("../Resultats/Auto_user_INS-80-TF_23-02-16_151_198/temp/") == False:
-	os.mkdir("../Resultats/Auto_user_INS-80-TF_23-02-16_151_198/temp/")  
+"""if os.path.isdir("../Resultats/'IonXpress_002'/VariantCaller") == False:
+	os.mkdir("../Resultats/Auto_user_INS-92-SG_19-5-16_159_208/VariantCaller") 
+if os.path.isdir("../Resultats/Auto_user_INS-92-SG_19-5-16_159_208/VEP/") == False:
+	os.mkdir("../Resultats/Auto_user_INS-92-SG_19-5-16_159_208/VEP/")
+if os.path.isdir("../Resultats/Auto_user_INS-92-SG_19-5-16_159_208/temp/") == False:
+	os.mkdir("../Resultats/Auto_user_INS-92-SG_19-5-16_159_208/temp/")  """
 
 ################################################################################
 # Etape de separation des lignes de variants
@@ -181,8 +179,8 @@ for i in barecode:
 
 	fichier = 'TSVC_variants_'+i+'.vcf'
 	#//TODO A modifier lorsque arborescence finale connue
-	j = "../Data/Run_test/Auto_user_INS-80-TF_23-02-16_151_198/plugin_out/variantCaller_out.411/"+i+'/'+fichier
-	print('Traitement du fichier: \n',j,'\n')
+	j = "../Data/Run_test/Auto_user_INS-92-SG_19-5-16_159_208/plugin_out/variantCaller_out.447/"+i+'/'+fichier
+	print('Traitement du fichier:',j)
 	File = open(j,'r')
 	contentFile = read_file(File)
 	#Cree une liste avec chaque elements correspondant a une ligne du fichier
@@ -198,7 +196,7 @@ for i in barecode:
 	# dans listOfList et les autres dans ListdeNewLines + ajfileOute seulement les mutations
 	listOfTranscripts = check_if_multiple_id(listOfList)
 	#//TODO A modifier lorsque arborescence finale connue
-	fileOut = "../Resultats/Auto_user_INS-80-TF_23-02-16_151_198/VariantCaller/SEP_LIGNES_"+fichier
+	fileOut = "../Resultats/Auto_user_INS-92-SG_19-5-16_159_208/VariantCaller/SEP_LIGNES_"+fichier
 	#creation du fichier de sortie: fichier VCF avec un transcript par ligne
 	print('Création de ',fileOut)
 	output_file(fileOut,listOfTranscripts)
@@ -225,7 +223,7 @@ for i in barecode:
 		a = listOfTranscripts[l].split('\t')
 		if "FAO=0;" not in a[7]:
 			listOfMutations.append(listOfTranscripts[l])
-	fileOut2 = "../Resultats/Auto_user_INS-80-TF_23-02-16_151_198/VariantCaller/MUTATIONS_"+fichier
+	fileOut2 = "../Resultats/Auto_user_INS-92-SG_19-5-16_159_208/VariantCaller/MUTATIONS_"+fichier
 	print('Création de ',fileOut2)
 	output_file(fileOut2,listOfMutations)
 	print('OK')
@@ -233,27 +231,29 @@ for i in barecode:
 	################################################################################
 	#Etape de lancement de VEP avec en input le fichier de mutations
 	################################################################################
-	####TODO// Trouver GMAF pour trier les HS
-	inputfile = "../Resultats/Auto_user_INS-80-TF_23-02-16_151_198/VariantCaller/MUTATIONS_"+fichier
-	outputFile2 = "../Resultats/Auto_user_INS-80-TF_23-02-16_151_198/VEP/VEP_"+fichier
-	command3 = "perl ../Logiciels/ensembl-tools-release-84/scripts/variant_effect_predictor/variant_effect_predictor.pl -cache --no_stats --everything --refseq --port 3337 --gmaf --input_file "+inputfile+ " --output_file "+outputFile2
+
+	inputfile = "../Resultats/Auto_user_INS-92-SG_19-5-16_159_208/VariantCaller/MUTATIONS_"+fichier
+	outputFile2 = "../Resultats/Auto_user_INS-92-SG_19-5-16_159_208/VEP/VEP_"+fichier
+	command3 = "perl ../Logiciels/ensembl-tools-release-84/scripts/variant_effect_predictor/variant_effect_predictor.pl -cache --no_stats --refseq --gmaf --hgvs --sift b --polyphen b --port 3337 --input_file "+inputfile+ " --output_file "+outputFile2
 	os.system(command3)
+	print("Traitement VEP OK")
 
 	################################################################################
 	#Recherche equivalences RefSeq -> Ensembl
 	################################################################################
 	main_refseq_ensembl(fichier)
 	################################################################################
-	#Comparaison transcrits annotes avec liste de HS
+	#Filtrage des différents variants annotes
 	################################################################################
-	#main_compare_hs(fichier)
 	main_filtre(fichier)
 	################################################################################
 	#Suppression fichiers temporaires
 	################################################################################
-	#os.remove("../Resultats/Auto_user_INS-80-TF_23-02-16_151_198/temp/resultats_correlation_refseq_vs_cosmic_"+fichier)
+
 print("######################\n Fin du script!\n######################")
+####TODO a supprimer
 interval = time.time() - start_time
 interval_in_min = interval/60
 print('Total time in seconds:', interval) 
 print('Total time in min:', interval_in_min) 
+####TODO a supprimer

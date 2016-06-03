@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 # coding: utf-8 
 import os,re
 
@@ -137,7 +137,7 @@ def output_file(FileName, finalList):
 """
 Ouverture et Analyse du fichier *summary.xls
 """
-fichier = open("../Data/Run_test/Auto_user_INS-80-TF_23-02-16_151_198/plugin_out/coverageAnalysis_out.410/R_2014_07_31_04_21_49_user_INS-80-TF_23-02-16_Auto_user_INS-80-TF_23-02-16_151.bc_summary.xls","r")
+fichier = open("../Data/Run_test/Auto_user_INS-92-SG_19-5-16_159_208/plugin_out/coverageAnalysis_out.446/R_2014_07_31_09_01_46_user_INS-92-SG_19-5-16_Auto_user_INS-92-SG_19-5-16_159.bc_summary.xls","r")
 fileContent = read_file(fichier)
 get_list_barcode(fileContent)
 get_listReadsOnTarget(fileContent)
@@ -148,7 +148,7 @@ fichier.close()
 """
 Ouverture et Analyse du fichier explog_final.txt
 """
-Nomfichier = "../Data/Run_test/Auto_user_INS-80-TF_23-02-16_151_198/explog_final.txt"
+Nomfichier = "../Data/Run_test/Auto_user_INS-92-SG_19-5-16_159_208/explog_final.txt"
 fichier = open(Nomfichier,"r")
 fileContent = read_file(fichier)
 kit = get_kit(fileContent)
@@ -169,7 +169,7 @@ for barecode in barcodeList:
 	"""
 	Ouverture et Analyse du fichier read_stats.txt
 	"""
-	Nomfichier = "../Data/Run_test/Auto_user_INS-80-TF_23-02-16_151_198/plugin_out/sampleID_out.412/"+barecode+"/read_stats.txt"
+	Nomfichier = "../Data/Run_test/Auto_user_INS-92-SG_19-5-16_159_208/plugin_out/sampleID_out.448/"+barecode+"/read_stats.txt"
 	fichier = open(Nomfichier,"r")
 	fileContent = read_file(fichier)
 	sampleList[6] = get_id(fileContent)
@@ -178,7 +178,7 @@ for barecode in barcodeList:
 	"""
 	Ouverture et Analyse du fichier .stats.cov.txt
 	"""
-	Nomfichier = "../Data/Run_test/Auto_user_INS-80-TF_23-02-16_151_198/plugin_out/coverageAnalysis_out.410/"+barecode+"/"+barecode+"_R_2014_07_31_04_21_49_user_INS-80-TF_23-02-16_Auto_user_INS-80-TF_23-02-16_151.stats.cov.txt"
+	Nomfichier = "../Data/Run_test/Auto_user_INS-92-SG_19-5-16_159_208/plugin_out/coverageAnalysis_out.446/"+barecode+"/"+barecode+"_R_2014_07_31_09_01_46_user_INS-92-SG_19-5-16_Auto_user_INS-92-SG_19-5-16_159.stats.cov.txt"
 	fichier = open(Nomfichier,"r")
 	fileContent = read_file(fichier)
 	get_mean_read_depth(fileContent)
@@ -191,10 +191,10 @@ for barecode in barcodeList:
 Creation du fichier final summary.txt
 """
 #TODO// recuperer nom de l'echantillon +_summary.txt
-if os.path.isdir('../Resultats/Auto_user_INS-80-TF_23-02-16_151_198') == False:
+if os.path.isdir('../Resultats/Auto_user_INS-92-SG_19-5-16_159_208') == False:
 	print("creation du repertoire")
-	os.mkdir('../Resultats/Auto_user_INS-80-TF_23-02-16_151_198') 
-FileName = '../Resultats/Auto_user_INS-80-TF_23-02-16_151_198/Auto_user_INS-80-TF_23-02-16_151_198_summary.txt'
+	os.mkdir('../Resultats/Auto_user_INS-92-SG_19-5-16_159_208') 
+FileName = '../Resultats/Auto_user_INS-92-SG_19-5-16_159_208/Auto_user_INS-92-SG_19-5-16_159_208_summary.txt'
 output_file(FileName, finalList)
 
 

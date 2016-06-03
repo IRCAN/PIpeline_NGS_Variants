@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 # coding: utf-8 
 
 """
@@ -13,7 +13,7 @@ contentFile = open(File,"r")
 cosmic =  contentFile.readlines()
 contentFile.close()
 cosmicIdList = set()
-f_out = "../Data/Cosmic/Cosmic_lite_2.txt"
+f_out = "../Data/Cosmic/Cosmic_lite.txt"
 File_out = open(f_out,'w')
 print("Lecture de la base de données COSMIC...")
 print("Création de Cosmic_lite: merci de patienter...")
