@@ -2155,19 +2155,29 @@ sub vf_to_consequences {
 
     my $term_method = $config->{terms}.'_term';
 
-    # summary is just all unique consequence terms
-    if(defined($config->{summary})) {
-      $line->{Consequence} = join ",", keys %{{map {$_ => 1} map {$_->$term_method || $_->SO_term} map {@{$_->get_all_OverlapConsequences}} @vfoas}};
-    }
+    my @ocs = sort {$a->rank <=> $b->rank} map {@{$_->get_all_OverlapConsequences}} @vfoas;
 
-    # most severe is the consequence term with the lowest rank
+    if(@ocs) {
+
+      # summary is just all unique consequence terms
+      if(defined($config->{summary})) {
+        $line->{Consequence} = join ",", keys %{{map {$_ => 1} map {$_->$term_method || $_->SO_term} @ocs}};
+      }
+
+      # most severe is the consequence term with the lowest rank
+      else {
+        $line->{Consequence} = $ocs[0]->$term_method || $ocs[0]->SO_term;
+      }
+
+      unless(defined($config->{no_stats})) {
+        $config->{stats}->{consequences}->{$_}++ for split(',', $line->{Consequence});
+      }
+    }
     else {
-      my $oc = (sort {$a->rank <=> $b->rank} map {@{$_->get_all_OverlapConsequences}} @vfoas)[0];
-      $line->{Consequence} = $oc->$term_method || $oc->SO_term;
-    }
-
-    unless(defined($config->{no_stats})) {
-      $config->{stats}->{consequences}->{$_}++ for split(',', $line->{Consequence});
+      warning_msg(
+        $config,
+        "Unable to assign consequence type on line ".$vf->{_line_number}
+      );
     }
 
     push @return, $line;
@@ -2272,9 +2282,9 @@ sub pick_worst_vfoa {
         if($appris->value =~ m/([A-Za-z])(\d+)/) {
           my ($type, $grade) = ($1, $2);
 
-          # values are principal1, principal2, ..., alternate1, alternate2
+          # values are principal1, principal2, ..., alternative1, alternative2
           # so add 10 to grade if alternate
-          $grade += 10 if $type eq 'alternate';
+          $grade += 10 if substr($type, 0, 1) eq 'a';
 
           $info->{appris} = $grade if $grade;
         }
@@ -3286,15 +3296,15 @@ sub validate_vf {
     my $tmp_ref_allele = $ref_allele;
     $tmp_ref_allele =~ s/\-//g;
 
-    #if(($vf->{end} - $vf->{start}) + 1 != length($tmp_ref_allele)) {
-    #    warning_msg(
-    #        $config,
-    #        "WARNING: Length of reference allele (".$ref_allele.
-    #        " length ".length($tmp_ref_allele).") does not match co-ordinates ".$vf->{start}."-".$vf->{end}.
-    #        " on line ".$config->{line_number}
-    #    );
-    #    return 0;
-    #}
+    if($tmp_ref_allele =~ /^[ACGT]*$/ && ($vf->{end} - $vf->{start}) + 1 != length($tmp_ref_allele)) {
+       warning_msg(
+           $config,
+           "WARNING: Length of reference allele (".$ref_allele.
+           " length ".length($tmp_ref_allele).") does not match co-ordinates ".$vf->{start}."-".$vf->{end}.
+           " on line ".$config->{line_number}
+       );
+       return 0;
+    }
 
     # flag as unbalanced
     foreach my $allele(@alleles) {
@@ -5311,7 +5321,7 @@ sub parse_variation {
   my $line = shift;
 
   my @cols = @{get_variation_columns($config)};
-  my $delim = defined($config->{'cache_var_type'}) && $config->{'cache_var_type'} eq 'tabix' ? "\t" : " ";
+  my $delim = defined($config->{'cache_var_type'}) && $config->{'cache_var_type'} eq 'tabix' ? "\t" : qr/ /;
   my @data = split $delim, $line;
 
   # assumption fix for old cache files
@@ -5995,7 +6005,7 @@ sub cache_custom_annotation {
                     if(defined($feature)) {
                         $got_features = 1;
 
-                        if(!defined($feature->{name}) || $custom->{coords}) {
+                        if(!defined($feature->{name}) || $feature->{name} eq '.' || $custom->{coords}) {
                             $feature->{name} = $feature->{chr}.":".$feature->{start}."-".$feature->{end};
                         }
 

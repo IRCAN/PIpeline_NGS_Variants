@@ -1,6 +1,6 @@
 =head1 LICENSE
 
-Copyright [1999-2016] Wellcome Trust Sanger Institute and the EMBL-European Bioinformatics Institute
+Copyright [1999-2016] EMBL-European Bioinformatics Institute
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -19,10 +19,11 @@ limitations under the License.
 package Bio::DB::HTS::Tabix::Iterator;
 
 use Bio::DB::HTS; #load the XS
-$Bio::DB::HTS::Tabix::Iterator::VERSION = '1.11';
+$Bio::DB::HTS::Tabix::Iterator::VERSION = '2.1';
 
 use strict;
 use warnings;
+use Scalar::Util qw/reftype/;
 
 #this class is just a wrapper around the tabix_iter_next method,
 #all the attributes it needs come from the main Tabix method
@@ -62,7 +63,15 @@ sub close {
     #xs method
     if ( defined $self->{_tabix_iter} ) {
         tbx_iter_free($self->{_tabix_iter});
+        delete $self->{_tabix_iter}; # delete once you've removed it. Prevents bad re-issuing of code
     }
+}
+
+sub DESTROY {
+    my $self = shift;
+    return if reftype($self) ne 'HASH';
+    $self->close();
+    return;
 }
 
 1;

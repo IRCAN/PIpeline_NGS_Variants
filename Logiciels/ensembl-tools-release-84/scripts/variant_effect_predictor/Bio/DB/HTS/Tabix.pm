@@ -1,7 +1,7 @@
 
 =head1 LICENSE
 
-Copyright [1999-2016] Wellcome Trust Sanger Institute and the EMBL-European Bioinformatics Institute
+Copyright [1999-2016] EMBL-European Bioinformatics Institute
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -19,12 +19,13 @@ limitations under the License.
 
 package Bio::DB::HTS::Tabix;
 
-use Bio::DB::HTS; #load the XS
+use Bio::DB::HTS;
 use Bio::DB::HTS::Tabix::Iterator;
-$Bio::DB::HTS::Tabix::VERSION = '1.11';
+$Bio::DB::HTS::Tabix::VERSION = '2.1';
 use strict;
 use warnings;
 
+use Scalar::Util qw/reftype/;
 
 sub new {
   my $class         = shift;
@@ -34,7 +35,6 @@ sub new {
 
   # filename checks
   die "Tabix region lookup requires a gzipped, tabixed bedfile" unless $filename =~ /gz$/;
-  die "Filename " . $filename . " does not exist" unless -e $filename;
 
   my $htsfile = Bio::DB::HTSfile->open($filename);
   my $tabix_index = tbx_open($filename);
@@ -113,12 +113,22 @@ sub close {
 
     if ( $self->{_htsfile} ) {
         Bio::DB::HTSfile::close($self->{_htsfile});
+        delete $self->{_htsfile};
     }
 
     if ( $self->{_tabix_index} ) {
         tbx_close($self->{_tabix_index});
+        delete $self->{_tabix_index};
     }
 }
+
+sub DESTROY {
+    my $self = shift;
+    return if reftype($self) ne 'HASH';
+    $self->close();
+    return;
+}
+
 
 1;
 
@@ -141,6 +151,7 @@ Bio::DB::HTS::Tabix - Object oriented access to the underlying tbx C methods
     while ( my $n = $iter->next ) {
         say $n;
     }
+    $tabix->close;
 
 =head1 DESCRIPTION
 
@@ -167,11 +178,51 @@ Returns all the header lines as a single scalar from the tabixed file
 
 =item C<query>
 
-Takes a single region like: '1:4000005-4000009' or '12:5000000'
-Note: this works exactly the same way as the tabix executable,
-so '12:5000000' actually means get all results from position 5,000,000
-up to the very end of the chromosome. To get results only at position
-5,000,000 you should do '12:5000000-5000001'
+Takes a single region like: '1:4000005-4000009' or '12:5000000'. The coordinate format is 0 or 1-based for start and stop positions depending on how the Tabix index file was created - by default this is 1.
+
+Here are some examples showing Tabix.
+
+    use Bio::DB::HTS::Tabix;
+
+    my $tabix = Bio::DB::HTS::Tabix->new(filename => $file);
+
+    # Calling region 1
+
+    $iter = $tabix->query("1");
+    printf("Calling region 1\n" );
+    while(my $l = $iter->next) {
+      print $l, "\n";
+    }
+Gives:
+    1       4000000 4000000 -0.972
+    1       4000001 4000001 -0.153
+    1       4000002 4000002 -2.15
+    1       4000003 4000003 -1.17
+    1       4000003 4000006 -3.6
+    1       4000006 4000007 -6.7
+    1       4000007 4000009 -7.9
+
+
+    #Calling a range
+    $iter = $tabix->query("1:4000003-4000006");
+gives
+    1       4000003 4000003 -1.17
+    1       4000003 4000006 -3.6
+    1       4000006 4000007 -6.7
+
+    #Calling region 1:4000003 to end of region 1
+    $iter = $tabix->query("1:4000003");
+gives
+    1       4000003 4000003 -1.17
+    1       4000003 4000006 -3.6
+    1       4000006 4000007 -6.7
+    1       4000007 4000009 -7.9
+
+    #Calling single location 1:4000002
+    $iter = $tabix->query("1:4000002-4000002");
+gives
+    1       4000002 4000002 -2.15
+
 
 Returns a L<Bio::DB::HTS::Tabix::Iterator> for the specified region
 

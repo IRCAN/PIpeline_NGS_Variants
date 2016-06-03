@@ -1,7 +1,27 @@
 
+2.1
+   * add missing test file to manifest
+
+2.0
+   * BCF addition
+   * Kseq addition: courtesy of Andrew Yates and Chris Fields
+   * Tabix bugfixes: see GitHub issue #17
+   * licence updated
+
+1.13
+   * removed file existence Tabix check as it prevents remote access
+   * Tabix bugfix
+   * Build git clone commands use branch and depth options
+
+1.12
+   * Build procedure static option added, courtesy of David Jones
+   * TravisCI tests added
+   * build_options script added to demonstrate build options
+   * cpanfile updates
+
 1.11
-   * FAIDX memory leak fix, courtesy Andy Yates & Keiran Rayne
-   * INSTALL.pl to local directory, courtesy Keiran Rayne
+   * FAIDX memory leak fix, courtesy Andy Yates & Keiran Raine
+   * INSTALL.pl to local directory, courtesy Keiran Raine
    * documentation updates
 
 1.10

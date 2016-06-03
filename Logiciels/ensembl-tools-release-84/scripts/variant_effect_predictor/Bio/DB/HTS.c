@@ -8,7 +8,7 @@
 
 #line 1 "lib/Bio/DB/HTS.xs"
 /*
-Copyright [1999-2016] Wellcome Trust Sanger Institute and the EMBL-European Bioinformatics Institute
+Copyright [1999-2016] EMBL-European Bioinformatics Institute
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -59,7 +59,10 @@ limitations under the License.
 #include "tbx.h"
 #include "bgzf.h"
 #include "vcf.h"
+#include "vcfutils.h"
+#include "vcf_sweep.h"
 #include "synced_bcf_reader.h"
+#include <zlib.h>
 
 /* stolen from bam_aux.c */
 #define BAM_MAX_REGION 1<<29
@@ -72,10 +75,15 @@ typedef faidx_t*        Bio__DB__HTS__Fai;
 typedef bam_pileup1_t*  Bio__DB__HTS__Pileup;
 typedef tbx_t*          Bio__DB__HTS__Tabix;
 typedef hts_itr_t*      Bio__DB__HTS__Tabix__Iterator;
-typedef bcf_srs_t*      Bio__DB__HTS__VCF;
+typedef vcfFile*        Bio__DB__HTS__VCFfile;
 typedef bcf_hdr_t*      Bio__DB__HTS__VCF__Header;
 typedef bcf1_t*         Bio__DB__HTS__VCF__Row;
-
+KSEQ_INIT(gzFile, gzread)
+typedef gzFile          Bio__DB__HTS__Kseq;
+typedef kseq_t*         Bio__DB__HTS__Kseq__Iterator;
+typedef kstream_t*      Bio__DB__HTS__Kseq__Kstream;
+typedef kstring_t*      Bio__DB__HTS__Kseq__Kstring;
+typedef bcf_sweep_t*    Bio__DB__HTS__VCF__Sweep;
 
 typedef struct {
   SV* callback;
@@ -360,7 +368,7 @@ int hts_fetch(htsFile *fp, const hts_idx_t *idx, int tid, int beg, int end, void
 
 
 
-#line 364 "lib/Bio/DB/HTS.c"
+#line 372 "lib/Bio/DB/HTS.c"
 #ifndef PERL_UNUSED_VAR
 #  define PERL_UNUSED_VAR(var) if (0) var = var
 #endif
@@ -504,7 +512,7 @@ S_croak_xs_usage(const CV *const cv, const char *const params)
 #  define newXS_deffile(a,b) Perl_newXS_deffile(aTHX_ a,b)
 #endif
 
-#line 508 "lib/Bio/DB/HTS.c"
+#line 516 "lib/Bio/DB/HTS.c"
 
 XS_EUPXS(XS_Bio__DB__HTS__Fai_load); /* prototype to pass -Wmissing-prototypes */
 XS_EUPXS(XS_Bio__DB__HTS__Fai_load)
@@ -524,9 +532,9 @@ XS_EUPXS(XS_Bio__DB__HTS__Fai_load)
 	    packname = (char *)SvPV_nolen(ST(0))
 ;
 	}
-#line 362 "lib/Bio/DB/HTS.xs"
+#line 370 "lib/Bio/DB/HTS.xs"
     RETVAL = fai_load(filename);
-#line 530 "lib/Bio/DB/HTS.c"
+#line 538 "lib/Bio/DB/HTS.c"
 	{
 	    SV * RETVALSV;
 	    RETVALSV = sv_newmortal();
@@ -556,9 +564,9 @@ XS_EUPXS(XS_Bio__DB__HTS__Fai_destroy)
 			"Bio::DB::HTS::Fai::destroy",
 			"fai", "Bio::DB::HTS::Fai")
 ;
-#line 371 "lib/Bio/DB/HTS.xs"
+#line 379 "lib/Bio/DB/HTS.xs"
     fai_destroy(fai);
-#line 562 "lib/Bio/DB/HTS.c"
+#line 570 "lib/Bio/DB/HTS.c"
     }
     XSRETURN_EMPTY;
 }
@@ -574,10 +582,10 @@ XS_EUPXS(XS_Bio__DB__HTS__Fai_fetch)
 	Bio__DB__HTS__Fai	fai;
 	const char *	reg = (const char *)SvPV_nolen(ST(1))
 ;
-#line 379 "lib/Bio/DB/HTS.xs"
+#line 387 "lib/Bio/DB/HTS.xs"
     char     *seq;
     int       len;
-#line 581 "lib/Bio/DB/HTS.c"
+#line 589 "lib/Bio/DB/HTS.c"
 	SV *	RETVAL;
 
 	if (SvROK(ST(0)) && sv_derived_from(ST(0), "Bio::DB::HTS::Fai")) {
@@ -589,13 +597,13 @@ XS_EUPXS(XS_Bio__DB__HTS__Fai_fetch)
 			"Bio::DB::HTS::Fai::fetch",
 			"fai", "Bio::DB::HTS::Fai")
 ;
-#line 382 "lib/Bio/DB/HTS.xs"
+#line 390 "lib/Bio/DB/HTS.xs"
     seq = fai_fetch(fai,reg,&len);
     if (seq == NULL)
        XSRETURN_EMPTY;
     RETVAL = newSVpv(seq,len);
     free((void*)seq);
-#line 599 "lib/Bio/DB/HTS.c"
+#line 607 "lib/Bio/DB/HTS.c"
 	RETVAL = sv_2mortal(RETVAL);
 	ST(0) = RETVAL;
     }
@@ -612,11 +620,11 @@ XS_EUPXS(XS_Bio__DB__HTSfile_max_pileup_cnt)
     {
 	int	RETVAL;
 	dXSTARG;
-#line 396 "lib/Bio/DB/HTS.xs"
+#line 404 "lib/Bio/DB/HTS.xs"
 	if (items > 1)
 	   MaxPileupCnt = SvIV(ST(1));
 	RETVAL = MaxPileupCnt;
-#line 620 "lib/Bio/DB/HTS.c"
+#line 628 "lib/Bio/DB/HTS.c"
 	XSprePUSH; PUSHi((IV)RETVAL);
     }
     XSRETURN(1);
@@ -643,9 +651,9 @@ XS_EUPXS(XS_Bio__DB__HTSfile_open)
 	    mode = (char *)SvPV_nolen(ST(2))
 ;
 	}
-#line 410 "lib/Bio/DB/HTS.xs"
+#line 418 "lib/Bio/DB/HTS.xs"
         RETVAL = hts_open(filename,mode);
-#line 649 "lib/Bio/DB/HTS.c"
+#line 657 "lib/Bio/DB/HTS.c"
 	{
 	    SV * RETVALSV;
 	    RETVALSV = sv_newmortal();
@@ -675,9 +683,9 @@ XS_EUPXS(XS_Bio__DB__HTSfile_close)
 			"Bio::DB::HTSfile::close",
 			"htsfile", "Bio::DB::HTSfile")
 ;
-#line 420 "lib/Bio/DB/HTS.xs"
+#line 428 "lib/Bio/DB/HTS.xs"
    hts_close(htsfile);
-#line 681 "lib/Bio/DB/HTS.c"
+#line 689 "lib/Bio/DB/HTS.c"
     }
     XSRETURN_EMPTY;
 }
@@ -696,9 +704,9 @@ XS_EUPXS(XS_Bio__DB__HTSfile_index_build)
 ;
 	int	RETVAL;
 	dXSTARG;
-#line 428 "lib/Bio/DB/HTS.xs"
+#line 436 "lib/Bio/DB/HTS.xs"
      RETVAL = sam_index_build(filename,0); //generate BAI for BAM files
-#line 702 "lib/Bio/DB/HTS.c"
+#line 710 "lib/Bio/DB/HTS.c"
 	XSprePUSH; PUSHi((IV)RETVAL);
     }
     XSRETURN(1);
@@ -726,9 +734,9 @@ XS_EUPXS(XS_Bio__DB__HTSfile_index_load)
 			"Bio::DB::HTSfile::index_load",
 			"htsfile", "Bio::DB::HTSfile")
 ;
-#line 440 "lib/Bio/DB/HTS.xs"
+#line 448 "lib/Bio/DB/HTS.xs"
       RETVAL = sam_index_load(htsfile, htsfile->fn) ;
-#line 732 "lib/Bio/DB/HTS.c"
+#line 740 "lib/Bio/DB/HTS.c"
 	{
 	    SV * RETVALSV;
 	    RETVALSV = sv_newmortal();
@@ -758,9 +766,9 @@ XS_EUPXS(XS_Bio__DB__HTSfile_index_close)
 			"Bio::DB::HTSfile::index_close",
 			"indexfile", "Bio::DB::HTS::Index")
 ;
-#line 449 "lib/Bio/DB/HTS.xs"
+#line 457 "lib/Bio/DB/HTS.xs"
       hts_idx_destroy(indexfile) ;
-#line 764 "lib/Bio/DB/HTS.c"
+#line 772 "lib/Bio/DB/HTS.c"
     }
     XSRETURN_EMPTY;
 }
@@ -774,10 +782,10 @@ XS_EUPXS(XS_Bio__DB__HTSfile_header_read)
        croak_xs_usage(cv,  "htsfile");
     {
 	Bio__DB__HTSfile	htsfile;
-#line 458 "lib/Bio/DB/HTS.xs"
+#line 466 "lib/Bio/DB/HTS.xs"
       bam_hdr_t *bh;
       int64_t result ;
-#line 781 "lib/Bio/DB/HTS.c"
+#line 789 "lib/Bio/DB/HTS.c"
 	Bio__DB__HTS__Header	RETVAL;
 
 	if (SvROK(ST(0)) && sv_derived_from(ST(0), "Bio::DB::HTSfile")) {
@@ -789,14 +797,14 @@ XS_EUPXS(XS_Bio__DB__HTSfile_header_read)
 			"Bio::DB::HTSfile::header_read",
 			"htsfile", "Bio::DB::HTSfile")
 ;
-#line 461 "lib/Bio/DB/HTS.xs"
+#line 469 "lib/Bio/DB/HTS.xs"
       if( htsfile->format.format == bam ) //enum value from htsExactFormat from hts.h
       {
         result = bgzf_seek(htsfile->fp.bgzf,0,0) ;
       }
       bh = sam_hdr_read(htsfile);
       RETVAL = bh ;
-#line 800 "lib/Bio/DB/HTS.c"
+#line 808 "lib/Bio/DB/HTS.c"
 	{
 	    SV * RETVALSV;
 	    RETVALSV = sv_newmortal();
@@ -839,9 +847,9 @@ XS_EUPXS(XS_Bio__DB__HTSfile_header_write)
 			"Bio::DB::HTSfile::header_write",
 			"header", "Bio::DB::HTS::Header")
 ;
-#line 477 "lib/Bio/DB/HTS.xs"
+#line 485 "lib/Bio/DB/HTS.xs"
       RETVAL= sam_hdr_write(hts,header);
-#line 845 "lib/Bio/DB/HTS.c"
+#line 853 "lib/Bio/DB/HTS.c"
 	XSprePUSH; PUSHi((IV)RETVAL);
     }
     XSRETURN(1);
@@ -857,9 +865,9 @@ XS_EUPXS(XS_Bio__DB__HTSfile_read1)
     {
 	Bio__DB__HTSfile	htsfile;
 	Bio__DB__HTS__Header	header;
-#line 488 "lib/Bio/DB/HTS.xs"
+#line 496 "lib/Bio/DB/HTS.xs"
     bam1_t *alignment;
-#line 863 "lib/Bio/DB/HTS.c"
+#line 871 "lib/Bio/DB/HTS.c"
 	Bio__DB__HTS__Alignment	RETVAL;
 
 	if (SvROK(ST(0)) && sv_derived_from(ST(0), "Bio::DB::HTSfile")) {
@@ -881,14 +889,14 @@ XS_EUPXS(XS_Bio__DB__HTSfile_read1)
 			"Bio::DB::HTSfile::read1",
 			"header", "Bio::DB::HTS::Header")
 ;
-#line 490 "lib/Bio/DB/HTS.xs"
+#line 498 "lib/Bio/DB/HTS.xs"
        alignment = bam_init1();
        if (sam_read1(htsfile,header,alignment) >= 0) {
          RETVAL = alignment ;
        }
        else
          XSRETURN_EMPTY;
-#line 892 "lib/Bio/DB/HTS.c"
+#line 900 "lib/Bio/DB/HTS.c"
 	{
 	    SV * RETVALSV;
 	    RETVALSV = sv_newmortal();
@@ -916,9 +924,9 @@ XS_EUPXS(XS_Bio__DB__HTS__Alignment_new)
 	    package = (char *)SvPV_nolen(ST(0))
 ;
 	}
-#line 507 "lib/Bio/DB/HTS.xs"
+#line 515 "lib/Bio/DB/HTS.xs"
       RETVAL = bam_init1();
-#line 922 "lib/Bio/DB/HTS.c"
+#line 930 "lib/Bio/DB/HTS.c"
 	{
 	    SV * RETVALSV;
 	    RETVALSV = sv_newmortal();
@@ -948,9 +956,9 @@ XS_EUPXS(XS_Bio__DB__HTS__Alignment_DESTROY)
 			"Bio::DB::HTS::Alignment::DESTROY",
 			"b")
 ;
-#line 516 "lib/Bio/DB/HTS.xs"
+#line 524 "lib/Bio/DB/HTS.xs"
     bam_destroy1(b);
-#line 954 "lib/Bio/DB/HTS.c"
+#line 962 "lib/Bio/DB/HTS.c"
     }
     XSRETURN_EMPTY;
 }
@@ -976,11 +984,11 @@ XS_EUPXS(XS_Bio__DB__HTS__Alignment_tid)
 			"Bio::DB::HTS::Alignment::tid",
 			"b", "Bio::DB::HTS::Alignment")
 ;
-#line 523 "lib/Bio/DB/HTS.xs"
+#line 531 "lib/Bio/DB/HTS.xs"
     if (items > 1)
       b->core.tid = SvIV(ST(1));
     RETVAL=b->core.tid;
-#line 984 "lib/Bio/DB/HTS.c"
+#line 992 "lib/Bio/DB/HTS.c"
 	XSprePUSH; PUSHi((IV)RETVAL);
     }
     XSRETURN(1);
@@ -1007,11 +1015,11 @@ XS_EUPXS(XS_Bio__DB__HTS__Alignment_pos)
 			"Bio::DB::HTS::Alignment::pos",
 			"b", "Bio::DB::HTS::Alignment")
 ;
-#line 534 "lib/Bio/DB/HTS.xs"
+#line 542 "lib/Bio/DB/HTS.xs"
     if (items > 1)
       b->core.pos = SvIV(ST(1));
     RETVAL=b->core.pos;
-#line 1015 "lib/Bio/DB/HTS.c"
+#line 1023 "lib/Bio/DB/HTS.c"
 	XSprePUSH; PUSHi((IV)RETVAL);
     }
     XSRETURN(1);
@@ -1038,9 +1046,9 @@ XS_EUPXS(XS_Bio__DB__HTS__Alignment_calend)
 			"Bio::DB::HTS::Alignment::calend",
 			"b", "Bio::DB::HTS::Alignment")
 ;
-#line 545 "lib/Bio/DB/HTS.xs"
+#line 553 "lib/Bio/DB/HTS.xs"
    RETVAL=bam_endpos(b);
-#line 1044 "lib/Bio/DB/HTS.c"
+#line 1052 "lib/Bio/DB/HTS.c"
 	XSprePUSH; PUSHi((IV)RETVAL);
     }
     XSRETURN(1);
@@ -1067,9 +1075,9 @@ XS_EUPXS(XS_Bio__DB__HTS__Alignment_cigar2qlen)
 			"Bio::DB::HTS::Alignment::cigar2qlen",
 			"b", "Bio::DB::HTS::Alignment")
 ;
-#line 554 "lib/Bio/DB/HTS.xs"
+#line 562 "lib/Bio/DB/HTS.xs"
    RETVAL=bam_cigar2qlen(b->core.n_cigar,bam_get_cigar(b));
-#line 1073 "lib/Bio/DB/HTS.c"
+#line 1081 "lib/Bio/DB/HTS.c"
 	XSprePUSH; PUSHi((IV)RETVAL);
     }
     XSRETURN(1);
@@ -1096,11 +1104,11 @@ XS_EUPXS(XS_Bio__DB__HTS__Alignment_qual)
 			"Bio::DB::HTS::Alignment::qual",
 			"b", "Bio::DB::HTS::Alignment")
 ;
-#line 563 "lib/Bio/DB/HTS.xs"
+#line 571 "lib/Bio/DB/HTS.xs"
     if (items > 1)
       b->core.qual = SvIV(ST(1));
     RETVAL=b->core.qual;
-#line 1104 "lib/Bio/DB/HTS.c"
+#line 1112 "lib/Bio/DB/HTS.c"
 	XSprePUSH; PUSHi((IV)RETVAL);
     }
     XSRETURN(1);
@@ -1127,11 +1135,11 @@ XS_EUPXS(XS_Bio__DB__HTS__Alignment_flag)
 			"Bio::DB::HTS::Alignment::flag",
 			"b", "Bio::DB::HTS::Alignment")
 ;
-#line 574 "lib/Bio/DB/HTS.xs"
+#line 582 "lib/Bio/DB/HTS.xs"
     if (items > 1)
       b->core.flag = SvIV(ST(1));
     RETVAL=b->core.flag;
-#line 1135 "lib/Bio/DB/HTS.c"
+#line 1143 "lib/Bio/DB/HTS.c"
 	XSprePUSH; PUSHi((IV)RETVAL);
     }
     XSRETURN(1);
@@ -1158,11 +1166,11 @@ XS_EUPXS(XS_Bio__DB__HTS__Alignment_n_cigar)
 			"Bio::DB::HTS::Alignment::n_cigar",
 			"b", "Bio::DB::HTS::Alignment")
 ;
-#line 585 "lib/Bio/DB/HTS.xs"
+#line 593 "lib/Bio/DB/HTS.xs"
   if (items > 1)
     b->core.n_cigar = SvIV(ST(1));
     RETVAL=b->core.n_cigar;
-#line 1166 "lib/Bio/DB/HTS.c"
+#line 1174 "lib/Bio/DB/HTS.c"
 	XSprePUSH; PUSHi((IV)RETVAL);
     }
     XSRETURN(1);
@@ -1189,11 +1197,11 @@ XS_EUPXS(XS_Bio__DB__HTS__Alignment_l_qseq)
 			"Bio::DB::HTS::Alignment::l_qseq",
 			"b", "Bio::DB::HTS::Alignment")
 ;
-#line 596 "lib/Bio/DB/HTS.xs"
+#line 604 "lib/Bio/DB/HTS.xs"
     if (items > 1)
       b->core.l_qseq = SvIV(ST(1));
     RETVAL=b->core.l_qseq;
-#line 1197 "lib/Bio/DB/HTS.c"
+#line 1205 "lib/Bio/DB/HTS.c"
 	XSprePUSH; PUSHi((IV)RETVAL);
     }
     XSRETURN(1);
@@ -1208,10 +1216,10 @@ XS_EUPXS(XS_Bio__DB__HTS__Alignment_qseq)
        croak_xs_usage(cv,  "b");
     {
 	Bio__DB__HTS__Alignment	b;
-#line 607 "lib/Bio/DB/HTS.xs"
+#line 615 "lib/Bio/DB/HTS.xs"
     char* seq;
     int   i;
-#line 1215 "lib/Bio/DB/HTS.c"
+#line 1223 "lib/Bio/DB/HTS.c"
 	SV *	RETVAL;
 
 	if (SvROK(ST(0)) && sv_derived_from(ST(0), "Bio::DB::HTS::Alignment")) {
@@ -1223,14 +1231,14 @@ XS_EUPXS(XS_Bio__DB__HTS__Alignment_qseq)
 			"Bio::DB::HTS::Alignment::qseq",
 			"b", "Bio::DB::HTS::Alignment")
 ;
-#line 610 "lib/Bio/DB/HTS.xs"
+#line 618 "lib/Bio/DB/HTS.xs"
     seq = Newxz(seq,b->core.l_qseq+1,char);
     for (i=0;i<b->core.l_qseq;i++) {
       seq[i]=seq_nt16_str[bam_seqi(bam_get_seq(b),i)];
     }
     RETVAL = newSVpv(seq,b->core.l_qseq);
     Safefree(seq);
-#line 1234 "lib/Bio/DB/HTS.c"
+#line 1242 "lib/Bio/DB/HTS.c"
 	RETVAL = sv_2mortal(RETVAL);
 	ST(0) = RETVAL;
     }
@@ -1257,9 +1265,9 @@ XS_EUPXS(XS_Bio__DB__HTS__Alignment__qscore)
 			"Bio::DB::HTS::Alignment::_qscore",
 			"b", "Bio::DB::HTS::Alignment")
 ;
-#line 624 "lib/Bio/DB/HTS.xs"
+#line 632 "lib/Bio/DB/HTS.xs"
     RETVAL = newSVpv(bam_get_qual(b),b->core.l_qseq);
-#line 1263 "lib/Bio/DB/HTS.c"
+#line 1271 "lib/Bio/DB/HTS.c"
 	RETVAL = sv_2mortal(RETVAL);
 	ST(0) = RETVAL;
     }
@@ -1287,11 +1295,11 @@ XS_EUPXS(XS_Bio__DB__HTS__Alignment_mtid)
 			"Bio::DB::HTS::Alignment::mtid",
 			"b", "Bio::DB::HTS::Alignment")
 ;
-#line 633 "lib/Bio/DB/HTS.xs"
+#line 641 "lib/Bio/DB/HTS.xs"
     if (items > 1)
       b->core.mtid = SvIV(ST(1));
     RETVAL=b->core.mtid;
-#line 1295 "lib/Bio/DB/HTS.c"
+#line 1303 "lib/Bio/DB/HTS.c"
 	XSprePUSH; PUSHi((IV)RETVAL);
     }
     XSRETURN(1);
@@ -1318,11 +1326,11 @@ XS_EUPXS(XS_Bio__DB__HTS__Alignment_mpos)
 			"Bio::DB::HTS::Alignment::mpos",
 			"b", "Bio::DB::HTS::Alignment")
 ;
-#line 644 "lib/Bio/DB/HTS.xs"
+#line 652 "lib/Bio/DB/HTS.xs"
     if (items > 1)
       b->core.mpos = SvIV(ST(1));
     RETVAL=b->core.mpos;
-#line 1326 "lib/Bio/DB/HTS.c"
+#line 1334 "lib/Bio/DB/HTS.c"
 	XSprePUSH; PUSHi((IV)RETVAL);
     }
     XSRETURN(1);
@@ -1349,11 +1357,11 @@ XS_EUPXS(XS_Bio__DB__HTS__Alignment_isize)
 			"Bio::DB::HTS::Alignment::isize",
 			"b", "Bio::DB::HTS::Alignment")
 ;
-#line 655 "lib/Bio/DB/HTS.xs"
+#line 663 "lib/Bio/DB/HTS.xs"
     if (items > 1)
       b->core.isize = SvIV(ST(1));
     RETVAL=b->core.isize;
-#line 1357 "lib/Bio/DB/HTS.c"
+#line 1365 "lib/Bio/DB/HTS.c"
 	XSprePUSH; PUSHi((IV)RETVAL);
     }
     XSRETURN(1);
@@ -1380,9 +1388,9 @@ XS_EUPXS(XS_Bio__DB__HTS__Alignment_l_aux)
 			"Bio::DB::HTS::Alignment::l_aux",
 			"b", "Bio::DB::HTS::Alignment")
 ;
-#line 666 "lib/Bio/DB/HTS.xs"
+#line 674 "lib/Bio/DB/HTS.xs"
     RETVAL=SvIV(newSViv(bam_get_l_aux(b)));
-#line 1386 "lib/Bio/DB/HTS.c"
+#line 1394 "lib/Bio/DB/HTS.c"
 	XSprePUSH; PUSHi((IV)RETVAL);
     }
     XSRETURN(1);
@@ -1397,11 +1405,11 @@ XS_EUPXS(XS_Bio__DB__HTS__Alignment_aux)
        croak_xs_usage(cv,  "b");
     {
 	Bio__DB__HTS__Alignment	b;
-#line 674 "lib/Bio/DB/HTS.xs"
+#line 682 "lib/Bio/DB/HTS.xs"
    uint8_t *s;
    uint8_t type, key[2];
    char    str[8192];
-#line 1405 "lib/Bio/DB/HTS.c"
+#line 1413 "lib/Bio/DB/HTS.c"
 	char *	RETVAL;
 	dXSTARG;
 
@@ -1414,7 +1422,7 @@ XS_EUPXS(XS_Bio__DB__HTS__Alignment_aux)
 			"Bio::DB::HTS::Alignment::aux",
 			"b", "Bio::DB::HTS::Alignment")
 ;
-#line 678 "lib/Bio/DB/HTS.xs"
+#line 686 "lib/Bio/DB/HTS.xs"
    s = bam_get_aux(b);
    str[0] = '\0';
 
@@ -1452,7 +1460,7 @@ XS_EUPXS(XS_Bio__DB__HTS__Alignment_aux)
    }
    str[strlen(str)-1] = '\0';
    RETVAL = str;
-#line 1456 "lib/Bio/DB/HTS.c"
+#line 1464 "lib/Bio/DB/HTS.c"
 	sv_setpv(TARG, RETVAL); XSprePUSH; PUSHTARG;
     }
     XSRETURN(1);
@@ -1469,10 +1477,10 @@ XS_EUPXS(XS_Bio__DB__HTS__Alignment_aux_get)
 	Bio__DB__HTS__Alignment	b;
 	char*	tag = (char *)SvPV_nolen(ST(1))
 ;
-#line 724 "lib/Bio/DB/HTS.xs"
+#line 732 "lib/Bio/DB/HTS.xs"
    int           type;
    uint8_t       *s;
-#line 1476 "lib/Bio/DB/HTS.c"
+#line 1484 "lib/Bio/DB/HTS.c"
 	SV *	RETVAL;
 
 	if (SvROK(ST(0)) && sv_derived_from(ST(0), "Bio::DB::HTS::Alignment")) {
@@ -1484,7 +1492,7 @@ XS_EUPXS(XS_Bio__DB__HTS__Alignment_aux_get)
 			"Bio::DB::HTS::Alignment::aux_get",
 			"b", "Bio::DB::HTS::Alignment")
 ;
-#line 727 "lib/Bio/DB/HTS.xs"
+#line 735 "lib/Bio/DB/HTS.xs"
    s    = bam_aux_get(b,tag);
    if (s==0)
       XSRETURN_EMPTY;
@@ -1521,7 +1529,7 @@ XS_EUPXS(XS_Bio__DB__HTS__Alignment_aux_get)
    default:
      XSRETURN_EMPTY;
    }
-#line 1525 "lib/Bio/DB/HTS.c"
+#line 1533 "lib/Bio/DB/HTS.c"
 	RETVAL = sv_2mortal(RETVAL);
 	ST(0) = RETVAL;
     }
@@ -1539,10 +1547,10 @@ XS_EUPXS(XS_Bio__DB__HTS__Alignment_aux_keys)
     SP -= items;
     {
 	Bio__DB__HTS__Alignment	b;
-#line 771 "lib/Bio/DB/HTS.xs"
+#line 779 "lib/Bio/DB/HTS.xs"
    uint8_t *s;
    uint8_t type;
-#line 1546 "lib/Bio/DB/HTS.c"
+#line 1554 "lib/Bio/DB/HTS.c"
 
 	if (SvROK(ST(0)) && sv_derived_from(ST(0), "Bio::DB::HTS::Alignment")) {
 	    IV tmp = SvIV((SV*)SvRV(ST(0)));
@@ -1553,7 +1561,7 @@ XS_EUPXS(XS_Bio__DB__HTS__Alignment_aux_keys)
 			"Bio::DB::HTS::Alignment::aux_keys",
 			"b", "Bio::DB::HTS::Alignment")
 ;
-#line 774 "lib/Bio/DB/HTS.xs"
+#line 782 "lib/Bio/DB/HTS.xs"
    {
      s = bam_get_aux(b);  /* s is a khash macro */
      while (s < b->data + b->l_data) {
@@ -1571,7 +1579,7 @@ XS_EUPXS(XS_Bio__DB__HTS__Alignment_aux_keys)
        else if (type == 'Z' || type == 'H') { while (*s) ++(s); ++(s); }
      }
    }
-#line 1575 "lib/Bio/DB/HTS.c"
+#line 1583 "lib/Bio/DB/HTS.c"
 	PUTBACK;
 	return;
     }
@@ -1586,9 +1594,9 @@ XS_EUPXS(XS_Bio__DB__HTS__Alignment_data)
        croak_xs_usage(cv,  "b, ...");
     {
 	Bio__DB__HTS__Alignment	b;
-#line 797 "lib/Bio/DB/HTS.xs"
+#line 805 "lib/Bio/DB/HTS.xs"
     STRLEN  len;
-#line 1592 "lib/Bio/DB/HTS.c"
+#line 1600 "lib/Bio/DB/HTS.c"
 	SV *	RETVAL;
 
 	if (SvROK(ST(0)) && sv_derived_from(ST(0), "Bio::DB::HTS::Alignment")) {
@@ -1600,13 +1608,13 @@ XS_EUPXS(XS_Bio__DB__HTS__Alignment_data)
 			"Bio::DB::HTS::Alignment::data",
 			"b", "Bio::DB::HTS::Alignment")
 ;
-#line 799 "lib/Bio/DB/HTS.xs"
+#line 807 "lib/Bio/DB/HTS.xs"
     if (items > 1) {
       b->data     = SvPV(ST(1),len);
       b->l_data = len;
     }
     RETVAL=newSVpv(b->data,b->l_data);
-#line 1610 "lib/Bio/DB/HTS.c"
+#line 1618 "lib/Bio/DB/HTS.c"
 	RETVAL = sv_2mortal(RETVAL);
 	ST(0) = RETVAL;
     }
@@ -1634,11 +1642,11 @@ XS_EUPXS(XS_Bio__DB__HTS__Alignment_data_len)
 			"Bio::DB::HTS::Alignment::data_len",
 			"b", "Bio::DB::HTS::Alignment")
 ;
-#line 812 "lib/Bio/DB/HTS.xs"
+#line 820 "lib/Bio/DB/HTS.xs"
     if (items > 1)
       b->l_data = SvIV(ST(1));
     RETVAL=b->l_data;
-#line 1642 "lib/Bio/DB/HTS.c"
+#line 1650 "lib/Bio/DB/HTS.c"
 	XSprePUSH; PUSHi((IV)RETVAL);
     }
     XSRETURN(1);
@@ -1665,12 +1673,12 @@ XS_EUPXS(XS_Bio__DB__HTS__Alignment_m_data)
 			"Bio::DB::HTS::Alignment::m_data",
 			"b", "Bio::DB::HTS::Alignment")
 ;
-#line 823 "lib/Bio/DB/HTS.xs"
+#line 831 "lib/Bio/DB/HTS.xs"
     if (items > 1) {
       b->m_data = SvIV(ST(1));
     }
     RETVAL=b->m_data;
-#line 1674 "lib/Bio/DB/HTS.c"
+#line 1682 "lib/Bio/DB/HTS.c"
 	XSprePUSH; PUSHi((IV)RETVAL);
     }
     XSRETURN(1);
@@ -1696,9 +1704,9 @@ XS_EUPXS(XS_Bio__DB__HTS__Alignment_qname)
 			"Bio::DB::HTS::Alignment::qname",
 			"b", "Bio::DB::HTS::Alignment")
 ;
-#line 835 "lib/Bio/DB/HTS.xs"
+#line 843 "lib/Bio/DB/HTS.xs"
     RETVAL=newSVpv(bam_get_qname(b),0);
-#line 1702 "lib/Bio/DB/HTS.c"
+#line 1710 "lib/Bio/DB/HTS.c"
 	RETVAL = sv_2mortal(RETVAL);
 	ST(0) = RETVAL;
     }
@@ -1726,9 +1734,9 @@ XS_EUPXS(XS_Bio__DB__HTS__Alignment_paired)
 			"Bio::DB::HTS::Alignment::paired",
 			"b", "Bio::DB::HTS::Alignment")
 ;
-#line 844 "lib/Bio/DB/HTS.xs"
+#line 852 "lib/Bio/DB/HTS.xs"
     RETVAL=(b->core.flag&BAM_FPAIRED) != 0;
-#line 1732 "lib/Bio/DB/HTS.c"
+#line 1740 "lib/Bio/DB/HTS.c"
 	XSprePUSH; PUSHi((IV)RETVAL);
     }
     XSRETURN(1);
@@ -1755,9 +1763,9 @@ XS_EUPXS(XS_Bio__DB__HTS__Alignment_proper_pair)
 			"Bio::DB::HTS::Alignment::proper_pair",
 			"b", "Bio::DB::HTS::Alignment")
 ;
-#line 853 "lib/Bio/DB/HTS.xs"
+#line 861 "lib/Bio/DB/HTS.xs"
     RETVAL=(b->core.flag&BAM_FPROPER_PAIR) != 0;
-#line 1761 "lib/Bio/DB/HTS.c"
+#line 1769 "lib/Bio/DB/HTS.c"
 	XSprePUSH; PUSHi((IV)RETVAL);
     }
     XSRETURN(1);
@@ -1784,9 +1792,9 @@ XS_EUPXS(XS_Bio__DB__HTS__Alignment_unmapped)
 			"Bio::DB::HTS::Alignment::unmapped",
 			"b", "Bio::DB::HTS::Alignment")
 ;
-#line 862 "lib/Bio/DB/HTS.xs"
+#line 870 "lib/Bio/DB/HTS.xs"
     RETVAL=(b->core.flag&BAM_FUNMAP) != 0;
-#line 1790 "lib/Bio/DB/HTS.c"
+#line 1798 "lib/Bio/DB/HTS.c"
 	XSprePUSH; PUSHi((IV)RETVAL);
     }
     XSRETURN(1);
@@ -1813,9 +1821,9 @@ XS_EUPXS(XS_Bio__DB__HTS__Alignment_munmapped)
 			"Bio::DB::HTS::Alignment::munmapped",
 			"b", "Bio::DB::HTS::Alignment")
 ;
-#line 871 "lib/Bio/DB/HTS.xs"
+#line 879 "lib/Bio/DB/HTS.xs"
     RETVAL=(b->core.flag&BAM_FMUNMAP) != 0;
-#line 1819 "lib/Bio/DB/HTS.c"
+#line 1827 "lib/Bio/DB/HTS.c"
 	XSprePUSH; PUSHi((IV)RETVAL);
     }
     XSRETURN(1);
@@ -1842,9 +1850,9 @@ XS_EUPXS(XS_Bio__DB__HTS__Alignment_reversed)
 			"Bio::DB::HTS::Alignment::reversed",
 			"b", "Bio::DB::HTS::Alignment")
 ;
-#line 880 "lib/Bio/DB/HTS.xs"
+#line 888 "lib/Bio/DB/HTS.xs"
   RETVAL=bam_is_rev(b);
-#line 1848 "lib/Bio/DB/HTS.c"
+#line 1856 "lib/Bio/DB/HTS.c"
 	XSprePUSH; PUSHi((IV)RETVAL);
     }
     XSRETURN(1);
@@ -1871,9 +1879,9 @@ XS_EUPXS(XS_Bio__DB__HTS__Alignment_mreversed)
 			"Bio::DB::HTS::Alignment::mreversed",
 			"b", "Bio::DB::HTS::Alignment")
 ;
-#line 889 "lib/Bio/DB/HTS.xs"
+#line 897 "lib/Bio/DB/HTS.xs"
   RETVAL=bam_is_mrev(b);
-#line 1877 "lib/Bio/DB/HTS.c"
+#line 1885 "lib/Bio/DB/HTS.c"
 	XSprePUSH; PUSHi((IV)RETVAL);
     }
     XSRETURN(1);
@@ -1888,11 +1896,11 @@ XS_EUPXS(XS_Bio__DB__HTS__Alignment_cigar)
        croak_xs_usage(cv,  "b");
     {
 	Bio__DB__HTS__Alignment	b;
-#line 898 "lib/Bio/DB/HTS.xs"
+#line 906 "lib/Bio/DB/HTS.xs"
     int        i;
     uint32_t  *c;
     AV        *avref;
-#line 1896 "lib/Bio/DB/HTS.c"
+#line 1904 "lib/Bio/DB/HTS.c"
 	SV *	RETVAL;
 
 	if (SvROK(ST(0)) && sv_derived_from(ST(0), "Bio::DB::HTS::Alignment")) {
@@ -1904,13 +1912,13 @@ XS_EUPXS(XS_Bio__DB__HTS__Alignment_cigar)
 			"Bio::DB::HTS::Alignment::cigar",
 			"b", "Bio::DB::HTS::Alignment")
 ;
-#line 902 "lib/Bio/DB/HTS.xs"
+#line 910 "lib/Bio/DB/HTS.xs"
     avref = (AV*) sv_2mortal((SV*)newAV());
     c     = bam_get_cigar(b);
     for (i=0;i<b->core.n_cigar;i++)
       av_push(avref, newSViv(c[i]));
     RETVAL = (SV*) newRV((SV*)avref);
-#line 1914 "lib/Bio/DB/HTS.c"
+#line 1922 "lib/Bio/DB/HTS.c"
 	RETVAL = sv_2mortal(RETVAL);
 	ST(0) = RETVAL;
     }
@@ -1926,9 +1934,9 @@ XS_EUPXS(XS_Bio__DB__HTS__Header_new)
        croak_xs_usage(cv,  "packname=Bio::DB::HTS::Header");
     {
 	Bio__DB__HTS__Header	RETVAL;
-#line 916 "lib/Bio/DB/HTS.xs"
+#line 924 "lib/Bio/DB/HTS.xs"
     RETVAL = bam_hdr_init();
-#line 1932 "lib/Bio/DB/HTS.c"
+#line 1940 "lib/Bio/DB/HTS.c"
 	{
 	    SV * RETVALSV;
 	    RETVALSV = sv_newmortal();
@@ -1960,9 +1968,9 @@ XS_EUPXS(XS_Bio__DB__HTS__Header_n_targets)
 			"Bio::DB::HTS::Header::n_targets",
 			"bamh", "Bio::DB::HTS::Header")
 ;
-#line 925 "lib/Bio/DB/HTS.xs"
+#line 933 "lib/Bio/DB/HTS.xs"
     RETVAL = bamh->n_targets;
-#line 1966 "lib/Bio/DB/HTS.c"
+#line 1974 "lib/Bio/DB/HTS.c"
 	XSprePUSH; PUSHi((IV)RETVAL);
     }
     XSRETURN(1);
@@ -1977,10 +1985,10 @@ XS_EUPXS(XS_Bio__DB__HTS__Header_target_name)
        croak_xs_usage(cv,  "bamh");
     {
 	Bio__DB__HTS__Header	bamh;
-#line 934 "lib/Bio/DB/HTS.xs"
+#line 942 "lib/Bio/DB/HTS.xs"
     int i;
     AV * avref;
-#line 1984 "lib/Bio/DB/HTS.c"
+#line 1992 "lib/Bio/DB/HTS.c"
 	SV *	RETVAL;
 
 	if (SvROK(ST(0)) && sv_derived_from(ST(0), "Bio::DB::HTS::Header")) {
@@ -1992,12 +2000,12 @@ XS_EUPXS(XS_Bio__DB__HTS__Header_target_name)
 			"Bio::DB::HTS::Header::target_name",
 			"bamh", "Bio::DB::HTS::Header")
 ;
-#line 937 "lib/Bio/DB/HTS.xs"
+#line 945 "lib/Bio/DB/HTS.xs"
     avref = (AV*) sv_2mortal((SV*)newAV());
     for (i=0;i<bamh->n_targets;i++)
       av_push(avref, newSVpv(bamh->target_name[i],0));
     RETVAL = (SV*) newRV((SV*)avref);
-#line 2001 "lib/Bio/DB/HTS.c"
+#line 2009 "lib/Bio/DB/HTS.c"
 	RETVAL = sv_2mortal(RETVAL);
 	ST(0) = RETVAL;
     }
@@ -2013,10 +2021,10 @@ XS_EUPXS(XS_Bio__DB__HTS__Header_target_len)
        croak_xs_usage(cv,  "bamh");
     {
 	Bio__DB__HTS__Header	bamh;
-#line 949 "lib/Bio/DB/HTS.xs"
+#line 957 "lib/Bio/DB/HTS.xs"
     int i;
     AV * avref;
-#line 2020 "lib/Bio/DB/HTS.c"
+#line 2028 "lib/Bio/DB/HTS.c"
 	SV *	RETVAL;
 
 	if (SvROK(ST(0)) && sv_derived_from(ST(0), "Bio::DB::HTS::Header")) {
@@ -2028,12 +2036,12 @@ XS_EUPXS(XS_Bio__DB__HTS__Header_target_len)
 			"Bio::DB::HTS::Header::target_len",
 			"bamh", "Bio::DB::HTS::Header")
 ;
-#line 952 "lib/Bio/DB/HTS.xs"
+#line 960 "lib/Bio/DB/HTS.xs"
     avref = (AV*) sv_2mortal((SV*)newAV());
     for (i=0;i<bamh->n_targets;i++)
        av_push(avref, newSViv(bamh->target_len[i]));
     RETVAL = (SV*) newRV((SV*)avref);
-#line 2037 "lib/Bio/DB/HTS.c"
+#line 2045 "lib/Bio/DB/HTS.c"
 	RETVAL = sv_2mortal(RETVAL);
 	ST(0) = RETVAL;
     }
@@ -2049,10 +2057,10 @@ XS_EUPXS(XS_Bio__DB__HTS__Header_text)
        croak_xs_usage(cv,  "bamh, ...");
     {
 	Bio__DB__HTS__Header	bamh;
-#line 963 "lib/Bio/DB/HTS.xs"
+#line 971 "lib/Bio/DB/HTS.xs"
     char   *newtext;
     STRLEN n;
-#line 2056 "lib/Bio/DB/HTS.c"
+#line 2064 "lib/Bio/DB/HTS.c"
 	SV *	RETVAL;
 
 	if (SvROK(ST(0)) && sv_derived_from(ST(0), "Bio::DB::HTS::Header")) {
@@ -2064,7 +2072,7 @@ XS_EUPXS(XS_Bio__DB__HTS__Header_text)
 			"Bio::DB::HTS::Header::text",
 			"bamh", "Bio::DB::HTS::Header")
 ;
-#line 966 "lib/Bio/DB/HTS.xs"
+#line 974 "lib/Bio/DB/HTS.xs"
     /* in case text is not null terminated, we copy it */
     RETVAL = newSVpv(bamh->text,bamh->l_text);
     if (items > 1) {
@@ -2072,7 +2080,7 @@ XS_EUPXS(XS_Bio__DB__HTS__Header_text)
       strcpy(bamh->text,newtext);
       bamh->l_text = n;
     }
-#line 2076 "lib/Bio/DB/HTS.c"
+#line 2084 "lib/Bio/DB/HTS.c"
 	RETVAL = sv_2mortal(RETVAL);
 	ST(0) = RETVAL;
     }
@@ -2092,9 +2100,9 @@ XS_EUPXS(XS_Bio__DB__HTS__Header_parse_region)
 	Bio__DB__HTS__Header	bamh;
 	char*	region = (char *)SvPV_nolen(ST(1))
 ;
-#line 983 "lib/Bio/DB/HTS.xs"
+#line 991 "lib/Bio/DB/HTS.xs"
        int seqid,start,end;
-#line 2098 "lib/Bio/DB/HTS.c"
+#line 2106 "lib/Bio/DB/HTS.c"
 
 	if (SvROK(ST(0)) && sv_derived_from(ST(0), "Bio::DB::HTS::Header")) {
 	    IV tmp = SvIV((SV*)SvRV(ST(0)));
@@ -2105,7 +2113,7 @@ XS_EUPXS(XS_Bio__DB__HTS__Header_parse_region)
 			"Bio::DB::HTS::Header::parse_region",
 			"bamh", "Bio::DB::HTS::Header")
 ;
-#line 985 "lib/Bio/DB/HTS.xs"
+#line 993 "lib/Bio/DB/HTS.xs"
     {
       bam_parse_region(bamh,
 		       region,
@@ -2121,7 +2129,7 @@ XS_EUPXS(XS_Bio__DB__HTS__Header_parse_region)
 	PUSHs(sv_2mortal(newSViv(end)));
       }
     }
-#line 2125 "lib/Bio/DB/HTS.c"
+#line 2133 "lib/Bio/DB/HTS.c"
 	PUTBACK;
 	return;
     }
@@ -2157,9 +2165,9 @@ XS_EUPXS(XS_Bio__DB__HTS__Header_view1)
 			"Bio::DB::HTS::Header::view1",
 			"alignment", "Bio::DB::HTS::Alignment")
 ;
-#line 1007 "lib/Bio/DB/HTS.xs"
+#line 1015 "lib/Bio/DB/HTS.xs"
        bam_view1(bamh,alignment);
-#line 2163 "lib/Bio/DB/HTS.c"
+#line 2171 "lib/Bio/DB/HTS.c"
     }
     XSRETURN_EMPTY;
 }
@@ -2183,9 +2191,9 @@ XS_EUPXS(XS_Bio__DB__HTS__Header_DESTROY)
 			"Bio::DB::HTS::Header::DESTROY",
 			"bamh")
 ;
-#line 1015 "lib/Bio/DB/HTS.xs"
+#line 1023 "lib/Bio/DB/HTS.xs"
     bam_hdr_destroy(bamh);
-#line 2189 "lib/Bio/DB/HTS.c"
+#line 2197 "lib/Bio/DB/HTS.c"
     }
     XSRETURN_EMPTY;
 }
@@ -2208,9 +2216,9 @@ XS_EUPXS(XS_Bio__DB__HTS__Index_fetch)
 ;
 	CV*	callback;
 	SV*	callbackdata;
-#line 1031 "lib/Bio/DB/HTS.xs"
+#line 1039 "lib/Bio/DB/HTS.xs"
   fetch_callback_data fcd;
-#line 2214 "lib/Bio/DB/HTS.c"
+#line 2222 "lib/Bio/DB/HTS.c"
 	int	RETVAL;
 	dXSTARG;
 
@@ -2254,13 +2262,13 @@ XS_EUPXS(XS_Bio__DB__HTS__Index_fetch)
 	    callbackdata = ST(6)
 ;
 	}
-#line 1033 "lib/Bio/DB/HTS.xs"
+#line 1041 "lib/Bio/DB/HTS.xs"
   {
     fcd.callback = (SV*) callback;
     fcd.data     = callbackdata;
     RETVAL = hts_fetch(hfp,bai,ref,start,end,&fcd,hts_fetch_fun);
   }
-#line 2264 "lib/Bio/DB/HTS.c"
+#line 2272 "lib/Bio/DB/HTS.c"
 	XSprePUSH; PUSHi((IV)RETVAL);
     }
     XSRETURN(1);
@@ -2284,10 +2292,10 @@ XS_EUPXS(XS_Bio__DB__HTS__Index_pileup)
 ;
 	CV*	callback;
 	SV*	callbackdata;
-#line 1052 "lib/Bio/DB/HTS.xs"
+#line 1060 "lib/Bio/DB/HTS.xs"
   fetch_callback_data fcd;
   hts_plbuf_t        *pileup;
-#line 2291 "lib/Bio/DB/HTS.c"
+#line 2299 "lib/Bio/DB/HTS.c"
 
 	if (SvROK(ST(0)) && sv_derived_from(ST(0), "Bio::DB::HTS::Index")) {
 	    IV tmp = SvIV((SV*)SvRV(ST(0)));
@@ -2329,7 +2337,7 @@ XS_EUPXS(XS_Bio__DB__HTS__Index_pileup)
 	    callbackdata = ST(6)
 ;
 	}
-#line 1055 "lib/Bio/DB/HTS.xs"
+#line 1063 "lib/Bio/DB/HTS.xs"
   fcd.callback = (SV*) callback;
   fcd.data     = callbackdata;
   pileup       = hts_plbuf_init(invoke_pileup_callback_fun,(void*)&fcd);
@@ -2337,7 +2345,7 @@ XS_EUPXS(XS_Bio__DB__HTS__Index_pileup)
   hts_fetch(hfp,bai,ref,start,end,(void*)pileup,add_pileup_line);
   hts_plbuf_push(NULL,pileup);
   hts_plbuf_destroy(pileup);
-#line 2341 "lib/Bio/DB/HTS.c"
+#line 2349 "lib/Bio/DB/HTS.c"
     }
     XSRETURN_EMPTY;
 }
@@ -2360,14 +2368,14 @@ XS_EUPXS(XS_Bio__DB__HTS__Index_coverage)
 ;
 	int	bins;
 	int	maxcnt;
-#line 1073 "lib/Bio/DB/HTS.xs"
+#line 1081 "lib/Bio/DB/HTS.xs"
     coverage_graph  cg;
     hts_plbuf_t    *pileup;
     AV*             array;
     SV*             cov;
     int             i;
     bam_hdr_t      *bh;
-#line 2371 "lib/Bio/DB/HTS.c"
+#line 2379 "lib/Bio/DB/HTS.c"
 	AV *	RETVAL;
 
 	if (SvROK(ST(0)) && sv_derived_from(ST(0), "Bio::DB::HTS::Index")) {
@@ -2403,7 +2411,7 @@ XS_EUPXS(XS_Bio__DB__HTS__Index_coverage)
 	    maxcnt = (int)SvIV(ST(6))
 ;
 	}
-#line 1080 "lib/Bio/DB/HTS.xs"
+#line 1088 "lib/Bio/DB/HTS.xs"
   {
       /* TODO:can we do away with this check by a move to CSI as the standard for BAM indices */
       if (end >= BAM_MAX_REGION)
@@ -2446,7 +2454,7 @@ XS_EUPXS(XS_Bio__DB__HTS__Index_coverage)
       RETVAL = array;
       sv_2mortal((SV*)RETVAL);  /* this fixes a documented bug in perl typemap */
   }
-#line 2450 "lib/Bio/DB/HTS.c"
+#line 2458 "lib/Bio/DB/HTS.c"
 	{
 	    SV * RETVALSV;
 	    RETVALSV = newRV((SV*)RETVAL);
@@ -2476,9 +2484,9 @@ XS_EUPXS(XS_Bio__DB__HTS__Index_close)
 			"Bio::DB::HTS::Index::close",
 			"hts_idx", "Bio::DB::HTS::Index")
 ;
-#line 1130 "lib/Bio/DB/HTS.xs"
+#line 1138 "lib/Bio/DB/HTS.xs"
     hts_idx_destroy(hts_idx) ;
-#line 2482 "lib/Bio/DB/HTS.c"
+#line 2490 "lib/Bio/DB/HTS.c"
     }
     XSRETURN_EMPTY;
 }
@@ -2504,9 +2512,9 @@ XS_EUPXS(XS_Bio__DB__HTS__Pileup_qpos)
 			"Bio::DB::HTS::Pileup::qpos",
 			"pl", "Bio::DB::HTS::Pileup")
 ;
-#line 1140 "lib/Bio/DB/HTS.xs"
+#line 1148 "lib/Bio/DB/HTS.xs"
     RETVAL = pl->qpos;
-#line 2510 "lib/Bio/DB/HTS.c"
+#line 2518 "lib/Bio/DB/HTS.c"
 	XSprePUSH; PUSHi((IV)RETVAL);
     }
     XSRETURN(1);
@@ -2533,9 +2541,9 @@ XS_EUPXS(XS_Bio__DB__HTS__Pileup_pos)
 			"Bio::DB::HTS::Pileup::pos",
 			"pl", "Bio::DB::HTS::Pileup")
 ;
-#line 1148 "lib/Bio/DB/HTS.xs"
+#line 1156 "lib/Bio/DB/HTS.xs"
     RETVAL = pl->qpos+1;
-#line 2539 "lib/Bio/DB/HTS.c"
+#line 2547 "lib/Bio/DB/HTS.c"
 	XSprePUSH; PUSHi((IV)RETVAL);
     }
     XSRETURN(1);
@@ -2562,9 +2570,9 @@ XS_EUPXS(XS_Bio__DB__HTS__Pileup_indel)
 			"Bio::DB::HTS::Pileup::indel",
 			"pl", "Bio::DB::HTS::Pileup")
 ;
-#line 1156 "lib/Bio/DB/HTS.xs"
+#line 1164 "lib/Bio/DB/HTS.xs"
     RETVAL = pl->indel;
-#line 2568 "lib/Bio/DB/HTS.c"
+#line 2576 "lib/Bio/DB/HTS.c"
 	XSprePUSH; PUSHi((IV)RETVAL);
     }
     XSRETURN(1);
@@ -2591,9 +2599,9 @@ XS_EUPXS(XS_Bio__DB__HTS__Pileup_level)
 			"Bio::DB::HTS::Pileup::level",
 			"pl", "Bio::DB::HTS::Pileup")
 ;
-#line 1164 "lib/Bio/DB/HTS.xs"
+#line 1172 "lib/Bio/DB/HTS.xs"
     RETVAL = pl->level;
-#line 2597 "lib/Bio/DB/HTS.c"
+#line 2605 "lib/Bio/DB/HTS.c"
 	XSprePUSH; PUSHi((IV)RETVAL);
     }
     XSRETURN(1);
@@ -2620,9 +2628,9 @@ XS_EUPXS(XS_Bio__DB__HTS__Pileup_is_del)
 			"Bio::DB::HTS::Pileup::is_del",
 			"pl", "Bio::DB::HTS::Pileup")
 ;
-#line 1172 "lib/Bio/DB/HTS.xs"
+#line 1180 "lib/Bio/DB/HTS.xs"
     RETVAL = pl->is_del;
-#line 2626 "lib/Bio/DB/HTS.c"
+#line 2634 "lib/Bio/DB/HTS.c"
 	XSprePUSH; PUSHi((IV)RETVAL);
     }
     XSRETURN(1);
@@ -2649,9 +2657,9 @@ XS_EUPXS(XS_Bio__DB__HTS__Pileup_is_refskip)
 			"Bio::DB::HTS::Pileup::is_refskip",
 			"pl", "Bio::DB::HTS::Pileup")
 ;
-#line 1180 "lib/Bio/DB/HTS.xs"
+#line 1188 "lib/Bio/DB/HTS.xs"
     RETVAL = pl->is_refskip;
-#line 2655 "lib/Bio/DB/HTS.c"
+#line 2663 "lib/Bio/DB/HTS.c"
 	XSprePUSH; PUSHi((IV)RETVAL);
     }
     XSRETURN(1);
@@ -2678,9 +2686,9 @@ XS_EUPXS(XS_Bio__DB__HTS__Pileup_is_head)
 			"Bio::DB::HTS::Pileup::is_head",
 			"pl", "Bio::DB::HTS::Pileup")
 ;
-#line 1188 "lib/Bio/DB/HTS.xs"
+#line 1196 "lib/Bio/DB/HTS.xs"
     RETVAL = pl->is_head;
-#line 2684 "lib/Bio/DB/HTS.c"
+#line 2692 "lib/Bio/DB/HTS.c"
 	XSprePUSH; PUSHi((IV)RETVAL);
     }
     XSRETURN(1);
@@ -2707,9 +2715,9 @@ XS_EUPXS(XS_Bio__DB__HTS__Pileup_is_tail)
 			"Bio::DB::HTS::Pileup::is_tail",
 			"pl", "Bio::DB::HTS::Pileup")
 ;
-#line 1196 "lib/Bio/DB/HTS.xs"
+#line 1204 "lib/Bio/DB/HTS.xs"
     RETVAL = pl->is_tail;
-#line 2713 "lib/Bio/DB/HTS.c"
+#line 2721 "lib/Bio/DB/HTS.c"
 	XSprePUSH; PUSHi((IV)RETVAL);
     }
     XSRETURN(1);
@@ -2735,9 +2743,9 @@ XS_EUPXS(XS_Bio__DB__HTS__Pileup_b)
 			"Bio::DB::HTS::Pileup::b",
 			"pl", "Bio::DB::HTS::Pileup")
 ;
-#line 1204 "lib/Bio/DB/HTS.xs"
+#line 1212 "lib/Bio/DB/HTS.xs"
     RETVAL = bam_dup1(pl->b);
-#line 2741 "lib/Bio/DB/HTS.c"
+#line 2749 "lib/Bio/DB/HTS.c"
 	{
 	    SV * RETVALSV;
 	    RETVALSV = sv_newmortal();
@@ -2768,9 +2776,9 @@ XS_EUPXS(XS_Bio__DB__HTS__Pileup_alignment)
 			"Bio::DB::HTS::Pileup::alignment",
 			"pl", "Bio::DB::HTS::Pileup")
 ;
-#line 1212 "lib/Bio/DB/HTS.xs"
+#line 1220 "lib/Bio/DB/HTS.xs"
     RETVAL = bam_dup1(pl->b);
-#line 2774 "lib/Bio/DB/HTS.c"
+#line 2782 "lib/Bio/DB/HTS.c"
 	{
 	    SV * RETVALSV;
 	    RETVALSV = sv_newmortal();
@@ -2792,9 +2800,9 @@ XS_EUPXS(XS_Bio__DB__HTS__Tabix_tbx_open)
 	char *	fname = (char *)SvPV_nolen(ST(0))
 ;
 	Bio__DB__HTS__Tabix	RETVAL;
-#line 1224 "lib/Bio/DB/HTS.xs"
+#line 1232 "lib/Bio/DB/HTS.xs"
     RETVAL = tbx_index_load(fname);
-#line 2798 "lib/Bio/DB/HTS.c"
+#line 2806 "lib/Bio/DB/HTS.c"
 	{
 	    SV * RETVALSV;
 	    RETVALSV = sv_newmortal();
@@ -2824,9 +2832,9 @@ XS_EUPXS(XS_Bio__DB__HTS__Tabix_tbx_close)
 			"Bio::DB::HTS::Tabix::tbx_close",
 			"t", "Bio::DB::HTS::Tabix")
 ;
-#line 1233 "lib/Bio/DB/HTS.xs"
+#line 1241 "lib/Bio/DB/HTS.xs"
     tbx_destroy(t);
-#line 2830 "lib/Bio/DB/HTS.c"
+#line 2838 "lib/Bio/DB/HTS.c"
     }
     XSRETURN_EMPTY;
 }
@@ -2853,9 +2861,9 @@ XS_EUPXS(XS_Bio__DB__HTS__Tabix_tbx_query)
 			"Bio::DB::HTS::Tabix::tbx_query",
 			"t", "Bio::DB::HTS::Tabix")
 ;
-#line 1241 "lib/Bio/DB/HTS.xs"
+#line 1249 "lib/Bio/DB/HTS.xs"
     RETVAL = tbx_itr_querys(t, region);
-#line 2859 "lib/Bio/DB/HTS.c"
+#line 2867 "lib/Bio/DB/HTS.c"
 	{
 	    SV * RETVALSV;
 	    RETVALSV = sv_newmortal();
@@ -2876,11 +2884,11 @@ XS_EUPXS(XS_Bio__DB__HTS__Tabix_tbx_header)
     {
 	Bio__DB__HTSfile	fp;
 	Bio__DB__HTS__Tabix	tabix;
-#line 1252 "lib/Bio/DB/HTS.xs"
+#line 1260 "lib/Bio/DB/HTS.xs"
     int num_header_lines = 0;
     AV *av_ref;
     kstring_t str = {0,0,0};
-#line 2884 "lib/Bio/DB/HTS.c"
+#line 2892 "lib/Bio/DB/HTS.c"
 	SV *	RETVAL;
 
 	if (SvROK(ST(0)) && sv_derived_from(ST(0), "Bio::DB::HTSfile")) {
@@ -2902,7 +2910,7 @@ XS_EUPXS(XS_Bio__DB__HTS__Tabix_tbx_header)
 			"Bio::DB::HTS::Tabix::tbx_header",
 			"tabix", "Bio::DB::HTS::Tabix")
 ;
-#line 1256 "lib/Bio/DB/HTS.xs"
+#line 1264 "lib/Bio/DB/HTS.xs"
     av_ref = newAV();
     while ( hts_getline(fp, KS_SEP_LINE, &str) >= 0 ) {
         if ( ! str.l ) break; //no lines left so we are done
@@ -2917,7 +2925,8 @@ XS_EUPXS(XS_Bio__DB__HTS__Tabix_tbx_header)
         XSRETURN_EMPTY;
 
     RETVAL = newRV_noinc((SV*) av_ref);
-#line 2921 "lib/Bio/DB/HTS.c"
+    free(str.s);
+#line 2930 "lib/Bio/DB/HTS.c"
 	RETVAL = sv_2mortal(RETVAL);
 	ST(0) = RETVAL;
     }
@@ -2933,11 +2942,11 @@ XS_EUPXS(XS_Bio__DB__HTS__Tabix_tbx_seqnames)
        croak_xs_usage(cv,  "t");
     {
 	Bio__DB__HTS__Tabix	t;
-#line 1277 "lib/Bio/DB/HTS.xs"
+#line 1286 "lib/Bio/DB/HTS.xs"
     const char **names;
     int i, num_seqs;
     AV *av_ref;
-#line 2941 "lib/Bio/DB/HTS.c"
+#line 2950 "lib/Bio/DB/HTS.c"
 	SV *	RETVAL;
 
 	if (SvROK(ST(0)) && sv_derived_from(ST(0), "Bio::DB::HTS::Tabix")) {
@@ -2949,7 +2958,7 @@ XS_EUPXS(XS_Bio__DB__HTS__Tabix_tbx_seqnames)
 			"Bio::DB::HTS::Tabix::tbx_seqnames",
 			"t", "Bio::DB::HTS::Tabix")
 ;
-#line 1281 "lib/Bio/DB/HTS.xs"
+#line 1290 "lib/Bio/DB/HTS.xs"
     names = tbx_seqnames(t, &num_seqs); //call actual tabix method
 
     //blast all the values onto a perl array
@@ -2963,7 +2972,7 @@ XS_EUPXS(XS_Bio__DB__HTS__Tabix_tbx_seqnames)
 
     //return a reference to our array
     RETVAL = newRV_noinc((SV*)av_ref);
-#line 2967 "lib/Bio/DB/HTS.c"
+#line 2976 "lib/Bio/DB/HTS.c"
 	RETVAL = sv_2mortal(RETVAL);
 	ST(0) = RETVAL;
     }
@@ -2981,9 +2990,9 @@ XS_EUPXS(XS_Bio__DB__HTS__Tabix__Iterator_tbx_iter_next)
 	Bio__DB__HTS__Tabix__Iterator	iter;
 	Bio__DB__HTSfile	fp;
 	Bio__DB__HTS__Tabix	t;
-#line 1305 "lib/Bio/DB/HTS.xs"
+#line 1314 "lib/Bio/DB/HTS.xs"
     kstring_t str = {0,0,0};
-#line 2987 "lib/Bio/DB/HTS.c"
+#line 2996 "lib/Bio/DB/HTS.c"
 	SV *	RETVAL;
 
 	if (SvROK(ST(0)) && sv_derived_from(ST(0), "Bio::DB::HTS::Tabix::Iterator")) {
@@ -3015,12 +3024,16 @@ XS_EUPXS(XS_Bio__DB__HTS__Tabix__Iterator_tbx_iter_next)
 			"Bio::DB::HTS::Tabix::Iterator::tbx_iter_next",
 			"t", "Bio::DB::HTS::Tabix")
 ;
-#line 1307 "lib/Bio/DB/HTS.xs"
-    if (tbx_itr_next(fp, t, iter, &str) < 0)
+#line 1316 "lib/Bio/DB/HTS.xs"
+    if (tbx_itr_next(fp, t, iter, &str) < 0) {
+        free(str.s);
         XSRETURN_EMPTY;
+    }
 
     RETVAL = newSVpv(str.s, str.l);
-#line 3024 "lib/Bio/DB/HTS.c"
+    free(str.s);
+
+#line 3037 "lib/Bio/DB/HTS.c"
 	RETVAL = sv_2mortal(RETVAL);
 	ST(0) = RETVAL;
     }
@@ -3046,35 +3059,41 @@ XS_EUPXS(XS_Bio__DB__HTS__Tabix__Iterator_tbx_iter_free)
 			"Bio::DB::HTS::Tabix::Iterator::tbx_iter_free",
 			"iter", "Bio::DB::HTS::Tabix::Iterator")
 ;
-#line 1318 "lib/Bio/DB/HTS.xs"
+#line 1331 "lib/Bio/DB/HTS.xs"
 	tbx_itr_destroy(iter);
-#line 3052 "lib/Bio/DB/HTS.c"
+#line 3065 "lib/Bio/DB/HTS.c"
     }
     XSRETURN_EMPTY;
 }
 
 
-XS_EUPXS(XS_Bio__DB__HTS__VCF_bcf_sr_open); /* prototype to pass -Wmissing-prototypes */
-XS_EUPXS(XS_Bio__DB__HTS__VCF_bcf_sr_open)
+XS_EUPXS(XS_Bio__DB__HTS__VCFfile_open); /* prototype to pass -Wmissing-prototypes */
+XS_EUPXS(XS_Bio__DB__HTS__VCFfile_open)
 {
     dVAR; dXSARGS;
-    if (items != 1)
-       croak_xs_usage(cv,  "filename");
+    if (items < 2 || items > 3)
+       croak_xs_usage(cv,  "packname, filename, mode=\"r\"");
     {
-	char*	filename = (char *)SvPV_nolen(ST(0))
+	char*	packname = (char *)SvPV_nolen(ST(0))
 ;
-#line 1327 "lib/Bio/DB/HTS.xs"
-        bcf_srs_t* sr = bcf_sr_init();
-#line 3069 "lib/Bio/DB/HTS.c"
-	Bio__DB__HTS__VCF	RETVAL;
-#line 1329 "lib/Bio/DB/HTS.xs"
-        bcf_sr_add_reader(sr, filename);
-        RETVAL = sr;
-#line 3074 "lib/Bio/DB/HTS.c"
+	char*	filename = (char *)SvPV_nolen(ST(1))
+;
+	char*	mode;
+	Bio__DB__HTS__VCFfile	RETVAL;
+
+	if (items < 3)
+	    mode = "r";
+	else {
+	    mode = (char *)SvPV_nolen(ST(2))
+;
+	}
+#line 1343 "lib/Bio/DB/HTS.xs"
+      RETVAL = bcf_open(filename, mode);
+#line 3093 "lib/Bio/DB/HTS.c"
 	{
 	    SV * RETVALSV;
 	    RETVALSV = sv_newmortal();
-	    sv_setref_pv(RETVALSV, "Bio::DB::HTS::VCF", (void*)RETVAL);
+	    sv_setref_pv(RETVALSV, "Bio::DB::HTS::VCFfile", (void*)RETVAL);
 	    ST(0) = RETVALSV;
 	}
     }
@@ -3082,32 +3101,32 @@ XS_EUPXS(XS_Bio__DB__HTS__VCF_bcf_sr_open)
 }
 
 
-XS_EUPXS(XS_Bio__DB__HTS__VCF_bcf_header); /* prototype to pass -Wmissing-prototypes */
-XS_EUPXS(XS_Bio__DB__HTS__VCF_bcf_header)
+XS_EUPXS(XS_Bio__DB__HTS__VCFfile_header_read); /* prototype to pass -Wmissing-prototypes */
+XS_EUPXS(XS_Bio__DB__HTS__VCFfile_header_read)
 {
     dVAR; dXSARGS;
     if (items != 1)
-       croak_xs_usage(cv,  "vcf");
+       croak_xs_usage(cv,  "vfile");
     {
-	Bio__DB__HTS__VCF	vcf;
-#line 1339 "lib/Bio/DB/HTS.xs"
+	Bio__DB__HTS__VCFfile	vfile;
+#line 1352 "lib/Bio/DB/HTS.xs"
         bcf_hdr_t* h;
-#line 3096 "lib/Bio/DB/HTS.c"
+#line 3115 "lib/Bio/DB/HTS.c"
 	Bio__DB__HTS__VCF__Header	RETVAL;
 
-	if (SvROK(ST(0)) && sv_derived_from(ST(0), "Bio::DB::HTS::VCF")) {
+	if (SvROK(ST(0)) && sv_derived_from(ST(0), "Bio::DB::HTS::VCFfile")) {
 	    IV tmp = SvIV((SV*)SvRV(ST(0)));
-	    vcf = INT2PTR(Bio__DB__HTS__VCF,tmp);
+	    vfile = INT2PTR(Bio__DB__HTS__VCFfile,tmp);
 	}
 	else
 	    Perl_croak(aTHX_ "%s: %s is not of type %s",
-			"Bio::DB::HTS::VCF::bcf_header",
-			"vcf", "Bio::DB::HTS::VCF")
+			"Bio::DB::HTS::VCFfile::header_read",
+			"vfile", "Bio::DB::HTS::VCFfile")
 ;
-#line 1341 "lib/Bio/DB/HTS.xs"
-        h = vcf->readers[0].header;
+#line 1354 "lib/Bio/DB/HTS.xs"
+        h = bcf_hdr_read(vfile);
         RETVAL = h;
-#line 3111 "lib/Bio/DB/HTS.c"
+#line 3130 "lib/Bio/DB/HTS.c"
 	{
 	    SV * RETVALSV;
 	    RETVALSV = sv_newmortal();
@@ -3119,37 +3138,51 @@ XS_EUPXS(XS_Bio__DB__HTS__VCF_bcf_header)
 }
 
 
-XS_EUPXS(XS_Bio__DB__HTS__VCF_bcf_next); /* prototype to pass -Wmissing-prototypes */
-XS_EUPXS(XS_Bio__DB__HTS__VCF_bcf_next)
+XS_EUPXS(XS_Bio__DB__HTS__VCFfile_read1); /* prototype to pass -Wmissing-prototypes */
+XS_EUPXS(XS_Bio__DB__HTS__VCFfile_read1)
 {
     dVAR; dXSARGS;
-    if (items != 1)
-       croak_xs_usage(cv,  "vcf");
+    if (items != 2)
+       croak_xs_usage(cv,  "vfile, header");
     {
-	Bio__DB__HTS__VCF	vcf;
-#line 1351 "lib/Bio/DB/HTS.xs"
-        bcf1_t* line;
-#line 3133 "lib/Bio/DB/HTS.c"
+	Bio__DB__HTS__VCFfile	vfile;
+	Bio__DB__HTS__VCF__Header	header;
+#line 1365 "lib/Bio/DB/HTS.xs"
+        bcf1_t *rec;
+#line 3153 "lib/Bio/DB/HTS.c"
 	Bio__DB__HTS__VCF__Row	RETVAL;
 
-	if (SvROK(ST(0)) && sv_derived_from(ST(0), "Bio::DB::HTS::VCF")) {
+	if (SvROK(ST(0)) && sv_derived_from(ST(0), "Bio::DB::HTS::VCFfile")) {
 	    IV tmp = SvIV((SV*)SvRV(ST(0)));
-	    vcf = INT2PTR(Bio__DB__HTS__VCF,tmp);
+	    vfile = INT2PTR(Bio__DB__HTS__VCFfile,tmp);
 	}
 	else
 	    Perl_croak(aTHX_ "%s: %s is not of type %s",
-			"Bio::DB::HTS::VCF::bcf_next",
-			"vcf", "Bio::DB::HTS::VCF")
+			"Bio::DB::HTS::VCFfile::read1",
+			"vfile", "Bio::DB::HTS::VCFfile")
 ;
-#line 1353 "lib/Bio/DB/HTS.xs"
-        if ( bcf_sr_next_line(vcf) ) {
-            line = bcf_sr_get_line(vcf, 0); //0 being the first and only reader
-            RETVAL = line;
+
+	if (SvROK(ST(1)) && sv_derived_from(ST(1), "Bio::DB::HTS::VCF::Header")) {
+	    IV tmp = SvIV((SV*)SvRV(ST(1)));
+	    header = INT2PTR(Bio__DB__HTS__VCF__Header,tmp);
+	}
+	else
+	    Perl_croak(aTHX_ "%s: %s is not of type %s",
+			"Bio::DB::HTS::VCFfile::read1",
+			"header", "Bio::DB::HTS::VCF::Header")
+;
+#line 1367 "lib/Bio/DB/HTS.xs"
+        rec = bcf_init();
+        if ( bcf_read(vfile, header, rec) == 0 )
+        {
+            bcf_unpack(rec, BCF_UN_ALL) ;
+            RETVAL = rec ;
         }
-        else {
+        else
+        {
             XSRETURN_EMPTY;
         }
-#line 3153 "lib/Bio/DB/HTS.c"
+#line 3186 "lib/Bio/DB/HTS.c"
 	{
 	    SV * RETVALSV;
 	    RETVALSV = sv_newmortal();
@@ -3161,36 +3194,37 @@ XS_EUPXS(XS_Bio__DB__HTS__VCF_bcf_next)
 }
 
 
-XS_EUPXS(XS_Bio__DB__HTS__VCF_bcf_num_variants); /* prototype to pass -Wmissing-prototypes */
-XS_EUPXS(XS_Bio__DB__HTS__VCF_bcf_num_variants)
+XS_EUPXS(XS_Bio__DB__HTS__VCFfile_num_variants); /* prototype to pass -Wmissing-prototypes */
+XS_EUPXS(XS_Bio__DB__HTS__VCFfile_num_variants)
 {
     dVAR; dXSARGS;
-    if (items != 1)
-       croak_xs_usage(cv,  "vcf");
+    if (items != 2)
+       croak_xs_usage(cv,  "packname, filename");
     {
-	Bio__DB__HTS__VCF	vcf;
-#line 1368 "lib/Bio/DB/HTS.xs"
-        int n_records = 0;
-#line 3175 "lib/Bio/DB/HTS.c"
-	SV *	RETVAL;
-
-	if (SvROK(ST(0)) && sv_derived_from(ST(0), "Bio::DB::HTS::VCF")) {
-	    IV tmp = SvIV((SV*)SvRV(ST(0)));
-	    vcf = INT2PTR(Bio__DB__HTS__VCF,tmp);
-	}
-	else
-	    Perl_croak(aTHX_ "%s: %s is not of type %s",
-			"Bio::DB::HTS::VCF::bcf_num_variants",
-			"vcf", "Bio::DB::HTS::VCF")
+	char*	packname = (char *)SvPV_nolen(ST(0))
 ;
-#line 1370 "lib/Bio/DB/HTS.xs"
+	char*	filename = (char *)SvPV_nolen(ST(1))
+;
+#line 1387 "lib/Bio/DB/HTS.xs"
+        int n_records = 0;
+        vcfFile* vfile;
+        bcf_hdr_t* h;
+        bcf1_t *rec;
+#line 3214 "lib/Bio/DB/HTS.c"
+	SV *	RETVAL;
+#line 1392 "lib/Bio/DB/HTS.xs"
+        vfile = bcf_open(filename, "r");
+        h = bcf_hdr_read(vfile);
+        rec = bcf_init();
+
         //loop through all the lines but don't do anything with them
-        while ( bcf_sr_next_line(vcf) ) {
+        while(bcf_read(vfile, h, rec) == 0)
+        {
             ++n_records;
         }
-
+        bcf_close(vfile) ;
         RETVAL = newSViv(n_records);
-#line 3194 "lib/Bio/DB/HTS.c"
+#line 3228 "lib/Bio/DB/HTS.c"
 	RETVAL = sv_2mortal(RETVAL);
 	ST(0) = RETVAL;
     }
@@ -3198,27 +3232,1956 @@ XS_EUPXS(XS_Bio__DB__HTS__VCF_bcf_num_variants)
 }
 
 
-XS_EUPXS(XS_Bio__DB__HTS__VCF_bcf_sr_close); /* prototype to pass -Wmissing-prototypes */
-XS_EUPXS(XS_Bio__DB__HTS__VCF_bcf_sr_close)
+XS_EUPXS(XS_Bio__DB__HTS__VCFfile_vcf_close); /* prototype to pass -Wmissing-prototypes */
+XS_EUPXS(XS_Bio__DB__HTS__VCFfile_vcf_close)
 {
     dVAR; dXSARGS;
-    if (items != 1)
-       croak_xs_usage(cv,  "vcf");
+    if (items != 2)
+       croak_xs_usage(cv,  "vfile, h");
     {
-	Bio__DB__HTS__VCF	vcf;
+	Bio__DB__HTS__VCFfile	vfile;
+	Bio__DB__HTS__VCF__Header	h;
 
-	if (SvROK(ST(0)) && sv_derived_from(ST(0), "Bio::DB::HTS::VCF")) {
+	if (SvROK(ST(0)) && sv_derived_from(ST(0), "Bio::DB::HTS::VCFfile")) {
 	    IV tmp = SvIV((SV*)SvRV(ST(0)));
-	    vcf = INT2PTR(Bio__DB__HTS__VCF,tmp);
+	    vfile = INT2PTR(Bio__DB__HTS__VCFfile,tmp);
 	}
 	else
 	    Perl_croak(aTHX_ "%s: %s is not of type %s",
-			"Bio::DB::HTS::VCF::bcf_sr_close",
-			"vcf", "Bio::DB::HTS::VCF")
+			"Bio::DB::HTS::VCFfile::vcf_close",
+			"vfile", "Bio::DB::HTS::VCFfile")
 ;
-#line 1384 "lib/Bio/DB/HTS.xs"
-        bcf_sr_destroy(vcf);
-#line 3222 "lib/Bio/DB/HTS.c"
+
+	if (SvROK(ST(1)) && sv_derived_from(ST(1), "Bio::DB::HTS::VCF::Header")) {
+	    IV tmp = SvIV((SV*)SvRV(ST(1)));
+	    h = INT2PTR(Bio__DB__HTS__VCF__Header,tmp);
+	}
+	else
+	    Perl_croak(aTHX_ "%s: %s is not of type %s",
+			"Bio::DB::HTS::VCFfile::vcf_close",
+			"h", "Bio::DB::HTS::VCF::Header")
+;
+#line 1413 "lib/Bio/DB/HTS.xs"
+        bcf_hdr_destroy(h);
+        bcf_close(vfile);
+#line 3268 "lib/Bio/DB/HTS.c"
+    }
+    XSRETURN_EMPTY;
+}
+
+
+XS_EUPXS(XS_Bio__DB__HTS__VCF__Header_version); /* prototype to pass -Wmissing-prototypes */
+XS_EUPXS(XS_Bio__DB__HTS__VCF__Header_version)
+{
+    dVAR; dXSARGS;
+    if (items != 1)
+       croak_xs_usage(cv,  "header");
+    {
+	Bio__DB__HTS__VCF__Header	header;
+#line 1424 "lib/Bio/DB/HTS.xs"
+#line 3283 "lib/Bio/DB/HTS.c"
+	SV *	RETVAL;
+
+	if (SvROK(ST(0)) && sv_derived_from(ST(0), "Bio::DB::HTS::VCF::Header")) {
+	    IV tmp = SvIV((SV*)SvRV(ST(0)));
+	    header = INT2PTR(Bio__DB__HTS__VCF__Header,tmp);
+	}
+	else
+	    Perl_croak(aTHX_ "%s: %s is not of type %s",
+			"Bio::DB::HTS::VCF::Header::version",
+			"header", "Bio::DB::HTS::VCF::Header")
+;
+#line 1425 "lib/Bio/DB/HTS.xs"
+     RETVAL = newSVpv(bcf_hdr_get_version(header),0) ;
+#line 3297 "lib/Bio/DB/HTS.c"
+	RETVAL = sv_2mortal(RETVAL);
+	ST(0) = RETVAL;
+    }
+    XSRETURN(1);
+}
+
+
+XS_EUPXS(XS_Bio__DB__HTS__VCF__Header_num_samples); /* prototype to pass -Wmissing-prototypes */
+XS_EUPXS(XS_Bio__DB__HTS__VCF__Header_num_samples)
+{
+    dVAR; dXSARGS;
+    if (items != 1)
+       croak_xs_usage(cv,  "header");
+    {
+	Bio__DB__HTS__VCF__Header	header;
+#line 1434 "lib/Bio/DB/HTS.xs"
+#line 3314 "lib/Bio/DB/HTS.c"
+	int	RETVAL;
+	dXSTARG;
+
+	if (SvROK(ST(0)) && sv_derived_from(ST(0), "Bio::DB::HTS::VCF::Header")) {
+	    IV tmp = SvIV((SV*)SvRV(ST(0)));
+	    header = INT2PTR(Bio__DB__HTS__VCF__Header,tmp);
+	}
+	else
+	    Perl_croak(aTHX_ "%s: %s is not of type %s",
+			"Bio::DB::HTS::VCF::Header::num_samples",
+			"header", "Bio::DB::HTS::VCF::Header")
+;
+#line 1435 "lib/Bio/DB/HTS.xs"
+     RETVAL = bcf_hdr_nsamples(header) ;
+#line 3329 "lib/Bio/DB/HTS.c"
+	XSprePUSH; PUSHi((IV)RETVAL);
+    }
+    XSRETURN(1);
+}
+
+
+XS_EUPXS(XS_Bio__DB__HTS__VCF__Header_get_sample_names); /* prototype to pass -Wmissing-prototypes */
+XS_EUPXS(XS_Bio__DB__HTS__VCF__Header_get_sample_names)
+{
+    dVAR; dXSARGS;
+    if (items != 1)
+       croak_xs_usage(cv,  "header");
+    {
+	Bio__DB__HTS__VCF__Header	header;
+#line 1444 "lib/Bio/DB/HTS.xs"
+        int nsamples = 0 ;
+        int i ;
+        AV *av_ref;
+#line 3348 "lib/Bio/DB/HTS.c"
+	SV *	RETVAL;
+
+	if (SvROK(ST(0)) && sv_derived_from(ST(0), "Bio::DB::HTS::VCF::Header")) {
+	    IV tmp = SvIV((SV*)SvRV(ST(0)));
+	    header = INT2PTR(Bio__DB__HTS__VCF__Header,tmp);
+	}
+	else
+	    Perl_croak(aTHX_ "%s: %s is not of type %s",
+			"Bio::DB::HTS::VCF::Header::get_sample_names",
+			"header", "Bio::DB::HTS::VCF::Header")
+;
+#line 1448 "lib/Bio/DB/HTS.xs"
+        av_ref = newAV();
+        nsamples = bcf_hdr_nsamples(header) ;
+        for (i=0 ; i<nsamples ; i++)
+        {
+            SV *sv_ref = newSVpv(header->samples[i], 0);
+            av_push(av_ref, sv_ref);
+        }
+        RETVAL = newRV_noinc((SV*)av_ref);
+#line 3369 "lib/Bio/DB/HTS.c"
+	RETVAL = sv_2mortal(RETVAL);
+	ST(0) = RETVAL;
+    }
+    XSRETURN(1);
+}
+
+
+XS_EUPXS(XS_Bio__DB__HTS__VCF__Header_num_seqnames); /* prototype to pass -Wmissing-prototypes */
+XS_EUPXS(XS_Bio__DB__HTS__VCF__Header_num_seqnames)
+{
+    dVAR; dXSARGS;
+    if (items != 1)
+       croak_xs_usage(cv,  "header");
+    {
+	Bio__DB__HTS__VCF__Header	header;
+#line 1463 "lib/Bio/DB/HTS.xs"
+        int nseq = 0 ;
+#line 3387 "lib/Bio/DB/HTS.c"
+	int	RETVAL;
+	dXSTARG;
+
+	if (SvROK(ST(0)) && sv_derived_from(ST(0), "Bio::DB::HTS::VCF::Header")) {
+	    IV tmp = SvIV((SV*)SvRV(ST(0)));
+	    header = INT2PTR(Bio__DB__HTS__VCF__Header,tmp);
+	}
+	else
+	    Perl_croak(aTHX_ "%s: %s is not of type %s",
+			"Bio::DB::HTS::VCF::Header::num_seqnames",
+			"header", "Bio::DB::HTS::VCF::Header")
+;
+#line 1465 "lib/Bio/DB/HTS.xs"
+     bcf_hdr_seqnames(header, &nseq);
+     RETVAL = nseq;
+#line 3403 "lib/Bio/DB/HTS.c"
+	XSprePUSH; PUSHi((IV)RETVAL);
+    }
+    XSRETURN(1);
+}
+
+
+XS_EUPXS(XS_Bio__DB__HTS__VCF__Header_get_seqnames); /* prototype to pass -Wmissing-prototypes */
+XS_EUPXS(XS_Bio__DB__HTS__VCF__Header_get_seqnames)
+{
+    dVAR; dXSARGS;
+    if (items != 1)
+       croak_xs_usage(cv,  "header");
+    {
+	Bio__DB__HTS__VCF__Header	header;
+#line 1475 "lib/Bio/DB/HTS.xs"
+        int nseq = 0 ;
+        const char **seqnames ;
+        int i = 0 ;
+        AV *av_ref = newAV() ;
+#line 3423 "lib/Bio/DB/HTS.c"
+	SV *	RETVAL;
+
+	if (SvROK(ST(0)) && sv_derived_from(ST(0), "Bio::DB::HTS::VCF::Header")) {
+	    IV tmp = SvIV((SV*)SvRV(ST(0)));
+	    header = INT2PTR(Bio__DB__HTS__VCF__Header,tmp);
+	}
+	else
+	    Perl_croak(aTHX_ "%s: %s is not of type %s",
+			"Bio::DB::HTS::VCF::Header::get_seqnames",
+			"header", "Bio::DB::HTS::VCF::Header")
+;
+#line 1480 "lib/Bio/DB/HTS.xs"
+        seqnames = bcf_hdr_seqnames(header, &nseq);
+        for (i = 0; i < nseq; i++)
+        {
+            SV *sv_ref = newSVpv(seqnames[i], 0);
+            av_push(av_ref, sv_ref);
+        }
+        free(seqnames) ;
+        RETVAL = newRV_noinc((SV*)av_ref);
+#line 3444 "lib/Bio/DB/HTS.c"
+	RETVAL = sv_2mortal(RETVAL);
+	ST(0) = RETVAL;
+    }
+    XSRETURN(1);
+}
+
+
+XS_EUPXS(XS_Bio__DB__HTS__VCF__Row_print); /* prototype to pass -Wmissing-prototypes */
+XS_EUPXS(XS_Bio__DB__HTS__VCF__Row_print)
+{
+    dVAR; dXSARGS;
+    if (items != 2)
+       croak_xs_usage(cv,  "row, header");
+    {
+	Bio__DB__HTS__VCF__Row	row;
+	Bio__DB__HTS__VCF__Header	header;
+#line 1502 "lib/Bio/DB/HTS.xs"
+     int i ;
+#line 3463 "lib/Bio/DB/HTS.c"
+
+	if (SvROK(ST(0)) && sv_derived_from(ST(0), "Bio::DB::HTS::VCF::Row")) {
+	    IV tmp = SvIV((SV*)SvRV(ST(0)));
+	    row = INT2PTR(Bio__DB__HTS__VCF__Row,tmp);
+	}
+	else
+	    Perl_croak(aTHX_ "%s: %s is not of type %s",
+			"Bio::DB::HTS::VCF::Row::print",
+			"row", "Bio::DB::HTS::VCF::Row")
+;
+
+	if (SvROK(ST(1)) && sv_derived_from(ST(1), "Bio::DB::HTS::VCF::Header")) {
+	    IV tmp = SvIV((SV*)SvRV(ST(1)));
+	    header = INT2PTR(Bio__DB__HTS__VCF__Header,tmp);
+	}
+	else
+	    Perl_croak(aTHX_ "%s: %s is not of type %s",
+			"Bio::DB::HTS::VCF::Row::print",
+			"header", "Bio::DB::HTS::VCF::Header")
+;
+#line 1504 "lib/Bio/DB/HTS.xs"
+     printf("\nVCF data line:\n");
+     printf("chromosome:%s\t", bcf_hdr_id2name(header,row->rid));
+     printf("position:%d\t", (row->pos+1));
+     printf("QUAL:%f\t", row->qual);
+     printf("ID:%s\t", row->d.id );
+     printf("REF:%s\n", row->d.als);
+     printf("Num Alleles:%d\n", row->n_allele-1);
+     for( i=1 ; i<row->n_allele ; i++ )
+     {
+       printf("ALT[%d]=%s\t", i, row->d.allele[i]);
+     }
+     printf("\nNum Filters:%d\n", row->d.n_flt);
+
+#line 3498 "lib/Bio/DB/HTS.c"
+    }
+    XSRETURN_EMPTY;
+}
+
+
+XS_EUPXS(XS_Bio__DB__HTS__VCF__Row_chromosome); /* prototype to pass -Wmissing-prototypes */
+XS_EUPXS(XS_Bio__DB__HTS__VCF__Row_chromosome)
+{
+    dVAR; dXSARGS;
+    if (items != 2)
+       croak_xs_usage(cv,  "row, header");
+    {
+	Bio__DB__HTS__VCF__Row	row;
+	Bio__DB__HTS__VCF__Header	header;
+#line 1527 "lib/Bio/DB/HTS.xs"
+#line 3514 "lib/Bio/DB/HTS.c"
+	SV *	RETVAL;
+
+	if (SvROK(ST(0)) && sv_derived_from(ST(0), "Bio::DB::HTS::VCF::Row")) {
+	    IV tmp = SvIV((SV*)SvRV(ST(0)));
+	    row = INT2PTR(Bio__DB__HTS__VCF__Row,tmp);
+	}
+	else
+	    Perl_croak(aTHX_ "%s: %s is not of type %s",
+			"Bio::DB::HTS::VCF::Row::chromosome",
+			"row", "Bio::DB::HTS::VCF::Row")
+;
+
+	if (SvROK(ST(1)) && sv_derived_from(ST(1), "Bio::DB::HTS::VCF::Header")) {
+	    IV tmp = SvIV((SV*)SvRV(ST(1)));
+	    header = INT2PTR(Bio__DB__HTS__VCF__Header,tmp);
+	}
+	else
+	    Perl_croak(aTHX_ "%s: %s is not of type %s",
+			"Bio::DB::HTS::VCF::Row::chromosome",
+			"header", "Bio::DB::HTS::VCF::Header")
+;
+#line 1528 "lib/Bio/DB/HTS.xs"
+     RETVAL = newSVpv(bcf_hdr_id2name(header,row->rid),0) ;
+#line 3538 "lib/Bio/DB/HTS.c"
+	RETVAL = sv_2mortal(RETVAL);
+	ST(0) = RETVAL;
+    }
+    XSRETURN(1);
+}
+
+
+XS_EUPXS(XS_Bio__DB__HTS__VCF__Row_position); /* prototype to pass -Wmissing-prototypes */
+XS_EUPXS(XS_Bio__DB__HTS__VCF__Row_position)
+{
+    dVAR; dXSARGS;
+    if (items != 1)
+       croak_xs_usage(cv,  "row");
+    {
+	Bio__DB__HTS__VCF__Row	row;
+#line 1537 "lib/Bio/DB/HTS.xs"
+#line 3555 "lib/Bio/DB/HTS.c"
+	int	RETVAL;
+	dXSTARG;
+
+	if (SvROK(ST(0)) && sv_derived_from(ST(0), "Bio::DB::HTS::VCF::Row")) {
+	    IV tmp = SvIV((SV*)SvRV(ST(0)));
+	    row = INT2PTR(Bio__DB__HTS__VCF__Row,tmp);
+	}
+	else
+	    Perl_croak(aTHX_ "%s: %s is not of type %s",
+			"Bio::DB::HTS::VCF::Row::position",
+			"row", "Bio::DB::HTS::VCF::Row")
+;
+#line 1538 "lib/Bio/DB/HTS.xs"
+     RETVAL = row->pos+1;
+#line 3570 "lib/Bio/DB/HTS.c"
+	XSprePUSH; PUSHi((IV)RETVAL);
+    }
+    XSRETURN(1);
+}
+
+
+XS_EUPXS(XS_Bio__DB__HTS__VCF__Row_quality); /* prototype to pass -Wmissing-prototypes */
+XS_EUPXS(XS_Bio__DB__HTS__VCF__Row_quality)
+{
+    dVAR; dXSARGS;
+    if (items != 1)
+       croak_xs_usage(cv,  "row");
+    {
+	Bio__DB__HTS__VCF__Row	row;
+#line 1546 "lib/Bio/DB/HTS.xs"
+#line 3586 "lib/Bio/DB/HTS.c"
+	float	RETVAL;
+	dXSTARG;
+
+	if (SvROK(ST(0)) && sv_derived_from(ST(0), "Bio::DB::HTS::VCF::Row")) {
+	    IV tmp = SvIV((SV*)SvRV(ST(0)));
+	    row = INT2PTR(Bio__DB__HTS__VCF__Row,tmp);
+	}
+	else
+	    Perl_croak(aTHX_ "%s: %s is not of type %s",
+			"Bio::DB::HTS::VCF::Row::quality",
+			"row", "Bio::DB::HTS::VCF::Row")
+;
+#line 1547 "lib/Bio/DB/HTS.xs"
+     RETVAL = row->qual;
+#line 3601 "lib/Bio/DB/HTS.c"
+	XSprePUSH; PUSHn((double)RETVAL);
+    }
+    XSRETURN(1);
+}
+
+
+XS_EUPXS(XS_Bio__DB__HTS__VCF__Row_id); /* prototype to pass -Wmissing-prototypes */
+XS_EUPXS(XS_Bio__DB__HTS__VCF__Row_id)
+{
+    dVAR; dXSARGS;
+    if (items != 1)
+       croak_xs_usage(cv,  "row");
+    {
+	Bio__DB__HTS__VCF__Row	row;
+#line 1556 "lib/Bio/DB/HTS.xs"
+#line 3617 "lib/Bio/DB/HTS.c"
+	SV *	RETVAL;
+
+	if (SvROK(ST(0)) && sv_derived_from(ST(0), "Bio::DB::HTS::VCF::Row")) {
+	    IV tmp = SvIV((SV*)SvRV(ST(0)));
+	    row = INT2PTR(Bio__DB__HTS__VCF__Row,tmp);
+	}
+	else
+	    Perl_croak(aTHX_ "%s: %s is not of type %s",
+			"Bio::DB::HTS::VCF::Row::id",
+			"row", "Bio::DB::HTS::VCF::Row")
+;
+#line 1557 "lib/Bio/DB/HTS.xs"
+     RETVAL = newSVpv(row->d.id, 0) ;
+#line 3631 "lib/Bio/DB/HTS.c"
+	RETVAL = sv_2mortal(RETVAL);
+	ST(0) = RETVAL;
+    }
+    XSRETURN(1);
+}
+
+
+XS_EUPXS(XS_Bio__DB__HTS__VCF__Row_reference); /* prototype to pass -Wmissing-prototypes */
+XS_EUPXS(XS_Bio__DB__HTS__VCF__Row_reference)
+{
+    dVAR; dXSARGS;
+    if (items != 1)
+       croak_xs_usage(cv,  "row");
+    {
+	Bio__DB__HTS__VCF__Row	row;
+#line 1565 "lib/Bio/DB/HTS.xs"
+#line 3648 "lib/Bio/DB/HTS.c"
+	SV *	RETVAL;
+
+	if (SvROK(ST(0)) && sv_derived_from(ST(0), "Bio::DB::HTS::VCF::Row")) {
+	    IV tmp = SvIV((SV*)SvRV(ST(0)));
+	    row = INT2PTR(Bio__DB__HTS__VCF__Row,tmp);
+	}
+	else
+	    Perl_croak(aTHX_ "%s: %s is not of type %s",
+			"Bio::DB::HTS::VCF::Row::reference",
+			"row", "Bio::DB::HTS::VCF::Row")
+;
+#line 1566 "lib/Bio/DB/HTS.xs"
+     RETVAL = newSVpv(row->d.als, 0) ;
+#line 3662 "lib/Bio/DB/HTS.c"
+	RETVAL = sv_2mortal(RETVAL);
+	ST(0) = RETVAL;
+    }
+    XSRETURN(1);
+}
+
+
+XS_EUPXS(XS_Bio__DB__HTS__VCF__Row_num_alleles); /* prototype to pass -Wmissing-prototypes */
+XS_EUPXS(XS_Bio__DB__HTS__VCF__Row_num_alleles)
+{
+    dVAR; dXSARGS;
+    if (items != 1)
+       croak_xs_usage(cv,  "row");
+    {
+	Bio__DB__HTS__VCF__Row	row;
+#line 1575 "lib/Bio/DB/HTS.xs"
+#line 3679 "lib/Bio/DB/HTS.c"
+	int	RETVAL;
+	dXSTARG;
+
+	if (SvROK(ST(0)) && sv_derived_from(ST(0), "Bio::DB::HTS::VCF::Row")) {
+	    IV tmp = SvIV((SV*)SvRV(ST(0)));
+	    row = INT2PTR(Bio__DB__HTS__VCF__Row,tmp);
+	}
+	else
+	    Perl_croak(aTHX_ "%s: %s is not of type %s",
+			"Bio::DB::HTS::VCF::Row::num_alleles",
+			"row", "Bio::DB::HTS::VCF::Row")
+;
+#line 1576 "lib/Bio/DB/HTS.xs"
+     RETVAL = row->n_allele-1 ;
+#line 3694 "lib/Bio/DB/HTS.c"
+	XSprePUSH; PUSHi((IV)RETVAL);
+    }
+    XSRETURN(1);
+}
+
+
+XS_EUPXS(XS_Bio__DB__HTS__VCF__Row_get_alleles); /* prototype to pass -Wmissing-prototypes */
+XS_EUPXS(XS_Bio__DB__HTS__VCF__Row_get_alleles)
+{
+    dVAR; dXSARGS;
+    if (items != 1)
+       croak_xs_usage(cv,  "row");
+    {
+	Bio__DB__HTS__VCF__Row	row;
+#line 1585 "lib/Bio/DB/HTS.xs"
+     int i;
+     AV *av_ref;
+#line 3712 "lib/Bio/DB/HTS.c"
+	SV *	RETVAL;
+
+	if (SvROK(ST(0)) && sv_derived_from(ST(0), "Bio::DB::HTS::VCF::Row")) {
+	    IV tmp = SvIV((SV*)SvRV(ST(0)));
+	    row = INT2PTR(Bio__DB__HTS__VCF__Row,tmp);
+	}
+	else
+	    Perl_croak(aTHX_ "%s: %s is not of type %s",
+			"Bio::DB::HTS::VCF::Row::get_alleles",
+			"row", "Bio::DB::HTS::VCF::Row")
+;
+#line 1588 "lib/Bio/DB/HTS.xs"
+     av_ref = newAV();
+     for (i = 1; i < row->n_allele; ++i) {
+        SV *sv_ref = newSVpv(row->d.allele[i], 0);
+        av_push(av_ref, sv_ref);
+     }
+     RETVAL = newRV_noinc((SV*)av_ref);
+#line 3731 "lib/Bio/DB/HTS.c"
+	RETVAL = sv_2mortal(RETVAL);
+	ST(0) = RETVAL;
+    }
+    XSRETURN(1);
+}
+
+
+XS_EUPXS(XS_Bio__DB__HTS__VCF__Row_num_filters); /* prototype to pass -Wmissing-prototypes */
+XS_EUPXS(XS_Bio__DB__HTS__VCF__Row_num_filters)
+{
+    dVAR; dXSARGS;
+    if (items != 1)
+       croak_xs_usage(cv,  "row");
+    {
+	Bio__DB__HTS__VCF__Row	row;
+#line 1601 "lib/Bio/DB/HTS.xs"
+#line 3748 "lib/Bio/DB/HTS.c"
+	int	RETVAL;
+	dXSTARG;
+
+	if (SvROK(ST(0)) && sv_derived_from(ST(0), "Bio::DB::HTS::VCF::Row")) {
+	    IV tmp = SvIV((SV*)SvRV(ST(0)));
+	    row = INT2PTR(Bio__DB__HTS__VCF__Row,tmp);
+	}
+	else
+	    Perl_croak(aTHX_ "%s: %s is not of type %s",
+			"Bio::DB::HTS::VCF::Row::num_filters",
+			"row", "Bio::DB::HTS::VCF::Row")
+;
+#line 1602 "lib/Bio/DB/HTS.xs"
+     RETVAL = row->d.n_flt ;
+#line 3763 "lib/Bio/DB/HTS.c"
+	XSprePUSH; PUSHi((IV)RETVAL);
+    }
+    XSRETURN(1);
+}
+
+
+XS_EUPXS(XS_Bio__DB__HTS__VCF__Row_has_filter); /* prototype to pass -Wmissing-prototypes */
+XS_EUPXS(XS_Bio__DB__HTS__VCF__Row_has_filter)
+{
+    dVAR; dXSARGS;
+    if (items != 3)
+       croak_xs_usage(cv,  "row, header, filter");
+    {
+	Bio__DB__HTS__VCF__Row	row;
+	Bio__DB__HTS__VCF__Header	header;
+	char*	filter = (char *)SvPV_nolen(ST(2))
+;
+#line 1612 "lib/Bio/DB/HTS.xs"
+#line 3782 "lib/Bio/DB/HTS.c"
+	int	RETVAL;
+	dXSTARG;
+
+	if (SvROK(ST(0)) && sv_derived_from(ST(0), "Bio::DB::HTS::VCF::Row")) {
+	    IV tmp = SvIV((SV*)SvRV(ST(0)));
+	    row = INT2PTR(Bio__DB__HTS__VCF__Row,tmp);
+	}
+	else
+	    Perl_croak(aTHX_ "%s: %s is not of type %s",
+			"Bio::DB::HTS::VCF::Row::has_filter",
+			"row", "Bio::DB::HTS::VCF::Row")
+;
+
+	if (SvROK(ST(1)) && sv_derived_from(ST(1), "Bio::DB::HTS::VCF::Header")) {
+	    IV tmp = SvIV((SV*)SvRV(ST(1)));
+	    header = INT2PTR(Bio__DB__HTS__VCF__Header,tmp);
+	}
+	else
+	    Perl_croak(aTHX_ "%s: %s is not of type %s",
+			"Bio::DB::HTS::VCF::Row::has_filter",
+			"header", "Bio::DB::HTS::VCF::Header")
+;
+#line 1613 "lib/Bio/DB/HTS.xs"
+     RETVAL = bcf_has_filter(header,row,filter) ;
+#line 3807 "lib/Bio/DB/HTS.c"
+	XSprePUSH; PUSHi((IV)RETVAL);
+    }
+    XSRETURN(1);
+}
+
+
+XS_EUPXS(XS_Bio__DB__HTS__VCF__Row_is_snp); /* prototype to pass -Wmissing-prototypes */
+XS_EUPXS(XS_Bio__DB__HTS__VCF__Row_is_snp)
+{
+    dVAR; dXSARGS;
+    if (items != 1)
+       croak_xs_usage(cv,  "row");
+    {
+	Bio__DB__HTS__VCF__Row	row;
+#line 1622 "lib/Bio/DB/HTS.xs"
+#line 3823 "lib/Bio/DB/HTS.c"
+	int	RETVAL;
+	dXSTARG;
+
+	if (SvROK(ST(0)) && sv_derived_from(ST(0), "Bio::DB::HTS::VCF::Row")) {
+	    IV tmp = SvIV((SV*)SvRV(ST(0)));
+	    row = INT2PTR(Bio__DB__HTS__VCF__Row,tmp);
+	}
+	else
+	    Perl_croak(aTHX_ "%s: %s is not of type %s",
+			"Bio::DB::HTS::VCF::Row::is_snp",
+			"row", "Bio::DB::HTS::VCF::Row")
+;
+#line 1623 "lib/Bio/DB/HTS.xs"
+     RETVAL = bcf_is_snp(row) ;
+#line 3838 "lib/Bio/DB/HTS.c"
+	XSprePUSH; PUSHi((IV)RETVAL);
+    }
+    XSRETURN(1);
+}
+
+
+XS_EUPXS(XS_Bio__DB__HTS__VCF__Row_get_variant_type); /* prototype to pass -Wmissing-prototypes */
+XS_EUPXS(XS_Bio__DB__HTS__VCF__Row_get_variant_type)
+{
+    dVAR; dXSARGS;
+    if (items != 2)
+       croak_xs_usage(cv,  "row, allele_index");
+    {
+	Bio__DB__HTS__VCF__Row	row;
+	int	allele_index = (int)SvIV(ST(1))
+;
+	int	RETVAL;
+	dXSTARG;
+
+	if (SvROK(ST(0)) && sv_derived_from(ST(0), "Bio::DB::HTS::VCF::Row")) {
+	    IV tmp = SvIV((SV*)SvRV(ST(0)));
+	    row = INT2PTR(Bio__DB__HTS__VCF__Row,tmp);
+	}
+	else
+	    Perl_croak(aTHX_ "%s: %s is not of type %s",
+			"Bio::DB::HTS::VCF::Row::get_variant_type",
+			"row", "Bio::DB::HTS::VCF::Row")
+;
+#line 1633 "lib/Bio/DB/HTS.xs"
+     RETVAL = bcf_get_variant_type(row, allele_index);
+#line 3869 "lib/Bio/DB/HTS.c"
+	XSprePUSH; PUSHi((IV)RETVAL);
+    }
+    XSRETURN(1);
+}
+
+
+XS_EUPXS(XS_Bio__DB__HTS__VCF__Row_get_info_type); /* prototype to pass -Wmissing-prototypes */
+XS_EUPXS(XS_Bio__DB__HTS__VCF__Row_get_info_type)
+{
+    dVAR; dXSARGS;
+    if (items != 3)
+       croak_xs_usage(cv,  "row, header, id");
+    {
+	Bio__DB__HTS__VCF__Row	row;
+	Bio__DB__HTS__VCF__Header	header;
+	char*	id = (char *)SvPV_nolen(ST(2))
+;
+#line 1644 "lib/Bio/DB/HTS.xs"
+      bcf_info_t* info ;
+#line 3889 "lib/Bio/DB/HTS.c"
+	SV *	RETVAL;
+
+	if (SvROK(ST(0)) && sv_derived_from(ST(0), "Bio::DB::HTS::VCF::Row")) {
+	    IV tmp = SvIV((SV*)SvRV(ST(0)));
+	    row = INT2PTR(Bio__DB__HTS__VCF__Row,tmp);
+	}
+	else
+	    Perl_croak(aTHX_ "%s: %s is not of type %s",
+			"Bio::DB::HTS::VCF::Row::get_info_type",
+			"row", "Bio::DB::HTS::VCF::Row")
+;
+
+	if (SvROK(ST(1)) && sv_derived_from(ST(1), "Bio::DB::HTS::VCF::Header")) {
+	    IV tmp = SvIV((SV*)SvRV(ST(1)));
+	    header = INT2PTR(Bio__DB__HTS__VCF__Header,tmp);
+	}
+	else
+	    Perl_croak(aTHX_ "%s: %s is not of type %s",
+			"Bio::DB::HTS::VCF::Row::get_info_type",
+			"header", "Bio::DB::HTS::VCF::Header")
+;
+#line 1646 "lib/Bio/DB/HTS.xs"
+      info = bcf_get_info(header, row, id);
+      if( info == NULL )
+      {
+        RETVAL = newSVpv("",0);
+      }
+      else
+      {
+        switch( info->type )
+        {
+          case BCF_BT_FLOAT:
+               RETVAL = newSVpv("Float",0);
+               break ;
+          case BCF_BT_NULL:
+               RETVAL = newSVpv("Flag",0);
+               break ;
+          case BCF_BT_CHAR:
+               RETVAL = newSVpv("String",0);
+               break ;
+          default:
+               RETVAL = newSVpv("Integer",0);
+        }
+      }
+#line 3934 "lib/Bio/DB/HTS.c"
+	RETVAL = sv_2mortal(RETVAL);
+	ST(0) = RETVAL;
+    }
+    XSRETURN(1);
+}
+
+
+XS_EUPXS(XS_Bio__DB__HTS__VCF__Row_get_info); /* prototype to pass -Wmissing-prototypes */
+XS_EUPXS(XS_Bio__DB__HTS__VCF__Row_get_info)
+{
+    dVAR; dXSARGS;
+    if (items != 3)
+       croak_xs_usage(cv,  "row, header, id");
+    {
+	Bio__DB__HTS__VCF__Row	row;
+	Bio__DB__HTS__VCF__Header	header;
+	char*	id = (char *)SvPV_nolen(ST(2))
+;
+#line 1678 "lib/Bio/DB/HTS.xs"
+      bcf_info_t* info ;
+      int i=0 ;
+      int strlength=0 ;
+      int* buf_i;
+      float* buf_f;
+      char* buf_c;
+      AV* av_ref;
+      int result;
+#line 3962 "lib/Bio/DB/HTS.c"
+	SV *	RETVAL;
+
+	if (SvROK(ST(0)) && sv_derived_from(ST(0), "Bio::DB::HTS::VCF::Row")) {
+	    IV tmp = SvIV((SV*)SvRV(ST(0)));
+	    row = INT2PTR(Bio__DB__HTS__VCF__Row,tmp);
+	}
+	else
+	    Perl_croak(aTHX_ "%s: %s is not of type %s",
+			"Bio::DB::HTS::VCF::Row::get_info",
+			"row", "Bio::DB::HTS::VCF::Row")
+;
+
+	if (SvROK(ST(1)) && sv_derived_from(ST(1), "Bio::DB::HTS::VCF::Header")) {
+	    IV tmp = SvIV((SV*)SvRV(ST(1)));
+	    header = INT2PTR(Bio__DB__HTS__VCF__Header,tmp);
+	}
+	else
+	    Perl_croak(aTHX_ "%s: %s is not of type %s",
+			"Bio::DB::HTS::VCF::Row::get_info",
+			"header", "Bio::DB::HTS::VCF::Header")
+;
+#line 1687 "lib/Bio/DB/HTS.xs"
+      info = bcf_get_info(header, row, id);
+      if( info == NULL )
+      {
+          // info null, nothing to return
+          RETVAL = newSVpv("ID_NOT_FOUND",0);
+      }
+      else
+      {
+        av_ref = newAV();
+        if( info->type == BCF_BT_NULL )
+        {
+          buf_i = calloc(1, sizeof(int)) ;
+          result = bcf_get_info_flag(header,row,id,&buf_i,&(info->len));
+          if( result == 1 )
+          {
+            av_push(av_ref, newSViv(1));
+          }
+          else
+          {
+            av_push(av_ref, newSViv(0));
+          }
+          free(buf_i);
+        }
+        else if( info->type == BCF_BT_FLOAT )
+        {
+          buf_f = calloc(info->len, sizeof(float));
+          result = bcf_get_info_float(header, row, id, &buf_f, &(info->len)) ;
+          for( i=0 ; i<result ; i++ )
+          {
+            av_push(av_ref, newSVnv(buf_f[i])) ;
+          }
+          free(buf_f);
+        }
+        else if( info->type == BCF_BT_CHAR )
+        {
+          strlength = info->len+1 ;
+          buf_c = calloc(strlength, sizeof(char));
+          result = bcf_get_info_string(header,row,id,&buf_c,&strlength) ;
+          buf_c[info->len] = '\0' ;
+          av_push(av_ref, newSVpv(buf_c,0));
+          free(buf_c);
+        }
+        else if( info->type == BCF_BT_INT32 )
+        {
+          buf_i = calloc(info->len, sizeof(int));
+          result = bcf_get_info_int32(header, row, id, &buf_i, &(info->len)) ;
+          for( i=0 ; i<result ; i++ )
+          {
+            av_push(av_ref, newSViv(buf_i[i])) ;
+          }
+          free(buf_i);
+        }
+        else if( info->type == BCF_BT_INT16 )
+        {
+          buf_i = calloc(info->len, sizeof(int));
+          result = bcf_get_info_int32(header, row, id, &buf_i, &(info->len)) ;
+          for( i=0 ; i<result ; i++ )
+          {
+            av_push(av_ref, newSViv(buf_i[i])) ;
+          }
+          free(buf_i);
+        }
+        else if( info->type == BCF_BT_INT8 )
+        {
+          buf_i = calloc(info->len, sizeof(int));
+          result = bcf_get_info_int32(header, row, id, &buf_i, &(info->len)) ;
+          for( i=0 ; i<result ; i++ )
+          {
+            av_push(av_ref, newSViv(buf_i[i])) ;
+          }
+          free(buf_i);
+        }
+        //return a reference to our array
+        RETVAL = newRV_noinc((SV*)av_ref);
+      }
+
+#line 4061 "lib/Bio/DB/HTS.c"
+	RETVAL = sv_2mortal(RETVAL);
+	ST(0) = RETVAL;
+    }
+    XSRETURN(1);
+}
+
+
+XS_EUPXS(XS_Bio__DB__HTS__VCF__Row_get_format_type); /* prototype to pass -Wmissing-prototypes */
+XS_EUPXS(XS_Bio__DB__HTS__VCF__Row_get_format_type)
+{
+    dVAR; dXSARGS;
+    if (items != 3)
+       croak_xs_usage(cv,  "row, header, id");
+    {
+	Bio__DB__HTS__VCF__Row	row;
+	Bio__DB__HTS__VCF__Header	header;
+	char*	id = (char *)SvPV_nolen(ST(2))
+;
+#line 1775 "lib/Bio/DB/HTS.xs"
+      bcf_fmt_t* fmt ;
+#line 4082 "lib/Bio/DB/HTS.c"
+	SV *	RETVAL;
+
+	if (SvROK(ST(0)) && sv_derived_from(ST(0), "Bio::DB::HTS::VCF::Row")) {
+	    IV tmp = SvIV((SV*)SvRV(ST(0)));
+	    row = INT2PTR(Bio__DB__HTS__VCF__Row,tmp);
+	}
+	else
+	    Perl_croak(aTHX_ "%s: %s is not of type %s",
+			"Bio::DB::HTS::VCF::Row::get_format_type",
+			"row", "Bio::DB::HTS::VCF::Row")
+;
+
+	if (SvROK(ST(1)) && sv_derived_from(ST(1), "Bio::DB::HTS::VCF::Header")) {
+	    IV tmp = SvIV((SV*)SvRV(ST(1)));
+	    header = INT2PTR(Bio__DB__HTS__VCF__Header,tmp);
+	}
+	else
+	    Perl_croak(aTHX_ "%s: %s is not of type %s",
+			"Bio::DB::HTS::VCF::Row::get_format_type",
+			"header", "Bio::DB::HTS::VCF::Header")
+;
+#line 1777 "lib/Bio/DB/HTS.xs"
+      fmt = bcf_get_fmt(header, row, id);
+      if( fmt == NULL )
+      {
+        RETVAL = newSVpv("",0);
+      }
+      else
+      {
+        switch( fmt->type )
+        {
+          case BCF_BT_FLOAT:
+               RETVAL = newSVpv("Float",0);
+               break ;
+          case BCF_BT_CHAR:
+               RETVAL = newSVpv("String",0);
+               break ;
+          default:
+               RETVAL = newSVpv("Integer",0);
+        }
+      }
+#line 4124 "lib/Bio/DB/HTS.c"
+	RETVAL = sv_2mortal(RETVAL);
+	ST(0) = RETVAL;
+    }
+    XSRETURN(1);
+}
+
+
+XS_EUPXS(XS_Bio__DB__HTS__VCF__Row_get_format); /* prototype to pass -Wmissing-prototypes */
+XS_EUPXS(XS_Bio__DB__HTS__VCF__Row_get_format)
+{
+    dVAR; dXSARGS;
+    if (items != 3)
+       croak_xs_usage(cv,  "row, header, id");
+    {
+	Bio__DB__HTS__VCF__Row	row;
+	Bio__DB__HTS__VCF__Header	header;
+	char*	id = (char *)SvPV_nolen(ST(2))
+;
+#line 1806 "lib/Bio/DB/HTS.xs"
+      bcf_fmt_t* fmt ;
+      int i ;
+      int* buf_i = NULL ;
+      float* buf_f = NULL ;
+      char* buf_c = NULL ;
+      AV* av_ref;
+      int ndst = 0 ;
+      int result;
+#line 4152 "lib/Bio/DB/HTS.c"
+	SV *	RETVAL;
+
+	if (SvROK(ST(0)) && sv_derived_from(ST(0), "Bio::DB::HTS::VCF::Row")) {
+	    IV tmp = SvIV((SV*)SvRV(ST(0)));
+	    row = INT2PTR(Bio__DB__HTS__VCF__Row,tmp);
+	}
+	else
+	    Perl_croak(aTHX_ "%s: %s is not of type %s",
+			"Bio::DB::HTS::VCF::Row::get_format",
+			"row", "Bio::DB::HTS::VCF::Row")
+;
+
+	if (SvROK(ST(1)) && sv_derived_from(ST(1), "Bio::DB::HTS::VCF::Header")) {
+	    IV tmp = SvIV((SV*)SvRV(ST(1)));
+	    header = INT2PTR(Bio__DB__HTS__VCF__Header,tmp);
+	}
+	else
+	    Perl_croak(aTHX_ "%s: %s is not of type %s",
+			"Bio::DB::HTS::VCF::Row::get_format",
+			"header", "Bio::DB::HTS::VCF::Header")
+;
+#line 1815 "lib/Bio/DB/HTS.xs"
+      fmt = bcf_get_fmt(header, row, id);
+      if( fmt == NULL )
+      {
+          // info null, nothing to return
+          RETVAL = newSVpv("ID_NOT_FOUND",0);
+      }
+      else
+      {
+        av_ref = newAV();
+
+        if( fmt->type == BCF_BT_FLOAT )
+        {
+          result = bcf_get_format_float(header, row, id, &buf_f, &ndst) ;
+          for( i=0 ; i<ndst ; i++ )
+          {
+            av_push(av_ref, newSVnv(buf_f[i])) ;
+          }
+          free(buf_f);
+        }
+        else if( fmt->type == BCF_BT_CHAR )
+        {
+          result = bcf_get_format_char(header,row,id,&buf_c,&ndst) ;
+          av_push(av_ref, newSVpv(buf_c, ndst+1));
+          free(buf_c);
+        }
+        else if( fmt->type == BCF_BT_INT32 )
+        {
+          result = bcf_get_format_int32(header, row, id, &buf_i, &ndst) ;
+          for( i=0 ; i<ndst ; i++ )
+          {
+            av_push(av_ref, newSViv(buf_i[i])) ;
+          }
+          free(buf_i);
+        }
+        else if( fmt->type == BCF_BT_INT16 )
+        {
+          result = bcf_get_format_int32(header, row, id, &buf_i, &ndst) ;
+          for( i=0 ; i<ndst ; i++ )
+          {
+            av_push(av_ref, newSViv(buf_i[i])) ;
+          }
+          free(buf_i);
+        }
+        else if( fmt->type == BCF_BT_INT8 )
+        {
+          result = bcf_get_format_int32(header, row, id, &buf_i, &ndst) ;
+          for( i=0 ; i<ndst ; i++ )
+          {
+            av_push(av_ref, newSViv(buf_i[i])) ;
+          }
+          free(buf_i);
+        }
+        //return a reference to our array
+        RETVAL = newRV_noinc((SV*)av_ref);
+      }
+
+#line 4231 "lib/Bio/DB/HTS.c"
+	RETVAL = sv_2mortal(RETVAL);
+	ST(0) = RETVAL;
+    }
+    XSRETURN(1);
+}
+
+
+XS_EUPXS(XS_Bio__DB__HTS__VCF__Row_get_genotypes); /* prototype to pass -Wmissing-prototypes */
+XS_EUPXS(XS_Bio__DB__HTS__VCF__Row_get_genotypes)
+{
+    dVAR; dXSARGS;
+    if (items != 2)
+       croak_xs_usage(cv,  "row, header");
+    {
+	Bio__DB__HTS__VCF__Row	row;
+	Bio__DB__HTS__VCF__Header	header;
+#line 1881 "lib/Bio/DB/HTS.xs"
+      bcf_fmt_t* fmt ;
+      int ngt ;
+      int* gt_arr = NULL ;
+      int ngt_arr = 0;
+      AV* av_ref;
+      int i=0 ;
+#line 4255 "lib/Bio/DB/HTS.c"
+	SV *	RETVAL;
+
+	if (SvROK(ST(0)) && sv_derived_from(ST(0), "Bio::DB::HTS::VCF::Row")) {
+	    IV tmp = SvIV((SV*)SvRV(ST(0)));
+	    row = INT2PTR(Bio__DB__HTS__VCF__Row,tmp);
+	}
+	else
+	    Perl_croak(aTHX_ "%s: %s is not of type %s",
+			"Bio::DB::HTS::VCF::Row::get_genotypes",
+			"row", "Bio::DB::HTS::VCF::Row")
+;
+
+	if (SvROK(ST(1)) && sv_derived_from(ST(1), "Bio::DB::HTS::VCF::Header")) {
+	    IV tmp = SvIV((SV*)SvRV(ST(1)));
+	    header = INT2PTR(Bio__DB__HTS__VCF__Header,tmp);
+	}
+	else
+	    Perl_croak(aTHX_ "%s: %s is not of type %s",
+			"Bio::DB::HTS::VCF::Row::get_genotypes",
+			"header", "Bio::DB::HTS::VCF::Header")
+;
+#line 1888 "lib/Bio/DB/HTS.xs"
+      av_ref = newAV();
+      /* Note the VCF header type treats this as a String but BCF treats as an int */
+      ngt = bcf_get_genotypes(header, row, &gt_arr, &ngt_arr);
+      for( i=0 ; i<ngt_arr ; i++ )
+      {
+        av_push(av_ref, newSViv(gt_arr[i])) ;
+      }
+      free(gt_arr);
+      RETVAL = newRV_noinc((SV*)av_ref);
+#line 4287 "lib/Bio/DB/HTS.c"
+	RETVAL = sv_2mortal(RETVAL);
+	ST(0) = RETVAL;
+    }
+    XSRETURN(1);
+}
+
+
+XS_EUPXS(XS_Bio__DB__HTS__VCF__Row_destroy); /* prototype to pass -Wmissing-prototypes */
+XS_EUPXS(XS_Bio__DB__HTS__VCF__Row_destroy)
+{
+    dVAR; dXSARGS;
+    if (items != 2)
+       croak_xs_usage(cv,  "packname, row");
+    {
+	char*	packname = (char *)SvPV_nolen(ST(0))
+;
+	Bio__DB__HTS__VCF__Row	row;
+
+	if (SvROK(ST(1)) && sv_derived_from(ST(1), "Bio::DB::HTS::VCF::Row")) {
+	    IV tmp = SvIV((SV*)SvRV(ST(1)));
+	    row = INT2PTR(Bio__DB__HTS__VCF__Row,tmp);
+	}
+	else
+	    Perl_croak(aTHX_ "%s: %s is not of type %s",
+			"Bio::DB::HTS::VCF::Row::destroy",
+			"row", "Bio::DB::HTS::VCF::Row")
+;
+#line 1909 "lib/Bio/DB/HTS.xs"
+      bcf_destroy(row);
+#line 4317 "lib/Bio/DB/HTS.c"
+    }
+    XSRETURN_EMPTY;
+}
+
+
+XS_EUPXS(XS_Bio__DB__HTS__VCF__Sweep_sweep_open); /* prototype to pass -Wmissing-prototypes */
+XS_EUPXS(XS_Bio__DB__HTS__VCF__Sweep_sweep_open)
+{
+    dVAR; dXSARGS;
+    if (items != 1)
+       croak_xs_usage(cv,  "filename");
+    {
+	char*	filename = (char *)SvPV_nolen(ST(0))
+;
+#line 1920 "lib/Bio/DB/HTS.xs"
+        bcf_sweep_t* sweep;
+#line 4334 "lib/Bio/DB/HTS.c"
+	Bio__DB__HTS__VCF__Sweep	RETVAL;
+#line 1922 "lib/Bio/DB/HTS.xs"
+        sweep = bcf_sweep_init(filename);
+        RETVAL = sweep;
+#line 4339 "lib/Bio/DB/HTS.c"
+	{
+	    SV * RETVALSV;
+	    RETVALSV = sv_newmortal();
+	    sv_setref_pv(RETVALSV, "Bio::DB::HTS::VCF::Sweep", (void*)RETVAL);
+	    ST(0) = RETVALSV;
+	}
+    }
+    XSRETURN(1);
+}
+
+
+XS_EUPXS(XS_Bio__DB__HTS__VCF__Sweep_header_read); /* prototype to pass -Wmissing-prototypes */
+XS_EUPXS(XS_Bio__DB__HTS__VCF__Sweep_header_read)
+{
+    dVAR; dXSARGS;
+    if (items != 1)
+       croak_xs_usage(cv,  "sweep");
+    {
+	Bio__DB__HTS__VCF__Sweep	sweep;
+#line 1931 "lib/Bio/DB/HTS.xs"
+        bcf_hdr_t* h;
+#line 4361 "lib/Bio/DB/HTS.c"
+	Bio__DB__HTS__VCF__Header	RETVAL;
+
+	if (SvROK(ST(0)) && sv_derived_from(ST(0), "Bio::DB::HTS::VCF::Sweep")) {
+	    IV tmp = SvIV((SV*)SvRV(ST(0)));
+	    sweep = INT2PTR(Bio__DB__HTS__VCF__Sweep,tmp);
+	}
+	else
+	    Perl_croak(aTHX_ "%s: %s is not of type %s",
+			"Bio::DB::HTS::VCF::Sweep::header_read",
+			"sweep", "Bio::DB::HTS::VCF::Sweep")
+;
+#line 1933 "lib/Bio/DB/HTS.xs"
+        h = bcf_sweep_hdr(sweep);
+        RETVAL = h;
+#line 4376 "lib/Bio/DB/HTS.c"
+	{
+	    SV * RETVALSV;
+	    RETVALSV = sv_newmortal();
+	    sv_setref_pv(RETVALSV, "Bio::DB::HTS::VCF::Header", (void*)RETVAL);
+	    ST(0) = RETVALSV;
+	}
+    }
+    XSRETURN(1);
+}
+
+
+XS_EUPXS(XS_Bio__DB__HTS__VCF__Sweep_sweep_next); /* prototype to pass -Wmissing-prototypes */
+XS_EUPXS(XS_Bio__DB__HTS__VCF__Sweep_sweep_next)
+{
+    dVAR; dXSARGS;
+    if (items != 1)
+       croak_xs_usage(cv,  "sweep");
+    {
+	Bio__DB__HTS__VCF__Sweep	sweep;
+#line 1942 "lib/Bio/DB/HTS.xs"
+        bcf1_t* line;
+#line 4398 "lib/Bio/DB/HTS.c"
+	Bio__DB__HTS__VCF__Row	RETVAL;
+
+	if (SvROK(ST(0)) && sv_derived_from(ST(0), "Bio::DB::HTS::VCF::Sweep")) {
+	    IV tmp = SvIV((SV*)SvRV(ST(0)));
+	    sweep = INT2PTR(Bio__DB__HTS__VCF__Sweep,tmp);
+	}
+	else
+	    Perl_croak(aTHX_ "%s: %s is not of type %s",
+			"Bio::DB::HTS::VCF::Sweep::sweep_next",
+			"sweep", "Bio::DB::HTS::VCF::Sweep")
+;
+#line 1944 "lib/Bio/DB/HTS.xs"
+        line = bcf_sweep_fwd(sweep);
+        if( line )
+        {
+          RETVAL = line;
+        }
+        else
+        {
+          XSRETURN_EMPTY ;
+        }
+#line 4420 "lib/Bio/DB/HTS.c"
+	{
+	    SV * RETVALSV;
+	    RETVALSV = sv_newmortal();
+	    sv_setref_pv(RETVALSV, "Bio::DB::HTS::VCF::Row", (void*)RETVAL);
+	    ST(0) = RETVALSV;
+	}
+    }
+    XSRETURN(1);
+}
+
+
+XS_EUPXS(XS_Bio__DB__HTS__VCF__Sweep_sweep_previous); /* prototype to pass -Wmissing-prototypes */
+XS_EUPXS(XS_Bio__DB__HTS__VCF__Sweep_sweep_previous)
+{
+    dVAR; dXSARGS;
+    if (items != 1)
+       croak_xs_usage(cv,  "sweep");
+    {
+	Bio__DB__HTS__VCF__Sweep	sweep;
+#line 1960 "lib/Bio/DB/HTS.xs"
+        bcf1_t* line;
+#line 4442 "lib/Bio/DB/HTS.c"
+	Bio__DB__HTS__VCF__Row	RETVAL;
+
+	if (SvROK(ST(0)) && sv_derived_from(ST(0), "Bio::DB::HTS::VCF::Sweep")) {
+	    IV tmp = SvIV((SV*)SvRV(ST(0)));
+	    sweep = INT2PTR(Bio__DB__HTS__VCF__Sweep,tmp);
+	}
+	else
+	    Perl_croak(aTHX_ "%s: %s is not of type %s",
+			"Bio::DB::HTS::VCF::Sweep::sweep_previous",
+			"sweep", "Bio::DB::HTS::VCF::Sweep")
+;
+#line 1962 "lib/Bio/DB/HTS.xs"
+        line = bcf_sweep_bwd(sweep);
+        if( line )
+        {
+          RETVAL = line;
+        }
+        else
+        {
+          XSRETURN_EMPTY ;
+        }
+#line 4464 "lib/Bio/DB/HTS.c"
+	{
+	    SV * RETVALSV;
+	    RETVALSV = sv_newmortal();
+	    sv_setref_pv(RETVALSV, "Bio::DB::HTS::VCF::Row", (void*)RETVAL);
+	    ST(0) = RETVALSV;
+	}
+    }
+    XSRETURN(1);
+}
+
+
+XS_EUPXS(XS_Bio__DB__HTS__VCF__Sweep_sweep_close); /* prototype to pass -Wmissing-prototypes */
+XS_EUPXS(XS_Bio__DB__HTS__VCF__Sweep_sweep_close)
+{
+    dVAR; dXSARGS;
+    if (items != 1)
+       croak_xs_usage(cv,  "sweep");
+    {
+	Bio__DB__HTS__VCF__Sweep	sweep;
+
+	if (SvROK(ST(0)) && sv_derived_from(ST(0), "Bio::DB::HTS::VCF::Sweep")) {
+	    IV tmp = SvIV((SV*)SvRV(ST(0)));
+	    sweep = INT2PTR(Bio__DB__HTS__VCF__Sweep,tmp);
+	}
+	else
+	    Perl_croak(aTHX_ "%s: %s is not of type %s",
+			"Bio::DB::HTS::VCF::Sweep::sweep_close",
+			"sweep", "Bio::DB::HTS::VCF::Sweep")
+;
+#line 1978 "lib/Bio/DB/HTS.xs"
+        bcf_sweep_destroy(sweep);
+#line 4496 "lib/Bio/DB/HTS.c"
+    }
+    XSRETURN_EMPTY;
+}
+
+
+XS_EUPXS(XS_Bio__DB__HTS__Kseq_new); /* prototype to pass -Wmissing-prototypes */
+XS_EUPXS(XS_Bio__DB__HTS__Kseq_new)
+{
+    dVAR; dXSARGS;
+    if (items < 2 || items > 3)
+       croak_xs_usage(cv,  "package, filename, mode=\"r\"");
+    {
+	char *	package = (char *)SvPV_nolen(ST(0))
+;
+	char *	filename = (char *)SvPV_nolen(ST(1))
+;
+	char *	mode;
+	Bio__DB__HTS__Kseq	RETVAL;
+
+	if (items < 3)
+	    mode = "r";
+	else {
+	    mode = (char *)SvPV_nolen(ST(2))
+;
+	}
+#line 1991 "lib/Bio/DB/HTS.xs"
+      RETVAL = gzopen(filename, mode);
+#line 4524 "lib/Bio/DB/HTS.c"
+	{
+	    SV * RETVALSV;
+	    RETVALSV = sv_newmortal();
+	    sv_setref_pv(RETVALSV, "Bio::DB::HTS::Kseq", (void*)RETVAL);
+	    ST(0) = RETVALSV;
+	}
+    }
+    XSRETURN(1);
+}
+
+
+XS_EUPXS(XS_Bio__DB__HTS__Kseq_newfh); /* prototype to pass -Wmissing-prototypes */
+XS_EUPXS(XS_Bio__DB__HTS__Kseq_newfh)
+{
+    dVAR; dXSARGS;
+    if (items < 2 || items > 3)
+       croak_xs_usage(cv,  "pack, fh, mode=\"r\"");
+    {
+	char *	pack = (char *)SvPV_nolen(ST(0))
+;
+	PerlIO*	fh = IoIFP(sv_2io(ST(1)))
+;
+	char *	mode;
+	Bio__DB__HTS__Kseq	RETVAL;
+
+	if (items < 3)
+	    mode = "r";
+	else {
+	    mode = (char *)SvPV_nolen(ST(2))
+;
+	}
+#line 2002 "lib/Bio/DB/HTS.xs"
+      RETVAL = gzdopen(PerlIO_fileno(fh), mode);
+#line 4558 "lib/Bio/DB/HTS.c"
+	{
+	    SV * RETVALSV;
+	    RETVALSV = sv_newmortal();
+	    sv_setref_pv(RETVALSV, "Bio::DB::HTS::Kseq", (void*)RETVAL);
+	    ST(0) = RETVALSV;
+	}
+    }
+    XSRETURN(1);
+}
+
+
+XS_EUPXS(XS_Bio__DB__HTS__Kseq_iterator); /* prototype to pass -Wmissing-prototypes */
+XS_EUPXS(XS_Bio__DB__HTS__Kseq_iterator)
+{
+    dVAR; dXSARGS;
+    if (items != 1)
+       croak_xs_usage(cv,  "fp");
+    {
+	Bio__DB__HTS__Kseq	fp;
+	Bio__DB__HTS__Kseq__Iterator	RETVAL;
+
+	if (SvROK(ST(0)) && sv_derived_from(ST(0), "Bio::DB::HTS::Kseq")) {
+	    IV tmp = SvIV((SV*)SvRV(ST(0)));
+	    fp = INT2PTR(Bio__DB__HTS__Kseq,tmp);
+	}
+	else
+	    Perl_croak(aTHX_ "%s: %s is not of type %s",
+			"Bio::DB::HTS::Kseq::iterator",
+			"fp", "Bio::DB::HTS::Kseq")
+;
+#line 2011 "lib/Bio/DB/HTS.xs"
+      RETVAL = kseq_init(fp);
+#line 4591 "lib/Bio/DB/HTS.c"
+	{
+	    SV * RETVALSV;
+	    RETVALSV = sv_newmortal();
+	    sv_setref_pv(RETVALSV, "Bio::DB::HTS::Kseq::Iterator", (void*)RETVAL);
+	    ST(0) = RETVALSV;
+	}
+    }
+    XSRETURN(1);
+}
+
+
+XS_EUPXS(XS_Bio__DB__HTS__Kseq_DESTROY); /* prototype to pass -Wmissing-prototypes */
+XS_EUPXS(XS_Bio__DB__HTS__Kseq_DESTROY)
+{
+    dVAR; dXSARGS;
+    if (items != 1)
+       croak_xs_usage(cv,  "fp");
+    {
+	Bio__DB__HTS__Kseq	fp;
+
+	if (SvROK(ST(0))) {
+	    IV tmp = SvIV((SV*)SvRV(ST(0)));
+	    fp = INT2PTR(Bio__DB__HTS__Kseq,tmp);
+	}
+	else
+	    Perl_croak(aTHX_ "%s: %s is not a reference",
+			"Bio::DB::HTS::Kseq::DESTROY",
+			"fp")
+;
+#line 2020 "lib/Bio/DB/HTS.xs"
+      gzclose(fp);
+#line 4623 "lib/Bio/DB/HTS.c"
+    }
+    XSRETURN_EMPTY;
+}
+
+
+XS_EUPXS(XS_Bio__DB__HTS__Kseq__Kstream_new); /* prototype to pass -Wmissing-prototypes */
+XS_EUPXS(XS_Bio__DB__HTS__Kseq__Kstream_new)
+{
+    dVAR; dXSARGS;
+    if (items != 2)
+       croak_xs_usage(cv,  "package, fh");
+    {
+	char *	package = (char *)SvPV_nolen(ST(0))
+;
+	Bio__DB__HTS__Kseq	fh;
+	Bio__DB__HTS__Kseq__Kstream	RETVAL;
+
+	if (SvROK(ST(1)) && sv_derived_from(ST(1), "Bio::DB::HTS::Kseq")) {
+	    IV tmp = SvIV((SV*)SvRV(ST(1)));
+	    fh = INT2PTR(Bio__DB__HTS__Kseq,tmp);
+	}
+	else
+	    Perl_croak(aTHX_ "%s: %s is not of type %s",
+			"Bio::DB::HTS::Kseq::Kstream::new",
+			"fh", "Bio::DB::HTS::Kseq")
+;
+#line 2030 "lib/Bio/DB/HTS.xs"
+      RETVAL = ks_init(fh);
+#line 4652 "lib/Bio/DB/HTS.c"
+	{
+	    SV * RETVALSV;
+	    RETVALSV = sv_newmortal();
+	    sv_setref_pv(RETVALSV, "Bio::DB::HTS::Kseq::Kstream", (void*)RETVAL);
+	    ST(0) = RETVALSV;
+	}
+    }
+    XSRETURN(1);
+}
+
+
+XS_EUPXS(XS_Bio__DB__HTS__Kseq__Kstream_begin); /* prototype to pass -Wmissing-prototypes */
+XS_EUPXS(XS_Bio__DB__HTS__Kseq__Kstream_begin)
+{
+    dVAR; dXSARGS;
+    if (items != 1)
+       croak_xs_usage(cv,  "kstr");
+    {
+	Bio__DB__HTS__Kseq__Kstream	kstr;
+	int	RETVAL;
+	dXSTARG;
+
+	if (SvROK(ST(0)) && sv_derived_from(ST(0), "Bio::DB::HTS::Kseq::Kstream")) {
+	    IV tmp = SvIV((SV*)SvRV(ST(0)));
+	    kstr = INT2PTR(Bio__DB__HTS__Kseq__Kstream,tmp);
+	}
+	else
+	    Perl_croak(aTHX_ "%s: %s is not of type %s",
+			"Bio::DB::HTS::Kseq::Kstream::begin",
+			"kstr", "Bio::DB::HTS::Kseq::Kstream")
+;
+#line 2039 "lib/Bio/DB/HTS.xs"
+      RETVAL = kstr->begin;
+#line 4686 "lib/Bio/DB/HTS.c"
+	XSprePUSH; PUSHi((IV)RETVAL);
+    }
+    XSRETURN(1);
+}
+
+
+XS_EUPXS(XS_Bio__DB__HTS__Kseq__Kstream_end); /* prototype to pass -Wmissing-prototypes */
+XS_EUPXS(XS_Bio__DB__HTS__Kseq__Kstream_end)
+{
+    dVAR; dXSARGS;
+    if (items != 1)
+       croak_xs_usage(cv,  "kstr");
+    {
+	Bio__DB__HTS__Kseq__Kstream	kstr;
+	int	RETVAL;
+	dXSTARG;
+
+	if (SvROK(ST(0)) && sv_derived_from(ST(0), "Bio::DB::HTS::Kseq::Kstream")) {
+	    IV tmp = SvIV((SV*)SvRV(ST(0)));
+	    kstr = INT2PTR(Bio__DB__HTS__Kseq__Kstream,tmp);
+	}
+	else
+	    Perl_croak(aTHX_ "%s: %s is not of type %s",
+			"Bio::DB::HTS::Kseq::Kstream::end",
+			"kstr", "Bio::DB::HTS::Kseq::Kstream")
+;
+#line 2048 "lib/Bio/DB/HTS.xs"
+      RETVAL = kstr->end;
+#line 4715 "lib/Bio/DB/HTS.c"
+	XSprePUSH; PUSHi((IV)RETVAL);
+    }
+    XSRETURN(1);
+}
+
+
+XS_EUPXS(XS_Bio__DB__HTS__Kseq__Kstream_is_eof); /* prototype to pass -Wmissing-prototypes */
+XS_EUPXS(XS_Bio__DB__HTS__Kseq__Kstream_is_eof)
+{
+    dVAR; dXSARGS;
+    if (items != 1)
+       croak_xs_usage(cv,  "kstr");
+    {
+	Bio__DB__HTS__Kseq__Kstream	kstr;
+	int	RETVAL;
+	dXSTARG;
+
+	if (SvROK(ST(0)) && sv_derived_from(ST(0), "Bio::DB::HTS::Kseq::Kstream")) {
+	    IV tmp = SvIV((SV*)SvRV(ST(0)));
+	    kstr = INT2PTR(Bio__DB__HTS__Kseq__Kstream,tmp);
+	}
+	else
+	    Perl_croak(aTHX_ "%s: %s is not of type %s",
+			"Bio::DB::HTS::Kseq::Kstream::is_eof",
+			"kstr", "Bio::DB::HTS::Kseq::Kstream")
+;
+#line 2057 "lib/Bio/DB/HTS.xs"
+      RETVAL = kstr->is_eof;
+#line 4744 "lib/Bio/DB/HTS.c"
+	XSprePUSH; PUSHi((IV)RETVAL);
+    }
+    XSRETURN(1);
+}
+
+
+XS_EUPXS(XS_Bio__DB__HTS__Kseq__Kstream_buffer); /* prototype to pass -Wmissing-prototypes */
+XS_EUPXS(XS_Bio__DB__HTS__Kseq__Kstream_buffer)
+{
+    dVAR; dXSARGS;
+    if (items != 1)
+       croak_xs_usage(cv,  "kstr");
+    {
+	Bio__DB__HTS__Kseq__Kstream	kstr;
+	char *	RETVAL;
+	dXSTARG;
+
+	if (SvROK(ST(0)) && sv_derived_from(ST(0), "Bio::DB::HTS::Kseq::Kstream")) {
+	    IV tmp = SvIV((SV*)SvRV(ST(0)));
+	    kstr = INT2PTR(Bio__DB__HTS__Kseq__Kstream,tmp);
+	}
+	else
+	    Perl_croak(aTHX_ "%s: %s is not of type %s",
+			"Bio::DB::HTS::Kseq::Kstream::buffer",
+			"kstr", "Bio::DB::HTS::Kseq::Kstream")
+;
+#line 2066 "lib/Bio/DB/HTS.xs"
+      RETVAL = (char *)kstr->buf;
+#line 4773 "lib/Bio/DB/HTS.c"
+	sv_setpv(TARG, RETVAL); XSprePUSH; PUSHTARG;
+    }
+    XSRETURN(1);
+}
+
+
+XS_EUPXS(XS_Bio__DB__HTS__Kseq__Kstream_fh); /* prototype to pass -Wmissing-prototypes */
+XS_EUPXS(XS_Bio__DB__HTS__Kseq__Kstream_fh)
+{
+    dVAR; dXSARGS;
+    if (items != 1)
+       croak_xs_usage(cv,  "kstr");
+    {
+	Bio__DB__HTS__Kseq__Kstream	kstr;
+	Bio__DB__HTS__Kseq	RETVAL;
+
+	if (SvROK(ST(0)) && sv_derived_from(ST(0), "Bio::DB::HTS::Kseq::Kstream")) {
+	    IV tmp = SvIV((SV*)SvRV(ST(0)));
+	    kstr = INT2PTR(Bio__DB__HTS__Kseq__Kstream,tmp);
+	}
+	else
+	    Perl_croak(aTHX_ "%s: %s is not of type %s",
+			"Bio::DB::HTS::Kseq::Kstream::fh",
+			"kstr", "Bio::DB::HTS::Kseq::Kstream")
+;
+#line 2075 "lib/Bio/DB/HTS.xs"
+      RETVAL = kstr->f;
+#line 4801 "lib/Bio/DB/HTS.c"
+	{
+	    SV * RETVALSV;
+	    RETVALSV = sv_newmortal();
+	    sv_setref_pv(RETVALSV, "Bio::DB::HTS::Kseq", (void*)RETVAL);
+	    ST(0) = RETVALSV;
+	}
+    }
+    XSRETURN(1);
+}
+
+
+XS_EUPXS(XS_Bio__DB__HTS__Kseq__Kstream_DESTROY); /* prototype to pass -Wmissing-prototypes */
+XS_EUPXS(XS_Bio__DB__HTS__Kseq__Kstream_DESTROY)
+{
+    dVAR; dXSARGS;
+    if (items != 1)
+       croak_xs_usage(cv,  "kstr");
+    {
+	Bio__DB__HTS__Kseq__Kstream	kstr;
+
+	if (SvROK(ST(0))) {
+	    IV tmp = SvIV((SV*)SvRV(ST(0)));
+	    kstr = INT2PTR(Bio__DB__HTS__Kseq__Kstream,tmp);
+	}
+	else
+	    Perl_croak(aTHX_ "%s: %s is not a reference",
+			"Bio::DB::HTS::Kseq::Kstream::DESTROY",
+			"kstr")
+;
+#line 2084 "lib/Bio/DB/HTS.xs"
+      ks_destroy(kstr);
+#line 4833 "lib/Bio/DB/HTS.c"
+    }
+    XSRETURN_EMPTY;
+}
+
+
+XS_EUPXS(XS_Bio__DB__HTS__Kseq__Iterator_next_seq_hash); /* prototype to pass -Wmissing-prototypes */
+XS_EUPXS(XS_Bio__DB__HTS__Kseq__Iterator_next_seq_hash)
+{
+    dVAR; dXSARGS;
+    if (items != 1)
+       croak_xs_usage(cv,  "it");
+    {
+	Bio__DB__HTS__Kseq__Iterator	it;
+	SV *	RETVAL;
+
+	if (SvROK(ST(0)) && sv_derived_from(ST(0), "Bio::DB::HTS::Kseq::Iterator")) {
+	    IV tmp = SvIV((SV*)SvRV(ST(0)));
+	    it = INT2PTR(Bio__DB__HTS__Kseq__Iterator,tmp);
+	}
+	else
+	    Perl_croak(aTHX_ "%s: %s is not of type %s",
+			"Bio::DB::HTS::Kseq::Iterator::next_seq_hash",
+			"it", "Bio::DB::HTS::Kseq::Iterator")
+;
+#line 2093 "lib/Bio/DB/HTS.xs"
+      HV * results;
+#line 4860 "lib/Bio/DB/HTS.c"
+#line 2095 "lib/Bio/DB/HTS.xs"
+      results = (HV *)sv_2mortal((SV *)newHV());
+      if (kseq_read(it) >= 0) {
+          hv_stores(results, "name", newSVpvn(it->name.s, it->name.l));
+          hv_stores(results, "desc", newSVpvn(it->comment.s, it->comment.l));
+          hv_stores(results, "seq", newSVpvn(it->seq.s, it->seq.l));
+          hv_stores(results, "qual", newSVpvn(it->qual.s, it->qual.l));
+          RETVAL = newRV((SV *)results);
+      } else {
+          XSRETURN_UNDEF;
+      }
+#line 4872 "lib/Bio/DB/HTS.c"
+	RETVAL = sv_2mortal(RETVAL);
+	ST(0) = RETVAL;
+    }
+    XSRETURN(1);
+}
+
+
+XS_EUPXS(XS_Bio__DB__HTS__Kseq__Iterator_next_seq); /* prototype to pass -Wmissing-prototypes */
+XS_EUPXS(XS_Bio__DB__HTS__Kseq__Iterator_next_seq)
+{
+    dVAR; dXSARGS;
+    if (items != 1)
+       croak_xs_usage(cv,  "it");
+    {
+	Bio__DB__HTS__Kseq__Iterator	it;
+	SV *	RETVAL;
+
+	if (SvROK(ST(0)) && sv_derived_from(ST(0), "Bio::DB::HTS::Kseq::Iterator")) {
+	    IV tmp = SvIV((SV*)SvRV(ST(0)));
+	    it = INT2PTR(Bio__DB__HTS__Kseq__Iterator,tmp);
+	}
+	else
+	    Perl_croak(aTHX_ "%s: %s is not of type %s",
+			"Bio::DB::HTS::Kseq::Iterator::next_seq",
+			"it", "Bio::DB::HTS::Kseq::Iterator")
+;
+#line 2113 "lib/Bio/DB/HTS.xs"
+    HV * results;
+    HV * class_stash;
+    SV * ref;
+#line 4903 "lib/Bio/DB/HTS.c"
+#line 2117 "lib/Bio/DB/HTS.xs"
+    results = (HV *)sv_2mortal((SV *)newHV());
+    class_stash = gv_stashpv("Bio::DB::HTS::Kseq::Record", 0);
+    if (kseq_read(it) >= 0) {
+        hv_stores(results, "name", newSVpvn(it->name.s, it->name.l));
+        hv_stores(results, "desc", newSVpvn(it->comment.s, it->comment.l));
+        hv_stores(results, "seq", newSVpvn(it->seq.s, it->seq.l));
+        hv_stores(results, "qual", newSVpvn(it->qual.s, it->qual.l));
+        ref = newRV((SV *)results);
+        sv_bless(ref, class_stash);
+        RETVAL = ref;
+    } else {
+        XSRETURN_UNDEF;
+    }
+#line 4918 "lib/Bio/DB/HTS.c"
+	RETVAL = sv_2mortal(RETVAL);
+	ST(0) = RETVAL;
+    }
+    XSRETURN(1);
+}
+
+
+XS_EUPXS(XS_Bio__DB__HTS__Kseq__Iterator_read); /* prototype to pass -Wmissing-prototypes */
+XS_EUPXS(XS_Bio__DB__HTS__Kseq__Iterator_read)
+{
+    dVAR; dXSARGS;
+    if (items != 1)
+       croak_xs_usage(cv,  "it");
+    {
+	Bio__DB__HTS__Kseq__Iterator	it;
+	int	RETVAL;
+	dXSTARG;
+
+	if (SvROK(ST(0)) && sv_derived_from(ST(0), "Bio::DB::HTS::Kseq::Iterator")) {
+	    IV tmp = SvIV((SV*)SvRV(ST(0)));
+	    it = INT2PTR(Bio__DB__HTS__Kseq__Iterator,tmp);
+	}
+	else
+	    Perl_croak(aTHX_ "%s: %s is not of type %s",
+			"Bio::DB::HTS::Kseq::Iterator::read",
+			"it", "Bio::DB::HTS::Kseq::Iterator")
+;
+#line 2138 "lib/Bio/DB/HTS.xs"
+#line 4947 "lib/Bio/DB/HTS.c"
+#line 2139 "lib/Bio/DB/HTS.xs"
+      RETVAL = kseq_read(it);
+#line 4950 "lib/Bio/DB/HTS.c"
+	XSprePUSH; PUSHi((IV)RETVAL);
+    }
+    XSRETURN(1);
+}
+
+
+XS_EUPXS(XS_Bio__DB__HTS__Kseq__Iterator_rewind); /* prototype to pass -Wmissing-prototypes */
+XS_EUPXS(XS_Bio__DB__HTS__Kseq__Iterator_rewind)
+{
+    dVAR; dXSARGS;
+    if (items != 1)
+       croak_xs_usage(cv,  "it");
+    {
+	Bio__DB__HTS__Kseq__Iterator	it;
+
+	if (SvROK(ST(0)) && sv_derived_from(ST(0), "Bio::DB::HTS::Kseq::Iterator")) {
+	    IV tmp = SvIV((SV*)SvRV(ST(0)));
+	    it = INT2PTR(Bio__DB__HTS__Kseq__Iterator,tmp);
+	}
+	else
+	    Perl_croak(aTHX_ "%s: %s is not of type %s",
+			"Bio::DB::HTS::Kseq::Iterator::rewind",
+			"it", "Bio::DB::HTS::Kseq::Iterator")
+;
+#line 2148 "lib/Bio/DB/HTS.xs"
+      /* kseq_rewind() doesn't completely rewind the file,
+        just resets markers */
+      kseq_rewind(it);
+      /* use zlib to do so */
+      gzrewind(it->f->f);
+#line 4981 "lib/Bio/DB/HTS.c"
+    }
+    XSRETURN_EMPTY;
+}
+
+
+XS_EUPXS(XS_Bio__DB__HTS__Kseq__Iterator_kstream); /* prototype to pass -Wmissing-prototypes */
+XS_EUPXS(XS_Bio__DB__HTS__Kseq__Iterator_kstream)
+{
+    dVAR; dXSARGS;
+    if (items != 1)
+       croak_xs_usage(cv,  "it");
+    {
+	Bio__DB__HTS__Kseq__Iterator	it;
+	Bio__DB__HTS__Kseq__Kstream	RETVAL;
+
+	if (SvROK(ST(0)) && sv_derived_from(ST(0), "Bio::DB::HTS::Kseq::Iterator")) {
+	    IV tmp = SvIV((SV*)SvRV(ST(0)));
+	    it = INT2PTR(Bio__DB__HTS__Kseq__Iterator,tmp);
+	}
+	else
+	    Perl_croak(aTHX_ "%s: %s is not of type %s",
+			"Bio::DB::HTS::Kseq::Iterator::kstream",
+			"it", "Bio::DB::HTS::Kseq::Iterator")
+;
+#line 2159 "lib/Bio/DB/HTS.xs"
+      RETVAL = it->f;
+#line 5008 "lib/Bio/DB/HTS.c"
+	{
+	    SV * RETVALSV;
+	    RETVALSV = sv_newmortal();
+	    sv_setref_pv(RETVALSV, "Bio::DB::HTS::Kseq::Kstream", (void*)RETVAL);
+	    ST(0) = RETVALSV;
+	}
+    }
+    XSRETURN(1);
+}
+
+
+XS_EUPXS(XS_Bio__DB__HTS__Kseq__Iterator_name); /* prototype to pass -Wmissing-prototypes */
+XS_EUPXS(XS_Bio__DB__HTS__Kseq__Iterator_name)
+{
+    dVAR; dXSARGS;
+    if (items != 1)
+       croak_xs_usage(cv,  "it");
+    {
+	Bio__DB__HTS__Kseq__Iterator	it;
+	char *	RETVAL;
+	dXSTARG;
+
+	if (SvROK(ST(0)) && sv_derived_from(ST(0), "Bio::DB::HTS::Kseq::Iterator")) {
+	    IV tmp = SvIV((SV*)SvRV(ST(0)));
+	    it = INT2PTR(Bio__DB__HTS__Kseq__Iterator,tmp);
+	}
+	else
+	    Perl_croak(aTHX_ "%s: %s is not of type %s",
+			"Bio::DB::HTS::Kseq::Iterator::name",
+			"it", "Bio::DB::HTS::Kseq::Iterator")
+;
+#line 2168 "lib/Bio/DB/HTS.xs"
+      RETVAL = it->name.s;
+#line 5042 "lib/Bio/DB/HTS.c"
+	sv_setpv(TARG, RETVAL); XSprePUSH; PUSHTARG;
+    }
+    XSRETURN(1);
+}
+
+
+XS_EUPXS(XS_Bio__DB__HTS__Kseq__Iterator_comment); /* prototype to pass -Wmissing-prototypes */
+XS_EUPXS(XS_Bio__DB__HTS__Kseq__Iterator_comment)
+{
+    dVAR; dXSARGS;
+    if (items != 1)
+       croak_xs_usage(cv,  "it");
+    {
+	Bio__DB__HTS__Kseq__Iterator	it;
+	char *	RETVAL;
+	dXSTARG;
+
+	if (SvROK(ST(0)) && sv_derived_from(ST(0), "Bio::DB::HTS::Kseq::Iterator")) {
+	    IV tmp = SvIV((SV*)SvRV(ST(0)));
+	    it = INT2PTR(Bio__DB__HTS__Kseq__Iterator,tmp);
+	}
+	else
+	    Perl_croak(aTHX_ "%s: %s is not of type %s",
+			"Bio::DB::HTS::Kseq::Iterator::comment",
+			"it", "Bio::DB::HTS::Kseq::Iterator")
+;
+#line 2177 "lib/Bio/DB/HTS.xs"
+      RETVAL = it->comment.s;
+#line 5071 "lib/Bio/DB/HTS.c"
+	sv_setpv(TARG, RETVAL); XSprePUSH; PUSHTARG;
+    }
+    XSRETURN(1);
+}
+
+
+XS_EUPXS(XS_Bio__DB__HTS__Kseq__Iterator_seq); /* prototype to pass -Wmissing-prototypes */
+XS_EUPXS(XS_Bio__DB__HTS__Kseq__Iterator_seq)
+{
+    dVAR; dXSARGS;
+    if (items != 1)
+       croak_xs_usage(cv,  "it");
+    {
+	Bio__DB__HTS__Kseq__Iterator	it;
+	char *	RETVAL;
+	dXSTARG;
+
+	if (SvROK(ST(0)) && sv_derived_from(ST(0), "Bio::DB::HTS::Kseq::Iterator")) {
+	    IV tmp = SvIV((SV*)SvRV(ST(0)));
+	    it = INT2PTR(Bio__DB__HTS__Kseq__Iterator,tmp);
+	}
+	else
+	    Perl_croak(aTHX_ "%s: %s is not of type %s",
+			"Bio::DB::HTS::Kseq::Iterator::seq",
+			"it", "Bio::DB::HTS::Kseq::Iterator")
+;
+#line 2186 "lib/Bio/DB/HTS.xs"
+      RETVAL = it->seq.s;
+#line 5100 "lib/Bio/DB/HTS.c"
+	sv_setpv(TARG, RETVAL); XSprePUSH; PUSHTARG;
+    }
+    XSRETURN(1);
+}
+
+
+XS_EUPXS(XS_Bio__DB__HTS__Kseq__Iterator_qual); /* prototype to pass -Wmissing-prototypes */
+XS_EUPXS(XS_Bio__DB__HTS__Kseq__Iterator_qual)
+{
+    dVAR; dXSARGS;
+    if (items != 1)
+       croak_xs_usage(cv,  "it");
+    {
+	Bio__DB__HTS__Kseq__Iterator	it;
+	char *	RETVAL;
+	dXSTARG;
+
+	if (SvROK(ST(0)) && sv_derived_from(ST(0), "Bio::DB::HTS::Kseq::Iterator")) {
+	    IV tmp = SvIV((SV*)SvRV(ST(0)));
+	    it = INT2PTR(Bio__DB__HTS__Kseq__Iterator,tmp);
+	}
+	else
+	    Perl_croak(aTHX_ "%s: %s is not of type %s",
+			"Bio::DB::HTS::Kseq::Iterator::qual",
+			"it", "Bio::DB::HTS::Kseq::Iterator")
+;
+#line 2195 "lib/Bio/DB/HTS.xs"
+      RETVAL = it->qual.s;
+#line 5129 "lib/Bio/DB/HTS.c"
+	sv_setpv(TARG, RETVAL); XSprePUSH; PUSHTARG;
+    }
+    XSRETURN(1);
+}
+
+
+XS_EUPXS(XS_Bio__DB__HTS__Kseq__Iterator_last_char); /* prototype to pass -Wmissing-prototypes */
+XS_EUPXS(XS_Bio__DB__HTS__Kseq__Iterator_last_char)
+{
+    dVAR; dXSARGS;
+    if (items != 1)
+       croak_xs_usage(cv,  "it");
+    {
+	Bio__DB__HTS__Kseq__Iterator	it;
+	int	RETVAL;
+	dXSTARG;
+
+	if (SvROK(ST(0)) && sv_derived_from(ST(0), "Bio::DB::HTS::Kseq::Iterator")) {
+	    IV tmp = SvIV((SV*)SvRV(ST(0)));
+	    it = INT2PTR(Bio__DB__HTS__Kseq__Iterator,tmp);
+	}
+	else
+	    Perl_croak(aTHX_ "%s: %s is not of type %s",
+			"Bio::DB::HTS::Kseq::Iterator::last_char",
+			"it", "Bio::DB::HTS::Kseq::Iterator")
+;
+#line 2204 "lib/Bio/DB/HTS.xs"
+      RETVAL = it->last_char;
+#line 5158 "lib/Bio/DB/HTS.c"
+	XSprePUSH; PUSHi((IV)RETVAL);
+    }
+    XSRETURN(1);
+}
+
+
+XS_EUPXS(XS_Bio__DB__HTS__Kseq__Iterator_DESTROY); /* prototype to pass -Wmissing-prototypes */
+XS_EUPXS(XS_Bio__DB__HTS__Kseq__Iterator_DESTROY)
+{
+    dVAR; dXSARGS;
+    if (items != 1)
+       croak_xs_usage(cv,  "it");
+    {
+	Bio__DB__HTS__Kseq__Iterator	it;
+
+	if (SvROK(ST(0))) {
+	    IV tmp = SvIV((SV*)SvRV(ST(0)));
+	    it = INT2PTR(Bio__DB__HTS__Kseq__Iterator,tmp);
+	}
+	else
+	    Perl_croak(aTHX_ "%s: %s is not a reference",
+			"Bio::DB::HTS::Kseq::Iterator::DESTROY",
+			"it")
+;
+#line 2213 "lib/Bio/DB/HTS.xs"
+      kseq_destroy(it);
+#line 5185 "lib/Bio/DB/HTS.c"
     }
     XSRETURN_EMPTY;
 }
@@ -3322,11 +5285,61 @@ XS_EXTERNAL(boot_Bio__DB__HTS)
         newXS_deffile("Bio::DB::HTS::Tabix::tbx_seqnames", XS_Bio__DB__HTS__Tabix_tbx_seqnames);
         newXS_deffile("Bio::DB::HTS::Tabix::Iterator::tbx_iter_next", XS_Bio__DB__HTS__Tabix__Iterator_tbx_iter_next);
         newXS_deffile("Bio::DB::HTS::Tabix::Iterator::tbx_iter_free", XS_Bio__DB__HTS__Tabix__Iterator_tbx_iter_free);
-        newXS_deffile("Bio::DB::HTS::VCF::bcf_sr_open", XS_Bio__DB__HTS__VCF_bcf_sr_open);
-        newXS_deffile("Bio::DB::HTS::VCF::bcf_header", XS_Bio__DB__HTS__VCF_bcf_header);
-        newXS_deffile("Bio::DB::HTS::VCF::bcf_next", XS_Bio__DB__HTS__VCF_bcf_next);
-        newXS_deffile("Bio::DB::HTS::VCF::bcf_num_variants", XS_Bio__DB__HTS__VCF_bcf_num_variants);
-        newXS_deffile("Bio::DB::HTS::VCF::bcf_sr_close", XS_Bio__DB__HTS__VCF_bcf_sr_close);
+        (void)newXSproto_portable("Bio::DB::HTS::VCFfile::open", XS_Bio__DB__HTS__VCFfile_open, file, "$$$");
+        newXS_deffile("Bio::DB::HTS::VCFfile::header_read", XS_Bio__DB__HTS__VCFfile_header_read);
+        newXS_deffile("Bio::DB::HTS::VCFfile::read1", XS_Bio__DB__HTS__VCFfile_read1);
+        (void)newXSproto_portable("Bio::DB::HTS::VCFfile::num_variants", XS_Bio__DB__HTS__VCFfile_num_variants, file, "$$$");
+        newXS_deffile("Bio::DB::HTS::VCFfile::vcf_close", XS_Bio__DB__HTS__VCFfile_vcf_close);
+        newXS_deffile("Bio::DB::HTS::VCF::Header::version", XS_Bio__DB__HTS__VCF__Header_version);
+        newXS_deffile("Bio::DB::HTS::VCF::Header::num_samples", XS_Bio__DB__HTS__VCF__Header_num_samples);
+        newXS_deffile("Bio::DB::HTS::VCF::Header::get_sample_names", XS_Bio__DB__HTS__VCF__Header_get_sample_names);
+        newXS_deffile("Bio::DB::HTS::VCF::Header::num_seqnames", XS_Bio__DB__HTS__VCF__Header_num_seqnames);
+        newXS_deffile("Bio::DB::HTS::VCF::Header::get_seqnames", XS_Bio__DB__HTS__VCF__Header_get_seqnames);
+        newXS_deffile("Bio::DB::HTS::VCF::Row::print", XS_Bio__DB__HTS__VCF__Row_print);
+        newXS_deffile("Bio::DB::HTS::VCF::Row::chromosome", XS_Bio__DB__HTS__VCF__Row_chromosome);
+        newXS_deffile("Bio::DB::HTS::VCF::Row::position", XS_Bio__DB__HTS__VCF__Row_position);
+        newXS_deffile("Bio::DB::HTS::VCF::Row::quality", XS_Bio__DB__HTS__VCF__Row_quality);
+        newXS_deffile("Bio::DB::HTS::VCF::Row::id", XS_Bio__DB__HTS__VCF__Row_id);
+        newXS_deffile("Bio::DB::HTS::VCF::Row::reference", XS_Bio__DB__HTS__VCF__Row_reference);
+        newXS_deffile("Bio::DB::HTS::VCF::Row::num_alleles", XS_Bio__DB__HTS__VCF__Row_num_alleles);
+        newXS_deffile("Bio::DB::HTS::VCF::Row::get_alleles", XS_Bio__DB__HTS__VCF__Row_get_alleles);
+        newXS_deffile("Bio::DB::HTS::VCF::Row::num_filters", XS_Bio__DB__HTS__VCF__Row_num_filters);
+        newXS_deffile("Bio::DB::HTS::VCF::Row::has_filter", XS_Bio__DB__HTS__VCF__Row_has_filter);
+        newXS_deffile("Bio::DB::HTS::VCF::Row::is_snp", XS_Bio__DB__HTS__VCF__Row_is_snp);
+        newXS_deffile("Bio::DB::HTS::VCF::Row::get_variant_type", XS_Bio__DB__HTS__VCF__Row_get_variant_type);
+        newXS_deffile("Bio::DB::HTS::VCF::Row::get_info_type", XS_Bio__DB__HTS__VCF__Row_get_info_type);
+        newXS_deffile("Bio::DB::HTS::VCF::Row::get_info", XS_Bio__DB__HTS__VCF__Row_get_info);
+        newXS_deffile("Bio::DB::HTS::VCF::Row::get_format_type", XS_Bio__DB__HTS__VCF__Row_get_format_type);
+        newXS_deffile("Bio::DB::HTS::VCF::Row::get_format", XS_Bio__DB__HTS__VCF__Row_get_format);
+        newXS_deffile("Bio::DB::HTS::VCF::Row::get_genotypes", XS_Bio__DB__HTS__VCF__Row_get_genotypes);
+        newXS_deffile("Bio::DB::HTS::VCF::Row::destroy", XS_Bio__DB__HTS__VCF__Row_destroy);
+        newXS_deffile("Bio::DB::HTS::VCF::Sweep::sweep_open", XS_Bio__DB__HTS__VCF__Sweep_sweep_open);
+        newXS_deffile("Bio::DB::HTS::VCF::Sweep::header_read", XS_Bio__DB__HTS__VCF__Sweep_header_read);
+        newXS_deffile("Bio::DB::HTS::VCF::Sweep::sweep_next", XS_Bio__DB__HTS__VCF__Sweep_sweep_next);
+        newXS_deffile("Bio::DB::HTS::VCF::Sweep::sweep_previous", XS_Bio__DB__HTS__VCF__Sweep_sweep_previous);
+        newXS_deffile("Bio::DB::HTS::VCF::Sweep::sweep_close", XS_Bio__DB__HTS__VCF__Sweep_sweep_close);
+        (void)newXSproto_portable("Bio::DB::HTS::Kseq::new", XS_Bio__DB__HTS__Kseq_new, file, "$$$");
+        (void)newXSproto_portable("Bio::DB::HTS::Kseq::newfh", XS_Bio__DB__HTS__Kseq_newfh, file, "$$$");
+        (void)newXSproto_portable("Bio::DB::HTS::Kseq::iterator", XS_Bio__DB__HTS__Kseq_iterator, file, "$");
+        (void)newXSproto_portable("Bio::DB::HTS::Kseq::DESTROY", XS_Bio__DB__HTS__Kseq_DESTROY, file, "$");
+        (void)newXSproto_portable("Bio::DB::HTS::Kseq::Kstream::new", XS_Bio__DB__HTS__Kseq__Kstream_new, file, "$$");
+        (void)newXSproto_portable("Bio::DB::HTS::Kseq::Kstream::begin", XS_Bio__DB__HTS__Kseq__Kstream_begin, file, "$");
+        (void)newXSproto_portable("Bio::DB::HTS::Kseq::Kstream::end", XS_Bio__DB__HTS__Kseq__Kstream_end, file, "$");
+        (void)newXSproto_portable("Bio::DB::HTS::Kseq::Kstream::is_eof", XS_Bio__DB__HTS__Kseq__Kstream_is_eof, file, "$");
+        (void)newXSproto_portable("Bio::DB::HTS::Kseq::Kstream::buffer", XS_Bio__DB__HTS__Kseq__Kstream_buffer, file, "$");
+        (void)newXSproto_portable("Bio::DB::HTS::Kseq::Kstream::fh", XS_Bio__DB__HTS__Kseq__Kstream_fh, file, "$");
+        (void)newXSproto_portable("Bio::DB::HTS::Kseq::Kstream::DESTROY", XS_Bio__DB__HTS__Kseq__Kstream_DESTROY, file, "$");
+        (void)newXSproto_portable("Bio::DB::HTS::Kseq::Iterator::next_seq_hash", XS_Bio__DB__HTS__Kseq__Iterator_next_seq_hash, file, "$");
+        (void)newXSproto_portable("Bio::DB::HTS::Kseq::Iterator::next_seq", XS_Bio__DB__HTS__Kseq__Iterator_next_seq, file, "$");
+        (void)newXSproto_portable("Bio::DB::HTS::Kseq::Iterator::read", XS_Bio__DB__HTS__Kseq__Iterator_read, file, "$");
+        (void)newXSproto_portable("Bio::DB::HTS::Kseq::Iterator::rewind", XS_Bio__DB__HTS__Kseq__Iterator_rewind, file, "$");
+        (void)newXSproto_portable("Bio::DB::HTS::Kseq::Iterator::kstream", XS_Bio__DB__HTS__Kseq__Iterator_kstream, file, "$");
+        (void)newXSproto_portable("Bio::DB::HTS::Kseq::Iterator::name", XS_Bio__DB__HTS__Kseq__Iterator_name, file, "$");
+        (void)newXSproto_portable("Bio::DB::HTS::Kseq::Iterator::comment", XS_Bio__DB__HTS__Kseq__Iterator_comment, file, "$");
+        (void)newXSproto_portable("Bio::DB::HTS::Kseq::Iterator::seq", XS_Bio__DB__HTS__Kseq__Iterator_seq, file, "$");
+        (void)newXSproto_portable("Bio::DB::HTS::Kseq::Iterator::qual", XS_Bio__DB__HTS__Kseq__Iterator_qual, file, "$");
+        (void)newXSproto_portable("Bio::DB::HTS::Kseq::Iterator::last_char", XS_Bio__DB__HTS__Kseq__Iterator_last_char, file, "$");
+        (void)newXSproto_portable("Bio::DB::HTS::Kseq::Iterator::DESTROY", XS_Bio__DB__HTS__Kseq__Iterator_DESTROY, file, "$");
 #if PERL_VERSION_LE(5, 21, 5)
 #  if PERL_VERSION_GE(5, 9, 0)
     if (PL_unitcheckav)
