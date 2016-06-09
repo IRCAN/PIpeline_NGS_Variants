@@ -3,3 +3,4 @@ CosmicCompleteExport.tsv
 homo_sapiens_vep_84_GRCh37.tar.gz
 .directory
 Resultats/
+__pycache__

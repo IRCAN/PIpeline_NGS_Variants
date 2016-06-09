@@ -1,9 +1,0 @@
-Sample Name: 160089
-Sample ID:   M-YGRTGCAT
-Number of mapped reads:    220789
-Number of reads in sample ID regions: 13375
-Percent reads in sample ID regions:   6.06%
-Total base reads in sample ID regions:    23338933
-Percent base reads in sample ID regions: 5.61%
-Male sample ID region reads:   122
-Female sample ID region reads: 434

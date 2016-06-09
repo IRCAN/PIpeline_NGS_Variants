@@ -1,9 +1,0 @@
-Sample Name: 160089
-Sample ID:   F-YG?TGCAT
-Number of mapped reads:    61653
-Number of reads in sample ID regions: 3784
-Percent reads in sample ID regions:   6.14%
-Total base reads in sample ID regions:    6561315
-Percent base reads in sample ID regions: 5.64%
-Male sample ID region reads:   32
-Female sample ID region reads: 134

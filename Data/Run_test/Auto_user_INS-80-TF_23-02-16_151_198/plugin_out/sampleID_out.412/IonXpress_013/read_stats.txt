@@ -1,9 +1,0 @@
-Sample Name: 150175
-Sample ID:   F-CKACASGW
-Number of mapped reads:    271684
-Number of reads in sample ID regions: 10197
-Percent reads in sample ID regions:   3.75%
-Total base reads in sample ID regions:    28226245
-Percent base reads in sample ID regions: 3.52%
-Male sample ID region reads:   5
-Female sample ID region reads: 614
