@@ -1,9 +1,0 @@
-Sample Name: 160295
-Sample ID:   M-YGRCRSRW
-Number of mapped reads:    296985
-Number of reads in sample ID regions: 14842
-Percent reads in sample ID regions:   5.00%
-Total base reads in sample ID regions:    33419993
-Percent base reads in sample ID regions: 4.50%
-Male sample ID region reads:   633
-Female sample ID region reads: 689

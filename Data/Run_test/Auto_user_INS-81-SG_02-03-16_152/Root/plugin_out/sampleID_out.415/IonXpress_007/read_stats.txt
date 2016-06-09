@@ -1,9 +1,0 @@
-Sample Name: 154034-2
-Sample ID:   F-CK?TGSGA
-Number of mapped reads:    258504
-Number of reads in sample ID regions: 13403
-Percent reads in sample ID regions:   5.18%
-Total base reads in sample ID regions:    25623151
-Percent base reads in sample ID regions: 5.33%
-Male sample ID region reads:   1
-Female sample ID region reads: 1065

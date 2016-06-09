@@ -1,6 +1,0 @@
-Bases in target regions: 988
-Average base coverage depth: 1787.7
-Uniformity of coverage:      100.0%
-Coverage at 1x:   100.0%
-Coverage at 20x:  100.0%
-Coverage at 100x: 100.0%

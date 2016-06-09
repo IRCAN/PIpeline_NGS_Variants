@@ -1,9 +1,0 @@
-Sample Name: 152949
-Sample ID:   N/A
-Number of mapped reads:    36073
-Number of reads in sample ID regions: 60
-Percent reads in sample ID regions:   0.17%
-Total base reads in sample ID regions:    1517095
-Percent base reads in sample ID regions: 0.23%
-Male sample ID region reads:   0
-Female sample ID region reads: 0

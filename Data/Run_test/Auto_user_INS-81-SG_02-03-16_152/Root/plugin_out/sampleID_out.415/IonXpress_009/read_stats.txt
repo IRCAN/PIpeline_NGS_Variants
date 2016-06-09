@@ -1,9 +1,0 @@
-Sample Name: 160221
-Sample ID:   M-CTAYACRA
-Number of mapped reads:    385086
-Number of reads in sample ID regions: 22986
-Percent reads in sample ID regions:   5.97%
-Total base reads in sample ID regions:    44069990
-Percent base reads in sample ID regions: 5.36%
-Male sample ID region reads:   1132
-Female sample ID region reads: 954
