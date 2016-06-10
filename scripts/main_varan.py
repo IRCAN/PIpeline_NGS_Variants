@@ -58,6 +58,7 @@ class MainVaran(RefseqToEnsembl):
 				file = i+'.vcf'
 				TSVC_variants = glob.glob(pathREPERTORYVCF+"/plugin_out/variantCaller_out*/"+i+"/TSVC_variants_"+file)
 				print('Traitement du file: \n',TSVC_variants[0],'\n')
+				print(i)
 			else:
 				file = i+'.vcf'
 				TSVC_variants = glob.glob(pathREPERTORYVCF+"/Variants/"+i+"/"+file)

@@ -24,7 +24,6 @@ class VariantFilter:
 			if h[1] == "start":
 				del hotspots[count]
 			count += 1
-		os.remove("liste_hotspot_temp.txt")
 		return hotspots
 
 	def compare_hs(self,sample,file):
@@ -50,7 +49,6 @@ class VariantFilter:
 				hgvsp = sampleLigneSplit[5]
 				if hsLineSplit[0] == chrNumber and int(hsLineSplit[1]) <= int(position) <= int(hsLineSplit[2]) and hsLineSplit[3] == sampleLigneSplit[1]: # and cosmicNumber in hsLineSplit[6] and sampleLigneSplit[4] in hsLineSplit[7]:
 					HSm = sampleLigneSplit[1]+"\t"+hsLineSplit[4]+"\t"+sampleLigneSplit[2]+"\t"+sampleLigneSplit[3]+"\t"+sampleLigneSplit[4]+"\t"+hgvsp+"\t"+"COSM"+cosmicNumber+"\t"+sampleLigneSplit[7]+"\t"+sampleLigneSplit[8]+"\t"+sampleLigneSplit[9]+"\t"+sampleLigneSplit[10]+"\t"+sampleLigneSplit[11]+"\t"+sampleLigneSplit[12]+"\n"
-					print(sampleLigne)
 					##HS douteux si nocall ou <25reads: 
 					if sampleLigneSplit[7] != "cov_not_find":
 						if sampleLigneSplit[13] == "NO CALL" or int(sampleLigneSplit[7]) < 25:
