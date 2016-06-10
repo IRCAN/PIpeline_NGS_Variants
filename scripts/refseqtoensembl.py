@@ -26,15 +26,14 @@ class RefseqToEnsembl:
 		vcfFileFinalList.append("gene\tgene Id\tRefSeq id\tTranscript\tHGVSc\tHGVSp\tcosmic ID\tallele_cov\tallele_freq\tfunction\tmaf\tsift\tpolyphen\n")
 		idNotFindList = []
 		mutationsFile = self.parse_mutations_file(file,REPERTORYVCF)
-		####
-		#Recherche si correspondance entre ID refseq de gene2ensembl avec ID refseq du file VEP
-		####
+		################################################################################
+		#Recherche si correspondance entre ID refseq de gene2ensembl avec ID refseq du fichier VEP
+		################################################################################
 		File = "../System/Cosmic/Cosmic_lite.txt"
 		with open(File,'r') as cosmic0:
 			cosmic=cosmic0.readlines()
 		self.create_dico_panel()
-		"""Verifie si id refseq de vep est dans le panel de genes.
-		si il y est, on le met dans une liste temporaire."""
+		#Verifie si id refseq de vep est dans le panel de genes si il y est, on le met dans une liste temporaire.
 		for ligne in vepFile:
 			if ligne[0]!="#":
 				#Supprime le retour a la ligne
@@ -54,8 +53,7 @@ class RefseqToEnsembl:
 						temp = self.dicoPanel[key].split("\t")
 						tempList.append(ligne+"\t"+temp[0]+"\n")
 
-		"""liste temporaire qui ne contient que les lignes dont id refseq sont dans le panel.
-		Pour chaque ligne, on recupere les informations puis on cree un file qui servira a filtrer les variants."""
+		#liste temporaire qui ne contient que les lignes dont id refseq sont dans le panel. Pour chaque ligne, on recupere les informations puis on cree un file qui servira a filtrer les variants.
 		for ligne in tempList:
 			ligneSplit = ligne.split("\t")
 			idRefseq = ligneSplit[4]
@@ -65,11 +63,12 @@ class RefseqToEnsembl:
 			function = ligneSplit[6]
 			ligneInfoVcf = ligneSplit[13]
 			geneId = ligneSplit[14].replace("\n","")
-				#Si correspondance entre les ID
 			idEnsembleFind = False
 			if idRefseq in self.gene2ensemblFinalDic:
 				idEnsembleFind = True
+			################################################################################
 			#Recuperation du HGVSc
+			################################################################################
 			regexHGVSc = "HGVSc=" + idRefseq + ":(.*)"
 			matchHGVSc = re.search(regexHGVSc, ligneInfoVcf)
 			if matchHGVSc == None: 
@@ -80,7 +79,9 @@ class RefseqToEnsembl:
 				tempSplit = tempSplit[0]
 				tempSplit = tempSplit.split(":")
 				HGVSc = tempSplit[1]
+			################################################################################
 			#Recuperation du HGVSp
+			################################################################################
 			regexHGVSp = "HGVSp=(.*)"
 			matchHGVSp = re.search(regexHGVSp, ligneInfoVcf)
 			if matchHGVSp == None: 
@@ -91,7 +92,9 @@ class RefseqToEnsembl:
 				HGVSpTemp = HGVSpTemp[0]
 				HGVSpTemp = HGVSpTemp.split(":")
 				HGVSp = HGVSpTemp[1]
+			################################################################################
 			#Recuperation de la MAF
+			################################################################################
 			regexMAF = "GMAF=.*"
 			matchMAF = re.search(regexMAF, ligneInfoVcf)
 			if matchMAF == None :
@@ -106,7 +109,9 @@ class RefseqToEnsembl:
 				else:
 					MAFTemp = MAFTemp.split("=")
 					MAF = MAFTemp[1]
+			################################################################################
 			#Recuperation du SIFT
+			################################################################################
 			regexSift = "SIFT=(.*);"
 			matchSift = re.search(regexSift, ligneInfoVcf)
 			if matchSift == None: SIFT = "NA"
@@ -120,7 +125,9 @@ class RefseqToEnsembl:
 				else:
 					SIFTTemp = SIFTTemp.split("=")
 					SIFT = SIFTTemp[1]
+			################################################################################
 			#Recuperation du Polyphen
+			################################################################################
 			regexPolyphen = "PolyPhen=(.*);"
 			matchPolyphen = re.search(regexPolyphen, ligneInfoVcf)
 			if matchPolyphen == None: PolyPhen = "NA"
@@ -134,7 +141,9 @@ class RefseqToEnsembl:
 				else:
 					PolyPhenTemp = PolyPhenTemp.split("=")
 					PolyPhen = PolyPhenTemp[1]
+			################################################################################
 			#Creation de la string resume
+			################################################################################
 			if "-" in ligneSplit[1]:
 				temp = pos.split("-")
 				position = temp[0]
@@ -148,9 +157,9 @@ class RefseqToEnsembl:
 				string = chromPos[0]+":"+position + "\t"+ geneId +"\t" + idRefseq + "\t" + idEnsembl + "\t" + HGVSc + "\t" + HGVSp + "\tidCosmicNotFound\tcov_not_find\tfreq_not_find\t"+ function + "\t" + MAF + "\t" + SIFT + "\t" +PolyPhen + "\t"+ "NO-NOCALL" + "\n"
 			else:
 				string = chromPos[0]+":"+position + "\t"+ geneId +"\t" + idRefseq + "\t" + "NA" + "\t" + HGVSc + "\t" + HGVSp + "\tidCosmicNotFound\tcov_not_find\tfreq_not_find\t"+ function + "\t" + MAF + "\t" + SIFT + "\t" +PolyPhen + "\t"+ "NO-NOCALL" + "\n"
-			####
+			################################################################################
 			#Comparaison avec les lignes de MUTATIONS pour récupérer les couvertures
-			####
+			################################################################################
 			for mutation in mutationsFile:
 				if mutation[0]!="#":
 					mutationSplit = mutation.split("\t")
@@ -162,9 +171,9 @@ class RefseqToEnsembl:
 						string = string.replace("freq_not_find",alleleFreq+"%")
 						if mutationSplit[6] == "NOCALL":
 							string = string.replace("NO-NOCALL","NO CALL")
-			####
+			################################################################################
 			#Recuperation identifiant COSMIC
-			####
+			################################################################################
 			if idEnsembleFind:
 				idEnsembl = self.gene2ensemblFinalDic[idRefseq]
 				infoCosmic = self.cosmicDict.get(idEnsembl)
@@ -197,9 +206,9 @@ class RefseqToEnsembl:
 		with open(File,'r') as cosmic0:
 			cosmic = cosmic0.readlines()
 		idEnsemblFromCosmic = ""
-		########################################################
+		################################################################################
 		#Creation dictionnaire cosmic DB (key = ENST)
-		########################################################
+		################################################################################
 		for cosmicLigne in cosmic:
 			cosmicLigne = cosmicLigne.replace("\n","")
 			cosmicLigneSplit = cosmicLigne.split("\t")
@@ -212,7 +221,7 @@ class RefseqToEnsembl:
 			else:
 				self.cosmicDict[idEnsemblFromCosmic].append(cosmicLigne)
 		print('Parsing OK')
-################TODO: modifier les i,j et continuer traduction
+
 	def output_file(self,FileName, finalList,legendList=""):
 		"""Cree un file resultat et ecrit dans ce file."""
 		fileName = FileName
@@ -238,13 +247,12 @@ class RefseqToEnsembl:
 		return(resultat)
 
 	def get_allele_freq(self,string):
-	############################################
-	#TODO Modifier AF par DP et récupérer le nombre total de reads pour calculer la fréquence
-	############################################
+		################################################################################
+		#TODO Modifier AF par DP et récupérer le nombre total de reads pour calculer la fréquence
+		################################################################################
 		match = re.search(r"(AF)=\d*.\d*;", string)
-		resultat = match.group(0)
-	#Supprime le "AF="
-		resultat = resultat.replace(";","")
+		resultat = match.group(0)	
+		resultat = resultat.replace(";","")	#Supprime le "AF="
 		resultat = float(resultat[3:])
 		resultat = resultat*100
 		resultat = "%.1f" % resultat

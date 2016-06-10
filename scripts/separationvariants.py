@@ -1,11 +1,11 @@
 import re
 
 """
-Script pour separer une ligne du fichier VCF
-composee de plusieurs transcripts en plusieurs
+Script pour separer une ligne du fichier VCF composee de plusieurs transcripts en plusieurs
 lignes: une ligne par transcript.
 
 Ludovic KOSTHOWA (06/04/16)
+Info: Creation en cours, script peut etre modifie a tout moment.
 """
 
 class SeparationVariants:
@@ -55,7 +55,7 @@ class SeparationVariants:
 		Cette fonction permet de separer tout les elements necessaires a la
 		separation des lignes composees de plusirs ID cosmics."""
 		listContentFile = [] #liste du contenu du fichier
-		#separation de contentFile par les tabulations!
+		#separation de contentFile par les tabulations
 		listFinale =[]
 		for element in contentFile:
 			contentFile = element.split('\t')

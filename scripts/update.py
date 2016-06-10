@@ -1,6 +1,10 @@
 import cosmiclite
 import os
-"""Commentaires"""
+"""Script qui verifie sur le web les dernieres versions des bases de donnees.
+Si il y a une mise a jour, telecharge et remplace l'ancien fichier par la nouvelle version.
+
+Ludovic KOSTHOWA (06/04/16)
+Info: Creation en cours, script peut etre modifie a tout moment."""
 
 class Updates:
 	def __init__(self,REPERTORYVCF):

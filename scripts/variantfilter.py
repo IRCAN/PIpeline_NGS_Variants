@@ -1,7 +1,11 @@
 import re
 import os
 
-""" Commentaires"""
+"""Script qui filtre les variants trouves lors du sequençage. Differents filtres sont proposes
+et peuvent etre modifies.
+
+Ludovic KOSTHOWA (06/04/16)
+Info: Creation en cours, script peut etre modifie a tout moment."""
 
 class VariantFilter:
 	def __init__(self,REPERTORYVCF,file):

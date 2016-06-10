@@ -1,12 +1,9 @@
-#!/usr/bin/python
-# coding: utf-8 
 from main_varan import MainVaran 
 from update import Updates
 from globalinformations import GlobalInformations
 import os,re,time
 import glob
 from argparse import ArgumentParser
-
 
 """
 Script principal du pipeline qui traite le fichier .vcf de chaque patients d'un run
@@ -15,8 +12,6 @@ afin d'obtenir un compte rendu de mutations.
 Ludovic KOSTHOWA (Debut : 06/04/16)
 Info: Creation en cours, script peut etre modifie a tout moment.
 """
-
-
 
 if __name__=='__main__':
 	start_time = time.time()  
@@ -37,16 +32,14 @@ if __name__=='__main__':
 	print(REPERTORYVCF)
 	
 	if args.NoUpdates==False:
-		print("rien ne se passe")
+		print("....")
 	else:
-		#print("je fais des mises à jours")
 		Updates(REPERTORYVCF)
 	if args.globalinformations:
-		#print("hey j'ai des info")
 		GlobalInformations(REPERTORYVCF)
-
 	################################################################################
-	# Etape de separation des lignes de variants
+	# Lancement du fichier principal
+	################################################################################
 	if args.listHotspot:
 		MainVaran(pathREPERTORYVCF,REPERTORYVCF,ALL_HS_FILE=args.listHotspot)
 	else:

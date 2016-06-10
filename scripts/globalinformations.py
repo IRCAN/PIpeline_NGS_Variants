@@ -6,6 +6,7 @@ from argparse import ArgumentParser
 Script creant un fichier resume et qualite pour chaque echantillon du run.
 
 Ludovic KOSTHOWA (Debut : 06/04/16)
+Info: Creation en cours, script peut etre modifie a tout moment.
 """
 class GlobalInformations():
 	def __init__(self,REPERTORYVCF):
@@ -35,14 +36,16 @@ class GlobalInformations():
 			self.get_list_reads_on_target(self.fileContent)
 			self.get_sample(self.fileContent)
 			self.get_mapped_reads(self.fileContent)
-			"""
-			Ouverture et Analyse du fichier explog_final.txt
-			"""
+
 		#############################
 		#############################
 		# Attention chemins
 		#############################
 		#############################
+
+			################################################################################
+			# Ouverture et Analyse du fichier explog_final.txt
+			################################################################################
 			fileExplogFinal="../Run_test/"+REPERTORYVCF+"/explog_final.txt"
 			self.file2=open(fileExplogFinal, 'r')  # "../Data/Run_test/Auto_user_INS-80-TF_23-02-16_151_198/explog_final.txt"
 			self.fileContent = self.read_file(self.file2)
@@ -61,9 +64,9 @@ class GlobalInformations():
 				sampleList[4] = chip
 				sampleList[5] = self.mappedReadsList[curentBarecodeNumber]
 				sampleList[7] = self.listReadsOnTarget[curentBarecodeNumber]
-				"""
-				Ouverture et Analyse du fichier read_stats.txt
-				"""
+				################################################################################
+				# Ouverture et Analyse du fichier read_stats.txt
+				################################################################################
 				fileName =glob.glob("../Run_test/"+REPERTORYVCF+"/plugin_out/sampleID_out.*/"+barecode+"/read_stats.txt")
 				fichier = open(fileName[0],"r")
 				fileContent = self.read_file(fichier)
@@ -71,9 +74,9 @@ class GlobalInformations():
 				sampleList[6] = self.get_id(fileContent)
 				sampleList[8] = self.get_reads_on_sample_ID(fileContent)
 				fichier.close()
-				"""
-				Ouverture et Analyse du fichier .stats.cov.txt
-				"""
+				################################################################################
+				# Ouverture et Analyse du fichier .stats.cov.txt
+				################################################################################
 				fileName=glob.glob("../Run_test/"+REPERTORYVCF+"/plugin_out/coverageAnalysis_out.*/"+barecode+"/"+barecode+"*.stats.cov.txt")
 				fichier = open(fileName[0],"r")
 				fileContent = self.read_file(fichier)
@@ -84,9 +87,10 @@ class GlobalInformations():
 				sampleList[13]=self.get_coverage_500x(fileContent)
 				self.finalList.append(sampleList)
 				curentBarecodeNumber += 1
-			"""
-			Creation du fichier final globalInformations.txt
-			"""
+
+			################################################################################
+			# Creation du fichier final globalInformations.txt
+			################################################################################
 			if os.path.isdir('../Resultats/'+REPERTORYVCF) == False:
 				#print("creation du repertoire")
 				os.mkdir('../Resultats/'+REPERTORYVCF) 

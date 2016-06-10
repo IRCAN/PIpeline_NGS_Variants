@@ -8,7 +8,11 @@ from variantfilter import VariantFilter
 from refseqtoensembl import RefseqToEnsembl
 
 
-""" Commentaires"""
+""" Script principal du pipeline qui traite le fichier .vcf de chaque patients d'un run
+afin d'obtenir un compte rendu de mutations.
+
+Ludovic KOSTHOWA (Debut : 06/04/16)
+Info: Creation en cours, script peut etre modifie a tout moment."""
 
 class MainVaran(RefseqToEnsembl):
 
@@ -21,7 +25,7 @@ class MainVaran(RefseqToEnsembl):
 			self.run_VEP(pathREPERTORYVCF,REPERTORYVCF)
 
 	def concatenate_hs(self,ALL_HS_FILE):
-			""" Commentaires"""
+			""" TODO : Commentaires"""
 			tempFile = open("liste_hotspot_temp.txt", "w")
 			for element in ALL_HS_FILE:
 				f = open(element, 'r+')
@@ -88,11 +92,10 @@ class MainVaran(RefseqToEnsembl):
 			#creation du file de sortie: file VCF avec un transcript par ligne
 			self.output_file(f_out,listOfTranscripts,legendList)
 			print('Creation de ',f_out,'\n')
-		
 			################################################################################
 			# Etape de recherche de Hotspots non mutes
 			################################################################################
-			#creation d'un dictionnaire avec cle = gene-exon et valeurs vide.
+			#Etape de recherche de Hotspots non mutes
 			if hotspot != "":
 				resumeHotspot= HotspotProcess(REPERTORYVCF,hotspot,listOfTranscripts,file)
 			################################################################################
@@ -111,11 +114,10 @@ class MainVaran(RefseqToEnsembl):
 			################################################################################
 			inputfile = "../Resultats/"+REPERTORYVCF+"/VariantCaller/MUTATIONS_"+file
 			outputFile2 = "../Resultats/"+REPERTORYVCF+"/VEP/VEP_"+file
-
 			commandVEP = "perl ../System/ensembl-tools-release-84/scripts/variant_effect_predictor/variant_effect_predictor.pl -cache --no_stats --force --refseq --gmaf --hgvs --sift b --polyphen b --port 3337 --input_file "+inputfile+ " --output_file "+outputFile2
 			os.system(commandVEP)
 			################################################################################
-			#Recherche equivalences RefSeq -> Ensembl
+			#Filtrage des variants
 			################################################################################
 			self.make_file_for_filter(file,REPERTORYVCF)
 			if hotspot != "":
