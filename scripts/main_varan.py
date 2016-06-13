@@ -1,22 +1,26 @@
-import re
-import glob
-import os
-import shutil
+#!/usr/bin/python
+# coding: utf-8 
+"""Script principal du pipeline qui traite le fichier .vcf de chaque patients d'un run
+afin d'obtenir un compte rendu de mutations.
+Ludovic KOSTHOWA (Debut : 06/04/16)
+Info: Creation en cours, script peut etre modifie a tout moment."""
+
+import re,glob,os,shutil
 from separationvariants import SeparationVariants
 from hotspot import HotspotProcess
 from variantfilter import VariantFilter
 from refseqtoensembl import RefseqToEnsembl
 
-
-""" Script principal du pipeline qui traite le fichier .vcf de chaque patients d'un run
-afin d'obtenir un compte rendu de mutations.
-
-Ludovic KOSTHOWA (Debut : 06/04/16)
-Info: Creation en cours, script peut etre modifie a tout moment."""
-
 class MainVaran(RefseqToEnsembl):
 
 	def __init__(self,pathREPERTORYVCF, REPERTORYVCF, ALL_HS_FILE=""):
+		############################
+		############################
+		############################
+		# TODO :Commentaire sur la fonction
+		############################
+		############################
+		############################
 		RefseqToEnsembl.__init__(self)
 		if ALL_HS_FILE != "":
 			ALL_HS_FILE,hotspots=self.concatenate_hs(ALL_HS_FILE)
@@ -41,6 +45,7 @@ class MainVaran(RefseqToEnsembl):
 			return (ALL_HS_FILE,hotspots)
 
 	def run_VEP(self,pathREPERTORYVCF,REPERTORYVCF, hotspot="", ALL_HS_FILE=""):
+		"""Lance le logiciel VEP sur les mutations présentes dans chaque échantillons pour les annoter."""
 		######################
 		######################
 		#A modifier pour chemin
@@ -88,7 +93,7 @@ class MainVaran(RefseqToEnsembl):
 			# dans listOfList et les autres dans ListdeNewLines + ajf_oute seulement les mutations
 			listOfTranscripts = self.check_if_multiple_id(listOfList,sep.listNewLines)
 			#//TODO A modifier lorsque arborescence finale connue
-			f_out = "../Resultats/"+REPERTORYVCF+"/VariantCaller/SEP_LIGNES_"+file
+			f_out = "../Results/"+REPERTORYVCF+"/VariantCaller/SEP_LIGNES_"+file
 			#creation du file de sortie: file VCF avec un transcript par ligne
 			self.output_file(f_out,listOfTranscripts,legendList)
 			print('Creation de ',f_out,'\n')
@@ -106,15 +111,15 @@ class MainVaran(RefseqToEnsembl):
 				transcript = listOfTranscripts[indice].split('\t')
 				if "FAO=0;" not in transcript[7]:
 					mutationsList.append(listOfTranscripts[indice])
-			f_out2 = "../Resultats/"+REPERTORYVCF+"/VariantCaller/MUTATIONS_"+file
+			f_out2 = "../Results/"+REPERTORYVCF+"/VariantCaller/MUTATIONS_"+file
 			print('Creation de ',f_out2,'\n')
 			self.output_file(f_out2,mutationsList,legendList)
 			################################################################################
 			#Etape de lancement de VEP avec en input le file de mutations
 			################################################################################
-			inputfile = "../Resultats/"+REPERTORYVCF+"/VariantCaller/MUTATIONS_"+file
-			outputFile2 = "../Resultats/"+REPERTORYVCF+"/VEP/VEP_"+file
-			commandVEP = "perl ../System/ensembl-tools-release-84/scripts/variant_effect_predictor/variant_effect_predictor.pl -cache --no_stats --force --refseq --gmaf --hgvs --sift b --polyphen b --port 3337 --input_file "+inputfile+ " --output_file "+outputFile2
+			inputfile = "../Results/"+REPERTORYVCF+"/VariantCaller/MUTATIONS_"+file
+			outputFile2 = "../Results/"+REPERTORYVCF+"/VEP/VEP_"+file
+			commandVEP = "perl ../System/Ensembl/ensembl-tools-release-84/scripts/variant_effect_predictor/variant_effect_predictor.pl -cache --no_stats --force --refseq --gmaf --hgvs --sift b --polyphen b --port 3337 --input_file "+inputfile+ " --output_file "+outputFile2
 			os.system(commandVEP)
 			################################################################################
 			#Filtrage des variants

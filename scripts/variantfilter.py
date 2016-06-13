@@ -1,5 +1,5 @@
-import re
-import os
+#!/usr/bin/python
+# coding: utf-8 
 
 """Script qui filtre les variants trouves lors du sequençage. Differents filtres sont proposes
 et peuvent etre modifies.
@@ -7,10 +7,19 @@ et peuvent etre modifies.
 Ludovic KOSTHOWA (06/04/16)
 Info: Creation en cours, script peut etre modifie a tout moment."""
 
+import re,os
+
 class VariantFilter:
 	def __init__(self,REPERTORYVCF,file):
+		############################
+		############################
+		############################
+		# TODO :Commentaire sur la fonction
+		############################
+		############################
+		############################
 		self.REPERTORYVCF = REPERTORYVCF
-		with open("../Resultats/"+self.REPERTORYVCF+"/temp/resultats_"+file,'r') as File:
+		with open("../Results/"+self.REPERTORYVCF+"/temp/Results_"+file,'r') as File:
 			sample = File.readlines()
 		del sample[0]
 		self.compare_hs(sample,file)
@@ -20,6 +29,13 @@ class VariantFilter:
 		self.uncaracterized_mutations(sample,file)
 
 	def parse_hs_file(self):
+		############################
+		############################
+		############################
+		# TODO :Commentaire sur la fonction
+		############################
+		############################
+		############################
 		with open("liste_hotspot_temp.txt",'r') as hotspotsFile:
 			hotspots = hotspotsFile.readlines()
 		count = 0
@@ -31,11 +47,11 @@ class VariantFilter:
 		return hotspots
 
 	def compare_hs(self,sample,file):
-		"""Compare les mutations de l'echantillon au file des hotspots d'interet."""
+		"""Compare les mutations de l'echantillon au fichier des hotspots d'interet."""
 		hotspots = self.parse_hs_file()
-		outputFile = open("../Resultats/"+self.REPERTORYVCF+"/temp/HSm_"+file, 'w')
+		outputFile = open("../Results/"+self.REPERTORYVCF+"/temp/HSm_"+file, 'w')
 		outputFile.write("gene\texon\ttranscript\tcoding\tprotein\tcosmic\tallele_cov\tallele_freq\tfunction\tmaf\tsift\tpolyphen\n")
-		o_f_uncertain = open("../Resultats/"+self.REPERTORYVCF+"/temp/HSm_questionable_"+file, 'w')
+		o_f_uncertain = open("../Results/"+self.REPERTORYVCF+"/temp/HSm_questionable_"+file, 'w')
 		o_f_uncertain.write("gene\texon\tRefSeq id\tTranscript\tHGVSc\tHGVSp\tcosmic ID\tallele_cov\tallele_freq\tfunction\tmaf\tsift\tpolyphen\n")
 		suppList = []
 		# If 0 = file is empty, if 1 file is not empty
@@ -66,15 +82,15 @@ class VariantFilter:
 						fileEmpty2 = False
 					suppList.append(sampleLigne)
 		if fileEmpty1:
-			os.remove("../Resultats/"+self.REPERTORYVCF+"/temp/HSm_"+file)
+			os.remove("../Results/"+self.REPERTORYVCF+"/temp/HSm_"+file)
 		if fileEmpty2:
-			os.remove("../Resultats/"+self.REPERTORYVCF+"/temp/HSm_questionable_"+file)
+			os.remove("../Results/"+self.REPERTORYVCF+"/temp/HSm_questionable_"+file)
 		for supp in suppList:
 			sample.remove(supp)
 
 	def uncertain_mutation(self,sample,file):
 		"""Recherche parmis les mutations si elle est douteuse, cad si frequence allelique < 1 et couverture < 25."""
-		outputFile = open("../Resultats/"+self.REPERTORYVCF+"/temp/uncertain_mutation_"+file, 'w')
+		outputFile = open("../Results/"+self.REPERTORYVCF+"/temp/uncertain_mutation_"+file, 'w')
 		outputFile.write("gene\tposition\tRefSeq id\tTranscript\tHGVSc\tHGVSp\tcosmic ID\tallele_cov\tallele_freq\tfunction\tmaf\tsift\tpolyphen\n")
 		suppList = []
 		# If 0 = file is empty, if 1 file is not empty
@@ -93,13 +109,13 @@ class VariantFilter:
 					suppList.append(sampleLigne)
 					fileEmpty = False
 		if fileEmpty:
-			os.remove("../Resultats/"+self.REPERTORYVCF+"/temp/uncertain_mutation_"+file)
+			os.remove("../Results/"+self.REPERTORYVCF+"/temp/uncertain_mutation_"+file)
 		for supp in suppList:
 			sample.remove(supp)
 
 	def find_polymorphism(self,sample,file):
 		"""Recherche parmis les mutations si c'est un polymorphisme, cad si la minor allele frequency > 0.01."""
-		outputFile = open("../Resultats/"+self.REPERTORYVCF+"/temp/Polymorphism_"+file, 'w')
+		outputFile = open("../Results/"+self.REPERTORYVCF+"/temp/Polymorphism_"+file, 'w')
 		outputFile.write("gene\tposition\tRefSeq id\tTranscript\tHGVSc\tHGVSp\tcosmic ID\tallele_cov\tallele_freq\tfunction\tmaf\tsift\tpolyphen\n")
 		# If 0 = file is empty, if 1 file is not empty
 		fileEmpty = True
@@ -119,13 +135,13 @@ class VariantFilter:
 					outputFile.write(string)
 					suppList.append(sampleLigne)
 		if fileEmpty:
-			os.remove("../Resultats/"+self.REPERTORYVCF+"/temp/Polymorphism_"+file)
+			os.remove("../Results/"+self.REPERTORYVCF+"/temp/Polymorphism_"+file)
 		for supp in suppList:
 			sample.remove(supp)
 
 	def uncaracterized_mutations(self,sample,file):
-		"""Cree un file contenant toutes les mutations qui ne sont pas categorisees."""
-		outputFile = open("../Resultats/"+self.REPERTORYVCF+"/temp/uncaracterized_mutations_"+file, 'w')
+		"""Cree un fichier contenant toutes les mutations qui ne sont pas categorisees."""
+		outputFile = open("../Results/"+self.REPERTORYVCF+"/temp/uncaracterized_mutations_"+file, 'w')
 		outputFile.write("gene\tposition\tRefSeq id\tTranscript\tHGVSc\tHGVSp\tcosmic ID\tallele_cov\tallele_freq\tfunction\tmaf\tsift\tpolyphen\n")
 		if len(sample) != 0:
 			for sampleLigne in sample:
@@ -134,11 +150,11 @@ class VariantFilter:
 				string = sampleLigneSplit[1]+"\t"+sampleLigneSplit[0]+"\t"+sampleLigneSplit[2]+"\t"+sampleLigneSplit[3]+"\t"+sampleLigneSplit[4]+"\t"+sampleLigneSplit[5]+"\t"+sampleLigneSplit[6]+"\t"+sampleLigneSplit[7]+"\t"+sampleLigneSplit[8]+"\t"+sampleLigneSplit[9]+"\t"+sampleLigneSplit[10]+"\t"+sampleLigneSplit[11]+"\t"+sampleLigneSplit[12]+"\n"
 				outputFile.write(string)
 		else:
-			os.remove("../Resultats/"+self.REPERTORYVCF+"/temp/uncaracterized_mutations_"+file)
+			os.remove("../Results/"+self.REPERTORYVCF+"/temp/uncaracterized_mutations_"+file)
 
 	def no_contributory(self,sample,file):
-		"""Cree un file contenant toutes les mutations qui ne sont pas categorisees."""
-		outputFile = open("../Resultats/"+self.REPERTORYVCF+"/temp/no_contributory_"+file, 'w')
+		"""Cree un fichier contenant toutes les mutations qui ne sont pas categorisees."""
+		outputFile = open("../Results/"+self.REPERTORYVCF+"/temp/no_contributory_"+file, 'w')
 		outputFile.write("gene\tposition\tRefSeq id\tTranscript\tHGVSc\tHGVSp\tcosmic ID\tallele_cov\tallele_freq\tfunction\tmaf\tsift\tpolyphen\n")
 		fileEmpty = True
 		suppList = []
@@ -151,6 +167,6 @@ class VariantFilter:
 				outputFile.write(string)
 				suppList.append(sampleLigne)
 		if fileEmpty:
-			os.remove("../Resultats/"+self.REPERTORYVCF+"/temp/no_contributory_"+file)
+			os.remove("../Results/"+self.REPERTORYVCF+"/temp/no_contributory_"+file)
 		for supp in suppList:
 			sample.remove(supp)

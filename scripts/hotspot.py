@@ -1,19 +1,28 @@
+#!/usr/bin/python
+# coding: utf-8 
+
+"""TODO : Commentaires
+preciser HSnm et HSm"""
+
 import re
 import os
-
-
-""" Commentaires
-preciser HSnm et HSm"""
 
 class HotspotProcess:
 
 	def __init__(self,REPERTORYVCF,hotspot,list_of_transcripts,fichier):
+		############################
+		############################
+		############################
+		# TODO :Commentaire sur la fonction
+		############################
+		############################
+		############################
 		self.dicoHS = self.create_dico_HS(hotspot)
 		#ajout dans le dictionnaire des profondeurs des variants
 		self.find_depth_HSnm(list_of_transcripts,hotspot,self.dicoHS)
 		#calcul et ajout de la profondeur mean et minimale de chaque hotspot 
 		self.globalInfoHSnm = self.get_depth(self.dicoHS)
-		#creation fichier de sortie du tableau Hotspots non mutés
+		#creation fichier de sortie du tableau Hotspots non mutes
 		self.output_nmHS(fichier,self.globalInfoHSnm,REPERTORYVCF)
 
 	def create_dico_HS(self, hotspots):
@@ -62,7 +71,7 @@ class HotspotProcess:
 		return dicoHS
 
 	def output_nmHS(self,nomFichier,globalInfoHSnm,REPERTORYVCF):
-		"""Traitement du dictionnaire contenant les HS et leurs profondeurs puis ecriture dans un fichier tabulé (utile pour le rapport final)."""
+		"""Traitement du dictionnaire contenant les HS et leurs profondeurs puis ecriture dans un fichier tabule (utile pour le rapport final)."""
 		HSnmGlobalList = []
 		for key, value in globalInfoHSnm.items():
 			hsLine = []
@@ -76,7 +85,7 @@ class HotspotProcess:
 		#Trie de la liste de genes par ordre alphabetique pour meilleure lisibilite.
 		HSnmGlobalList = sorted(HSnmGlobalList)
 		HSnmGlobalList = "\n".join(HSnmGlobalList)
-		f_out = "../Resultats/"+REPERTORYVCF+"/temp/nonMutatedHS_"+nomFichier
+		f_out = "../Results/"+REPERTORYVCF+"/temp/nonMutatedHS_"+nomFichier
 		File = open(f_out,'w')	# creation et ouverture du File
 		File.write("Gene\texon\tMean Depth\tMinimal Depth\n")	#Ecriture de la legende.
 		for i in HSnmGlobalList:	#ecriture des donnees

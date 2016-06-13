@@ -1,4 +1,5 @@
-import re
+#!/usr/bin/python
+# coding: utf-8 
 
 """
 Script pour separer une ligne du fichier VCF composee de plusieurs transcripts en plusieurs
@@ -7,6 +8,8 @@ lignes: une ligne par transcript.
 Ludovic KOSTHOWA (06/04/16)
 Info: Creation en cours, script peut etre modifie a tout moment.
 """
+
+import re
 
 class SeparationVariants:
 
@@ -17,7 +20,7 @@ class SeparationVariants:
 		Retourne la liste des nouvelles lignes.
 
 		@param	contentFile : contenu du fichier VCF
-		@return listNewLines : liste des lignes ( un ID par ligne)."""
+		return listNewLines : liste des lignes ( un ID par ligne)."""
 
 		self.LEGENDES = ['AF=','AO=','DP=','FAO=','FDP=','FR=','FRO=','FSAF=','FSAR=','FSRF=','FSRR=','FWDB=','FXX=','HRUN=','LEN=','MLLD=','OALT=','OID=','OMAPLAT=','OPOS=','OREF=','QD=','RBI=','REFB=','REVB=','RO=','SAF=','SAR=','SRF=','SRR=','SSEN=','SSEP=','SSSB=','STB=','STBP=','TYPE=','VARB=','']
 		self.listNewLines = []
@@ -30,8 +33,7 @@ class SeparationVariants:
 			self.listNewLines.append(self.newLines)
 
 	def check_if_multiple_ID(self,contentFile):
-		"""Cree une liste composee seulement des lignes possedants plusieurs
-		mutations. """
+		"""Cree une liste composee seulement des lignes possedants plusieurs mutations. """
 		contentFileList=[]
 		for ligne in contentFile:
 			contentFileList.append(ligne)

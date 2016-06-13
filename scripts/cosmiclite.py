@@ -1,9 +1,7 @@
 #!/usr/bin/python
 # coding: utf-8 
 
-"""
-Script qui reduit la taille de la database cosmic en supprimant tout les doublons par rapport aux identifiants cosmic.
-
+"""Script qui reduit la taille de la database cosmic en supprimant tout les doublons par rapport aux identifiants cosmic.
 Ludovic KOSTHOWA (Debut : 06/04/16)
 Info: Creation en cours, script peut etre modifie a tout moment.
 """

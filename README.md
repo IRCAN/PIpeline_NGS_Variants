@@ -24,19 +24,22 @@ __Quick Start :__
 This part is currently being set up.
 
 __Repository :__
-- "__scripts__" repository contain all python3 scripts
+- "__scripts__" contain all python3 scripts.
 
-- "__Resultats__" repository contain output file created by scripts
+- "__Results__" contain output file created by scripts.
 
-- "__Data__" repository contain necessary data for running scripts.
-If you download the repository for the first time, you need to download the  ["homo_sapiens_vep_84_GRCh37.tar.gz"](http://ftp.ensembl.org/pub/current_variation/VEP/homo_sapiens_vep_84_GRCh37.tar.gz) from ensembl website and ["CosmicCompleteExport.tsv"](http://cancer.sanger.ac.uk/cosmic/download) from Cosmic database. You must add this data respectively in Data/Ensembl and Data/Cosmic repository.
+- "__Personal_Data__" contain personal files like hotspots files or panel list.
 
-- "__Logiciels__" repository contain all softwares used by scripts
-- "__Documents__" repository contain informations about pipeline like graph
+- "__System__" contain files needed to launch the software.
+
+- "__System/Cosmic__": repository of Cosmic database with Complete and Lite database. If you download the git repository for the first time, you need to download the ["CosmicCompleteExport.tsv"](http://cancer.sanger.ac.uk/cosmic/download) from Cosmic database.
+
+- "__System/Ensembl__": repository of Ensembl tools (VEP script and database). If you download the git repository for the first time, you need to download the  ["homo_sapiens_vep_84_GRCh37.tar.gz"](http://ftp.ensembl.org/pub/current_variation/VEP/homo_sapiens_vep_84_GRCh37.tar.gz) from ensembl website.
 
 __Documentations :__
 
-This part is currently being set up.
+Documentation of this pipeline is in "__html__" repository.
+Documentation made with epydoc.
 
 __Contributors :__
 

@@ -1,13 +1,26 @@
-import cosmiclite
-import os
+#!/usr/bin/python
+# coding: utf-8 
+
 """Script qui verifie sur le web les dernieres versions des bases de donnees.
 Si il y a une mise a jour, telecharge et remplace l'ancien fichier par la nouvelle version.
 
 Ludovic KOSTHOWA (06/04/16)
 Info: Creation en cours, script peut etre modifie a tout moment."""
 
+import cosmiclite
+import os
+
 class Updates:
 	def __init__(self,REPERTORYVCF):
+		############################
+		############################
+		############################
+		# TODO :Commentaire sur la fonction
+		############################
+		############################
+		############################
+
+
 		################################################################################
 		# Etape de verification de MAJ du genome local avec la derniere version du genome sur ensembl
 		################################################################################
@@ -26,10 +39,10 @@ class Updates:
 		# Etape de creation des repertoires
 		################################################################################
 	
-		if os.path.isdir("../Resultats/"+REPERTORYVCF+"/VariantCaller")== False:
-			os.makedirs("../Resultats/"+REPERTORYVCF+"/VariantCaller") 
-		if os.path.isdir("../Resultats/"+REPERTORYVCF+"/VEP/")== False:
-			os.mkdir("../Resultats/"+REPERTORYVCF+"/VEP/")
-		if os.path.isdir("../Resultats/"+REPERTORYVCF+"/temp/")== False:
-			os.mkdir("../Resultats/"+REPERTORYVCF+"/temp/")  
+		if os.path.isdir("../Results/"+REPERTORYVCF+"/VariantCaller")== False:
+			os.makedirs("../Results/"+REPERTORYVCF+"/VariantCaller") 
+		if os.path.isdir("../Results/"+REPERTORYVCF+"/VEP/")== False:
+			os.mkdir("../Results/"+REPERTORYVCF+"/VEP/")
+		if os.path.isdir("../Results/"+REPERTORYVCF+"/temp/")== False:
+			os.mkdir("../Results/"+REPERTORYVCF+"/temp/")  
 

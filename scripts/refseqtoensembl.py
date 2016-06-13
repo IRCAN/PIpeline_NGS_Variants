@@ -1,15 +1,24 @@
-import re
+#!/usr/bin/python
+# coding: utf-8 
 
 """
 Script qui idEnsembleFind les equivalences entre identifiants RefSeq et identifiants Ensembl puis compare
 les identifiants Ensembl à ceux de Cosmic afin d'obtenir diverses informations.
-
 Ludovic KOSTHOWA (Debut : 06/04/16)
 Info: Creation en cours, script peut etre modifie a tout moment.
 """
 
+import re
+
 class RefseqToEnsembl:
 	def __init__(self):
+		############################
+		############################
+		############################
+		# TODO :Commentaire sur la fonction
+		############################
+		############################
+		############################
 		self.cosmicDict = {}
 		self.gene2ensemblFinalDic = {}
 		self.dicoPanel = {}
@@ -18,7 +27,7 @@ class RefseqToEnsembl:
 
 	def make_file_for_filter(self,file,REPERTORYVCF):
 		"""Parse le file de sortie de VEP et cree un nouveau file avec les lignes qui match avec les ID ensembl."""
-		File = "../Resultats/"+REPERTORYVCF+"/VEP/VEP_"+file
+		File = "../Results/"+REPERTORYVCF+"/VEP/VEP_"+file
 		with open(File,'r') as vepFile0:
 			vepFile = vepFile0.readlines()
 		tempList = []
@@ -183,7 +192,7 @@ class RefseqToEnsembl:
 						if infoCosmicSplit[5] == HGVSc:
 							string = string.replace("idCosmicNotFound",infoCosmicSplit[4])
 			vcfFileFinalList.append(string)
-		self.output_file("../Resultats/"+REPERTORYVCF+"/temp/resultats_"+file,vcfFileFinalList)
+		self.output_file("../Results/"+REPERTORYVCF+"/temp/Results_"+file,vcfFileFinalList)
 
 	def parse_gene2ensembl(self):
 		"""Parse le file de correlation RefSeq vers Ensembl."""
@@ -234,12 +243,14 @@ class RefseqToEnsembl:
 		File.close()
 
 	def parse_mutations_file(self,file,REPERTORYVCF):
-		File = "../Resultats/"+REPERTORYVCF+"/VariantCaller/MUTATIONS_"+file
+		"""Parse le fichier contenant toutes les mutations présentes dans l'echantillon."""
+		File = "../Results/"+REPERTORYVCF+"/VariantCaller/MUTATIONS_"+file
 		with open(File,'r') as mutationsFile0:
 			mutationsFile=mutationsFile0.readlines()
 		return mutationsFile
 
 	def get_allele_cov(self,string):
+		"""Recupere la couverture allelique pour chaque mutations."""
 		match = re.search(r"(AO)=[0-9]*", string)
 		resultat = match.group(0)
 		#Supprime le "FAO="
@@ -247,6 +258,9 @@ class RefseqToEnsembl:
 		return(resultat)
 
 	def get_allele_freq(self,string):
+		"""Recupere la frequence allelique pour chaque mutations de l'echantillon."""
+
+
 		################################################################################
 		#TODO Modifier AF par DP et récupérer le nombre total de reads pour calculer la fréquence
 		################################################################################
@@ -259,6 +273,7 @@ class RefseqToEnsembl:
 		return(resultat)
 
 	def create_dico_panel(self):
+		"""Cree un dictionnaire contenant tout les identifiants RefSeq su panel."""
 		#############################
 		#############################
 		#CHEMIN A MODIFIER

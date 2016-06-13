@@ -1,9 +1,5 @@
-from main_varan import MainVaran 
-from update import Updates
-from globalinformations import GlobalInformations
-import os,re,time
-import glob
-from argparse import ArgumentParser
+#!/usr/bin/python
+# coding: utf-8 
 
 """
 Script principal du pipeline qui traite le fichier .vcf de chaque patients d'un run
@@ -13,11 +9,16 @@ Ludovic KOSTHOWA (Debut : 06/04/16)
 Info: Creation en cours, script peut etre modifie a tout moment.
 """
 
+import os,re,time,glob
+from main_varan import MainVaran 
+from update import Updates
+from globalinformations import GlobalInformations
+from argparse import ArgumentParser
+
 if __name__=='__main__':
 	start_time = time.time()  
 	#TODO: better description	
 	description = ("A partir d'un fichier VCF, ......")
-		 
 	parser = ArgumentParser(description=description)
 	parser.add_argument('run',  action='store' ,help="path to run repertory")
 	parser.add_argument('-lh','--listHotspot', default=False, nargs='+', help="fournir une liste de hotspots")
@@ -29,8 +30,6 @@ if __name__=='__main__':
 		pathREPERTORYVCF=pathREPERTORYVCF[:-1]
 	splitPathREPERTORYVCF=pathREPERTORYVCF.split("/")
 	REPERTORYVCF=splitPathREPERTORYVCF[-1]
-	print(REPERTORYVCF)
-	
 	if args.NoUpdates==False:
 		print("....")
 	else:
