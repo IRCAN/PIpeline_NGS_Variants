@@ -1,0 +1,279 @@
+<?xml version="1.0" encoding="ascii"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+          "DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>separationvariants</title>
+  <link rel="stylesheet" href="epydoc.css" type="text/css" />
+  <script type="text/javascript" src="epydoc.js"></script>
+</head>
+
+<body bgcolor="white" text="black" link="blue" vlink="#204080"
+      alink="#204080">
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+      <th class="navbar" width="100%"></th>
+  </tr>
+</table>
+<table width="100%" cellpadding="0" cellspacing="0">
+  <tr valign="top">
+    <td width="100%">
+      <span class="breadcrumbs">
+        Module&nbsp;separationvariants
+      </span>
+    </td>
+    <td>
+      <table cellpadding="0" cellspacing="0">
+        <!-- hide/show private -->
+        <tr><td align="right"><span class="options">[<a href="javascript:void(0);" class="privatelink"
+    onclick="toggle_private();">hide&nbsp;private</a>]</span></td></tr>
+        <tr><td align="right"><span class="options"
+            >[<a href="frames.html" target="_top">frames</a
+            >]&nbsp;|&nbsp;<a href="separationvariants-pysrc.html"
+            target="_top">no&nbsp;frames</a>]</span></td></tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<h1 class="epydoc">Source Code for <a href="separationvariants-module.html">Module separationvariants</a></h1>
+<pre class="py-src">
+<a name="L1"></a><tt class="py-lineno">  1</tt>  <tt class="py-line"><tt class="py-comment">#!/usr/bin/python</tt> </tt>
+<a name="L2"></a><tt class="py-lineno">  2</tt>  <tt class="py-line"><tt class="py-comment"># coding: utf-8 </tt> </tt>
+<a name="L3"></a><tt class="py-lineno">  3</tt>  <tt class="py-line"> </tt>
+<a name="L4"></a><tt class="py-lineno">  4</tt>  <tt class="py-line"><tt class="py-docstring">"""</tt> </tt>
+<a name="L5"></a><tt class="py-lineno">  5</tt>  <tt class="py-line"><tt class="py-docstring">Script pour separer une ligne du fichier VCF composee de plusieurs transcripts en plusieurs</tt> </tt>
+<a name="L6"></a><tt class="py-lineno">  6</tt>  <tt class="py-line"><tt class="py-docstring">lignes: une ligne par transcript.</tt> </tt>
+<a name="L7"></a><tt class="py-lineno">  7</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L8"></a><tt class="py-lineno">  8</tt>  <tt class="py-line"><tt class="py-docstring">Ludovic KOSTHOWA (06/04/16)</tt> </tt>
+<a name="L9"></a><tt class="py-lineno">  9</tt>  <tt class="py-line"><tt class="py-docstring">Info: Creation en cours, script peut etre modifie a tout moment.</tt> </tt>
+<a name="L10"></a><tt class="py-lineno"> 10</tt>  <tt class="py-line"><tt class="py-docstring">"""</tt> </tt>
+<a name="L11"></a><tt class="py-lineno"> 11</tt>  <tt class="py-line"> </tt>
+<a name="L12"></a><tt class="py-lineno"> 12</tt>  <tt class="py-line"><tt class="py-keyword">import</tt> <tt class="py-name">re</tt> </tt>
+<a name="L13"></a><tt class="py-lineno"> 13</tt>  <tt class="py-line"> </tt>
+<a name="SeparationVariants"></a><div id="SeparationVariants-def"><a name="L14"></a><tt class="py-lineno"> 14</tt> <a class="py-toggle" href="#" id="SeparationVariants-toggle" onclick="return toggle('SeparationVariants');">-</a><tt class="py-line"><tt class="py-keyword">class</tt> <a class="py-def-name" href="separationvariants.SeparationVariants-class.html">SeparationVariants</a><tt class="py-op">:</tt> </tt>
+</div><div id="SeparationVariants-collapsed" style="display:none;" pad="+++" indent="++++"></div><div id="SeparationVariants-expanded"><a name="L15"></a><tt class="py-lineno"> 15</tt>  <tt class="py-line"> </tt>
+<a name="SeparationVariants.__init__"></a><div id="SeparationVariants.__init__-def"><a name="L16"></a><tt class="py-lineno"> 16</tt> <a class="py-toggle" href="#" id="SeparationVariants.__init__-toggle" onclick="return toggle('SeparationVariants.__init__');">-</a><tt class="py-line">        <tt class="py-keyword">def</tt> <a class="py-def-name" href="separationvariants.SeparationVariants-class.html#__init__">__init__</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">,</tt><tt class="py-param">contentFile</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="SeparationVariants.__init__-collapsed" style="display:none;" pad="+++" indent="++++++++++++"></div><div id="SeparationVariants.__init__-expanded"><a name="L17"></a><tt class="py-lineno"> 17</tt>  <tt class="py-line"> </tt>
+<a name="L18"></a><tt class="py-lineno"> 18</tt>  <tt class="py-line">                <tt class="py-docstring">"""Traite les lignes composees de plusieurs ID cosmic</tt> </tt>
+<a name="L19"></a><tt class="py-lineno"> 19</tt>  <tt class="py-line"><tt class="py-docstring">                et cree de nouvelles lignes pour chaque identifiant.</tt> </tt>
+<a name="L20"></a><tt class="py-lineno"> 20</tt>  <tt class="py-line"><tt class="py-docstring">                Retourne la liste des nouvelles lignes.</tt> </tt>
+<a name="L21"></a><tt class="py-lineno"> 21</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L22"></a><tt class="py-lineno"> 22</tt>  <tt class="py-line"><tt class="py-docstring">                @param  contentFile : contenu du fichier VCF</tt> </tt>
+<a name="L23"></a><tt class="py-lineno"> 23</tt>  <tt class="py-line"><tt class="py-docstring">                return listNewLines : liste des lignes ( un ID par ligne)."""</tt> </tt>
+<a name="L24"></a><tt class="py-lineno"> 24</tt>  <tt class="py-line"> </tt>
+<a name="L25"></a><tt class="py-lineno"> 25</tt>  <tt class="py-line">                <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">LEGENDES</tt> <tt class="py-op">=</tt> <tt class="py-op">[</tt><tt class="py-string">'AF='</tt><tt class="py-op">,</tt><tt class="py-string">'AO='</tt><tt class="py-op">,</tt><tt class="py-string">'DP='</tt><tt class="py-op">,</tt><tt class="py-string">'FAO='</tt><tt class="py-op">,</tt><tt class="py-string">'FDP='</tt><tt class="py-op">,</tt><tt class="py-string">'FR='</tt><tt class="py-op">,</tt><tt class="py-string">'FRO='</tt><tt class="py-op">,</tt><tt class="py-string">'FSAF='</tt><tt class="py-op">,</tt><tt class="py-string">'FSAR='</tt><tt class="py-op">,</tt><tt class="py-string">'FSRF='</tt><tt class="py-op">,</tt><tt class="py-string">'FSRR='</tt><tt class="py-op">,</tt><tt class="py-string">'FWDB='</tt><tt class="py-op">,</tt><tt class="py-string">'FXX='</tt><tt class="py-op">,</tt><tt class="py-string">'HRUN='</tt><tt class="py-op">,</tt><tt class="py-string">'LEN='</tt><tt class="py-op">,</tt><tt class="py-string">'MLLD='</tt><tt class="py-op">,</tt><tt class="py-string">'OALT='</tt><tt class="py-op">,</tt><tt class="py-string">'OID='</tt><tt class="py-op">,</tt><tt class="py-string">'OMAPLAT='</tt><tt class="py-op">,</tt><tt class="py-string">'OPOS='</tt><tt class="py-op">,</tt><tt class="py-string">'OREF='</tt><tt class="py-op">,</tt><tt class="py-string">'QD='</tt><tt class="py-op">,</tt><tt class="py-string">'RBI='</tt><tt class="py-op">,</tt><tt class="py-string">'REFB='</tt><tt class="py-op">,</tt><tt class="py-string">'REVB='</tt><tt class="py-op">,</tt><tt class="py-string">'RO='</tt><tt class="py-op">,</tt><tt class="py-string">'SAF='</tt><tt class="py-op">,</tt><tt class="py-string">'SAR='</tt><tt class="py-op">,</tt><tt class="py-string">'SRF='</tt><tt class="py-op">,</tt><tt class="py-string">'SRR='</tt><tt class="py-op">,</tt><tt class="py-string">'SSEN='</tt><tt class="py-op">,</tt><tt class="py-string">'SSEP='</tt><tt class="py-op">,</tt><tt class="py-string">'SSSB='</tt><tt class="py-op">,</tt><tt class="py-string">'STB='</tt><tt class="py-op">,</tt><tt class="py-string">'STBP='</tt><tt class="py-op">,</tt><tt class="py-string">'TYPE='</tt><tt class="py-op">,</tt><tt class="py-string">'VARB='</tt><tt class="py-op">,</tt><tt class="py-string">''</tt><tt class="py-op">]</tt> </tt>
+<a name="L26"></a><tt class="py-lineno"> 26</tt>  <tt class="py-line">                <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">listNewLines</tt> <tt class="py-op">=</tt> <tt class="py-op">[</tt><tt class="py-op">]</tt> </tt>
+<a name="L27"></a><tt class="py-lineno"> 27</tt>  <tt class="py-line">                <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">contentFileCleaned</tt> <tt class="py-op">=</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-0" class="py-name" targets="Method separationvariants.SeparationVariants.check_if_multiple_ID()=separationvariants.SeparationVariants-class.html#check_if_multiple_ID"><a title="separationvariants.SeparationVariants.check_if_multiple_ID" class="py-name" href="#" onclick="return doclink('link-0', 'check_if_multiple_ID', 'link-0');">check_if_multiple_ID</a></tt><tt class="py-op">(</tt><tt class="py-name">contentFile</tt><tt class="py-op">)</tt> </tt>
+<a name="L28"></a><tt class="py-lineno"> 28</tt>  <tt class="py-line">                <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">listLigneTemp</tt> <tt class="py-op">=</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-1" class="py-name" targets="Method separationvariants.SeparationVariants.create_list_of_list()=separationvariants.SeparationVariants-class.html#create_list_of_list"><a title="separationvariants.SeparationVariants.create_list_of_list" class="py-name" href="#" onclick="return doclink('link-1', 'create_list_of_list', 'link-1');">create_list_of_list</a></tt><tt class="py-op">(</tt><tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">contentFileCleaned</tt><tt class="py-op">)</tt> </tt>
+<a name="L29"></a><tt class="py-lineno"> 29</tt>  <tt class="py-line">         </tt>
+<a name="L30"></a><tt class="py-lineno"> 30</tt>  <tt class="py-line">                <tt class="py-keyword">for</tt> <tt class="py-name">i</tt> <tt class="py-keyword">in</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">listLigneTemp</tt><tt class="py-op">:</tt> </tt>
+<a name="L31"></a><tt class="py-lineno"> 31</tt>  <tt class="py-line">                        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-2" class="py-name" targets="Method separationvariants.SeparationVariants.sort_informations()=separationvariants.SeparationVariants-class.html#sort_informations"><a title="separationvariants.SeparationVariants.sort_informations" class="py-name" href="#" onclick="return doclink('link-2', 'sort_informations', 'link-2');">sort_informations</a></tt><tt class="py-op">(</tt><tt class="py-name">i</tt><tt class="py-op">)</tt> </tt>
+<a name="L32"></a><tt class="py-lineno"> 32</tt>  <tt class="py-line">                        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">newLines</tt> <tt class="py-op">=</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-3" class="py-name" targets="Method separationvariants.SeparationVariants.check_if_same_length()=separationvariants.SeparationVariants-class.html#check_if_same_length"><a title="separationvariants.SeparationVariants.check_if_same_length" class="py-name" href="#" onclick="return doclink('link-3', 'check_if_same_length', 'link-3');">check_if_same_length</a></tt><tt class="py-op">(</tt><tt class="py-name">i</tt><tt class="py-op">)</tt> </tt>
+<a name="L33"></a><tt class="py-lineno"> 33</tt>  <tt class="py-line">                        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">listNewLines</tt><tt class="py-op">.</tt><tt class="py-name">append</tt><tt class="py-op">(</tt><tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">newLines</tt><tt class="py-op">)</tt> </tt>
+</div><a name="L34"></a><tt class="py-lineno"> 34</tt>  <tt class="py-line"> </tt>
+<a name="SeparationVariants.check_if_multiple_ID"></a><div id="SeparationVariants.check_if_multiple_ID-def"><a name="L35"></a><tt class="py-lineno"> 35</tt> <a class="py-toggle" href="#" id="SeparationVariants.check_if_multiple_ID-toggle" onclick="return toggle('SeparationVariants.check_if_multiple_ID');">-</a><tt class="py-line">        <tt class="py-keyword">def</tt> <a class="py-def-name" href="separationvariants.SeparationVariants-class.html#check_if_multiple_ID">check_if_multiple_ID</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">,</tt><tt class="py-param">contentFile</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="SeparationVariants.check_if_multiple_ID-collapsed" style="display:none;" pad="+++" indent="++++++++++++"></div><div id="SeparationVariants.check_if_multiple_ID-expanded"><a name="L36"></a><tt class="py-lineno"> 36</tt>  <tt class="py-line">                <tt class="py-docstring">"""Cree une liste composee seulement des lignes possedants plusieurs mutations. """</tt> </tt>
+<a name="L37"></a><tt class="py-lineno"> 37</tt>  <tt class="py-line">                <tt class="py-name">contentFileList</tt><tt class="py-op">=</tt><tt class="py-op">[</tt><tt class="py-op">]</tt> </tt>
+<a name="L38"></a><tt class="py-lineno"> 38</tt>  <tt class="py-line">                <tt class="py-keyword">for</tt> <tt class="py-name">ligne</tt> <tt class="py-keyword">in</tt> <tt class="py-name">contentFile</tt><tt class="py-op">:</tt> </tt>
+<a name="L39"></a><tt class="py-lineno"> 39</tt>  <tt class="py-line">                        <tt class="py-name">contentFileList</tt><tt class="py-op">.</tt><tt class="py-name">append</tt><tt class="py-op">(</tt><tt class="py-name">ligne</tt><tt class="py-op">)</tt> </tt>
+<a name="L40"></a><tt class="py-lineno"> 40</tt>  <tt class="py-line">                <tt class="py-name">listOflist</tt><tt class="py-op">=</tt><tt class="py-op">[</tt><tt class="py-op">]</tt> </tt>
+<a name="L41"></a><tt class="py-lineno"> 41</tt>  <tt class="py-line">                <tt class="py-keyword">for</tt> <tt class="py-name">ligne</tt> <tt class="py-keyword">in</tt> <tt class="py-name">contentFileList</tt><tt class="py-op">:</tt> </tt>
+<a name="L42"></a><tt class="py-lineno"> 42</tt>  <tt class="py-line">                        <tt class="py-name">lignesplit</tt> <tt class="py-op">=</tt> <tt class="py-name">ligne</tt><tt class="py-op">.</tt><tt class="py-name">split</tt><tt class="py-op">(</tt><tt class="py-string">'\t'</tt><tt class="py-op">)</tt> </tt>
+<a name="L43"></a><tt class="py-lineno"> 43</tt>  <tt class="py-line">                        <tt class="py-name">listOflist</tt><tt class="py-op">.</tt><tt class="py-name">append</tt><tt class="py-op">(</tt><tt class="py-name">lignesplit</tt><tt class="py-op">)</tt> </tt>
+<a name="L44"></a><tt class="py-lineno"> 44</tt>  <tt class="py-line">                <tt class="py-name">count</tt> <tt class="py-op">=</tt> <tt class="py-number">0</tt> </tt>
+<a name="L45"></a><tt class="py-lineno"> 45</tt>  <tt class="py-line">                <tt class="py-name">multipleIDList</tt> <tt class="py-op">=</tt> <tt class="py-op">[</tt><tt class="py-op">]</tt> </tt>
+<a name="L46"></a><tt class="py-lineno"> 46</tt>  <tt class="py-line">                <tt class="py-keyword">for</tt> <tt class="py-name">i</tt> <tt class="py-keyword">in</tt> <tt class="py-name">listOflist</tt><tt class="py-op">:</tt> </tt>
+<a name="L47"></a><tt class="py-lineno"> 47</tt>  <tt class="py-line">                        <tt class="py-name">ligne</tt> <tt class="py-op">=</tt> <tt class="py-name">i</tt><tt class="py-op">[</tt><tt class="py-number">4</tt><tt class="py-op">]</tt><tt class="py-op">.</tt><tt class="py-name">split</tt><tt class="py-op">(</tt><tt class="py-string">","</tt><tt class="py-op">)</tt> </tt>
+<a name="L48"></a><tt class="py-lineno"> 48</tt>  <tt class="py-line">                        <tt class="py-comment">#Si il y a plus (+) que une seule mutations, je cree une liste de ces ID.       </tt> </tt>
+<a name="L49"></a><tt class="py-lineno"> 49</tt>  <tt class="py-line">                        <tt class="py-keyword">if</tt> <tt class="py-name">len</tt><tt class="py-op">(</tt><tt class="py-name">ligne</tt><tt class="py-op">)</tt> <tt class="py-op">!=</tt> <tt class="py-number">1</tt><tt class="py-op">:</tt> </tt>
+<a name="L50"></a><tt class="py-lineno"> 50</tt>  <tt class="py-line">                                <tt class="py-name">multipleIDList</tt><tt class="py-op">.</tt><tt class="py-name">append</tt><tt class="py-op">(</tt><tt class="py-name">contentFile</tt><tt class="py-op">[</tt><tt class="py-name">count</tt><tt class="py-op">]</tt><tt class="py-op">)</tt> </tt>
+<a name="L51"></a><tt class="py-lineno"> 51</tt>  <tt class="py-line">                        <tt class="py-name">count</tt> <tt class="py-op">+=</tt> <tt class="py-number">1</tt> </tt>
+<a name="L52"></a><tt class="py-lineno"> 52</tt>  <tt class="py-line">                <tt class="py-keyword">return</tt> <tt class="py-name">multipleIDList</tt> </tt>
+</div><a name="L53"></a><tt class="py-lineno"> 53</tt>  <tt class="py-line"> </tt>
+<a name="SeparationVariants.create_list_of_list"></a><div id="SeparationVariants.create_list_of_list-def"><a name="L54"></a><tt class="py-lineno"> 54</tt> <a class="py-toggle" href="#" id="SeparationVariants.create_list_of_list-toggle" onclick="return toggle('SeparationVariants.create_list_of_list');">-</a><tt class="py-line">        <tt class="py-keyword">def</tt> <a class="py-def-name" href="separationvariants.SeparationVariants-class.html#create_list_of_list">create_list_of_list</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">,</tt><tt class="py-param">contentFile</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="SeparationVariants.create_list_of_list-collapsed" style="display:none;" pad="+++" indent="++++++++++++"></div><div id="SeparationVariants.create_list_of_list-expanded"><a name="L55"></a><tt class="py-lineno"> 55</tt>  <tt class="py-line">                <tt class="py-docstring">"""Cree pour chaque ligne une liste de toutes les informations des</tt> </tt>
+<a name="L56"></a><tt class="py-lineno"> 56</tt>  <tt class="py-line"><tt class="py-docstring">                differents identifiants cosmics. Cette liste est ajoutee dans une liste globale.</tt> </tt>
+<a name="L57"></a><tt class="py-lineno"> 57</tt>  <tt class="py-line"><tt class="py-docstring">                Cette fonction permet de separer tout les elements necessaires a la</tt> </tt>
+<a name="L58"></a><tt class="py-lineno"> 58</tt>  <tt class="py-line"><tt class="py-docstring">                separation des lignes composees de plusirs ID cosmics."""</tt> </tt>
+<a name="L59"></a><tt class="py-lineno"> 59</tt>  <tt class="py-line">                <tt class="py-name">listContentFile</tt> <tt class="py-op">=</tt> <tt class="py-op">[</tt><tt class="py-op">]</tt> <tt class="py-comment">#liste du contenu du fichier</tt> </tt>
+<a name="L60"></a><tt class="py-lineno"> 60</tt>  <tt class="py-line">                <tt class="py-comment">#separation de contentFile par les tabulations</tt> </tt>
+<a name="L61"></a><tt class="py-lineno"> 61</tt>  <tt class="py-line">                <tt class="py-name">listFinale</tt> <tt class="py-op">=</tt><tt class="py-op">[</tt><tt class="py-op">]</tt> </tt>
+<a name="L62"></a><tt class="py-lineno"> 62</tt>  <tt class="py-line">                <tt class="py-keyword">for</tt> <tt class="py-name">element</tt> <tt class="py-keyword">in</tt> <tt class="py-name">contentFile</tt><tt class="py-op">:</tt> </tt>
+<a name="L63"></a><tt class="py-lineno"> 63</tt>  <tt class="py-line">                        <tt class="py-name">contentFile</tt> <tt class="py-op">=</tt> <tt class="py-name">element</tt><tt class="py-op">.</tt><tt class="py-name">split</tt><tt class="py-op">(</tt><tt class="py-string">'\t'</tt><tt class="py-op">)</tt> </tt>
+<a name="L64"></a><tt class="py-lineno"> 64</tt>  <tt class="py-line">                        <tt class="py-name">listContentFile</tt><tt class="py-op">.</tt><tt class="py-name">append</tt><tt class="py-op">(</tt><tt class="py-name">contentFile</tt><tt class="py-op">)</tt> </tt>
+<a name="L65"></a><tt class="py-lineno"> 65</tt>  <tt class="py-line">                <tt class="py-keyword">for</tt> <tt class="py-name">ligneChromosome</tt> <tt class="py-keyword">in</tt> <tt class="py-name">listContentFile</tt><tt class="py-op">:</tt> </tt>
+<a name="L66"></a><tt class="py-lineno"> 66</tt>  <tt class="py-line">                        <tt class="py-name">listLigneTemp</tt> <tt class="py-op">=</tt> <tt class="py-op">[</tt><tt class="py-op">]</tt> <tt class="py-comment">#liste temporaire correspondant a une ligne (1 transcript)</tt> </tt>
+<a name="L67"></a><tt class="py-lineno"> 67</tt>  <tt class="py-line">                        <tt class="py-name">listInfoTemp</tt> <tt class="py-op">=</tt> <tt class="py-op">[</tt><tt class="py-op">]</tt>       <tt class="py-comment">#liste de la cellule INFO du fichier VCF</tt> </tt>
+<a name="L68"></a><tt class="py-lineno"> 68</tt>  <tt class="py-line">                        <tt class="py-name">listLigneInfoSort</tt> <tt class="py-op">=</tt> <tt class="py-op">[</tt><tt class="py-op">]</tt>  <tt class="py-comment">#liste finale correspondant aux informations triees pour chaque transcript</tt> </tt>
+<a name="L69"></a><tt class="py-lineno"> 69</tt>  <tt class="py-line">                        <tt class="py-keyword">for</tt> <tt class="py-name">element</tt> <tt class="py-keyword">in</tt> <tt class="py-name">ligneChromosome</tt><tt class="py-op">:</tt> </tt>
+<a name="L70"></a><tt class="py-lineno"> 70</tt>  <tt class="py-line">                                <tt class="py-comment">#separation de contentFile par les ";"</tt> </tt>
+<a name="L71"></a><tt class="py-lineno"> 71</tt>  <tt class="py-line">                                <tt class="py-keyword">if</tt> <tt class="py-string">";"</tt> <tt class="py-keyword">in</tt> <tt class="py-name">element</tt><tt class="py-op">:</tt> </tt>
+<a name="L72"></a><tt class="py-lineno"> 72</tt>  <tt class="py-line">                                        <tt class="py-name">temp</tt> <tt class="py-op">=</tt> <tt class="py-name">element</tt><tt class="py-op">.</tt><tt class="py-name">split</tt><tt class="py-op">(</tt><tt class="py-string">";"</tt><tt class="py-op">)</tt> </tt>
+<a name="L73"></a><tt class="py-lineno"> 73</tt>  <tt class="py-line">                                        <tt class="py-name">listInfoTemp</tt><tt class="py-op">.</tt><tt class="py-name">append</tt><tt class="py-op">(</tt><tt class="py-name">temp</tt><tt class="py-op">)</tt> </tt>
+<a name="L74"></a><tt class="py-lineno"> 74</tt>  <tt class="py-line">                                <tt class="py-comment">#separation de contentFile par les ","</tt> </tt>
+<a name="L75"></a><tt class="py-lineno"> 75</tt>  <tt class="py-line">                                <tt class="py-keyword">elif</tt> <tt class="py-string">","</tt> <tt class="py-keyword">in</tt> <tt class="py-name">element</tt><tt class="py-op">:</tt> </tt>
+<a name="L76"></a><tt class="py-lineno"> 76</tt>  <tt class="py-line">                                        <tt class="py-name">temp</tt> <tt class="py-op">=</tt> <tt class="py-name">element</tt><tt class="py-op">.</tt><tt class="py-name">split</tt><tt class="py-op">(</tt><tt class="py-string">","</tt><tt class="py-op">)</tt> </tt>
+<a name="L77"></a><tt class="py-lineno"> 77</tt>  <tt class="py-line">                                        <tt class="py-name">listInfoTemp</tt><tt class="py-op">.</tt><tt class="py-name">append</tt><tt class="py-op">(</tt><tt class="py-name">temp</tt><tt class="py-op">)</tt> </tt>
+<a name="L78"></a><tt class="py-lineno"> 78</tt>  <tt class="py-line">                                <tt class="py-keyword">else</tt><tt class="py-op">:</tt> </tt>
+<a name="L79"></a><tt class="py-lineno"> 79</tt>  <tt class="py-line">                                        <tt class="py-name">listInfoTemp</tt><tt class="py-op">.</tt><tt class="py-name">append</tt><tt class="py-op">(</tt><tt class="py-name">element</tt><tt class="py-op">)</tt> </tt>
+<a name="L80"></a><tt class="py-lineno"> 80</tt>  <tt class="py-line">                        <tt class="py-comment">#traitement et separations des informations de la cellule INFO</tt> </tt>
+<a name="L81"></a><tt class="py-lineno"> 81</tt>  <tt class="py-line">                        <tt class="py-name">listInfoTemp</tt><tt class="py-op">[</tt><tt class="py-number">7</tt><tt class="py-op">]</tt><tt class="py-op">[</tt><tt class="py-number">5</tt><tt class="py-op">]</tt> <tt class="py-op">=</tt> <tt class="py-name">listInfoTemp</tt><tt class="py-op">[</tt><tt class="py-number">7</tt><tt class="py-op">]</tt><tt class="py-op">[</tt><tt class="py-number">5</tt><tt class="py-op">]</tt><tt class="py-op">.</tt><tt class="py-name">replace</tt><tt class="py-op">(</tt><tt class="py-string">","</tt><tt class="py-op">,</tt><tt class="py-string">""</tt><tt class="py-op">)</tt> </tt>
+<a name="L82"></a><tt class="py-lineno"> 82</tt>  <tt class="py-line">                        <tt class="py-keyword">for</tt> <tt class="py-name">element</tt> <tt class="py-keyword">in</tt> <tt class="py-name">listInfoTemp</tt><tt class="py-op">[</tt><tt class="py-number">7</tt><tt class="py-op">]</tt><tt class="py-op">:</tt> </tt>
+<a name="L83"></a><tt class="py-lineno"> 83</tt>  <tt class="py-line">                                <tt class="py-name">listLigneTempElement7</tt> <tt class="py-op">=</tt> <tt class="py-name">element</tt><tt class="py-op">.</tt><tt class="py-name">split</tt><tt class="py-op">(</tt><tt class="py-string">","</tt><tt class="py-op">)</tt> </tt>
+<a name="L84"></a><tt class="py-lineno"> 84</tt>  <tt class="py-line">                                <tt class="py-name">listLigneInfoSort</tt><tt class="py-op">.</tt><tt class="py-name">append</tt><tt class="py-op">(</tt><tt class="py-name">listLigneTempElement7</tt><tt class="py-op">)</tt> </tt>
+<a name="L85"></a><tt class="py-lineno"> 85</tt>  <tt class="py-line">                        <tt class="py-keyword">for</tt> <tt class="py-name">element</tt> <tt class="py-keyword">in</tt> <tt class="py-name">listInfoTemp</tt><tt class="py-op">:</tt> </tt>
+<a name="L86"></a><tt class="py-lineno"> 86</tt>  <tt class="py-line">                                <tt class="py-keyword">if</tt> <tt class="py-name">type</tt><tt class="py-op">(</tt><tt class="py-name">element</tt><tt class="py-op">)</tt> <tt class="py-op">!=</tt> <tt class="py-name">list</tt><tt class="py-op">:</tt> </tt>
+<a name="L87"></a><tt class="py-lineno"> 87</tt>  <tt class="py-line">                                        <tt class="py-name">listLigneTemp</tt><tt class="py-op">.</tt><tt class="py-name">append</tt><tt class="py-op">(</tt><tt class="py-name">element</tt><tt class="py-op">)</tt> </tt>
+<a name="L88"></a><tt class="py-lineno"> 88</tt>  <tt class="py-line">                                <tt class="py-keyword">elif</tt> <tt class="py-name">type</tt><tt class="py-op">(</tt><tt class="py-name">element</tt><tt class="py-op">)</tt> <tt class="py-op">==</tt> <tt class="py-name">list</tt><tt class="py-op">:</tt> </tt>
+<a name="L89"></a><tt class="py-lineno"> 89</tt>  <tt class="py-line">                                        <tt class="py-keyword">if</tt> <tt class="py-name">element</tt> <tt class="py-op">==</tt> <tt class="py-name">listInfoTemp</tt><tt class="py-op">[</tt><tt class="py-number">7</tt><tt class="py-op">]</tt><tt class="py-op">:</tt> </tt>
+<a name="L90"></a><tt class="py-lineno"> 90</tt>  <tt class="py-line">                                                <tt class="py-name">listLigneInfoSort</tt> <tt class="py-op">=</tt> <tt class="py-op">[</tt><tt class="py-op">]</tt> </tt>
+<a name="L91"></a><tt class="py-lineno"> 91</tt>  <tt class="py-line">                                                <tt class="py-keyword">for</tt> <tt class="py-name">element</tt> <tt class="py-keyword">in</tt> <tt class="py-name">listInfoTemp</tt><tt class="py-op">[</tt><tt class="py-number">7</tt><tt class="py-op">]</tt><tt class="py-op">:</tt> </tt>
+<a name="L92"></a><tt class="py-lineno"> 92</tt>  <tt class="py-line">                                                        <tt class="py-name">listLigneTempElement7</tt> <tt class="py-op">=</tt> <tt class="py-name">element</tt><tt class="py-op">.</tt><tt class="py-name">split</tt><tt class="py-op">(</tt><tt class="py-string">","</tt><tt class="py-op">)</tt> </tt>
+<a name="L93"></a><tt class="py-lineno"> 93</tt>  <tt class="py-line">                                                        <tt class="py-name">listLigneInfoSort</tt><tt class="py-op">.</tt><tt class="py-name">append</tt><tt class="py-op">(</tt><tt class="py-name">listLigneTempElement7</tt><tt class="py-op">)</tt> </tt>
+<a name="L94"></a><tt class="py-lineno"> 94</tt>  <tt class="py-line">                                                <tt class="py-name">listLigneTemp</tt><tt class="py-op">.</tt><tt class="py-name">append</tt><tt class="py-op">(</tt><tt class="py-name">listLigneInfoSort</tt><tt class="py-op">)</tt>  </tt>
+<a name="L95"></a><tt class="py-lineno"> 95</tt>  <tt class="py-line">                                        <tt class="py-keyword">else</tt><tt class="py-op">:</tt> </tt>
+<a name="L96"></a><tt class="py-lineno"> 96</tt>  <tt class="py-line">                                                <tt class="py-name">listLigneTemp</tt><tt class="py-op">.</tt><tt class="py-name">append</tt><tt class="py-op">(</tt><tt class="py-name">element</tt><tt class="py-op">)</tt> </tt>
+<a name="L97"></a><tt class="py-lineno"> 97</tt>  <tt class="py-line">                        <tt class="py-comment">#verification pour eviter saut de ligne dans fichier VCF</tt> </tt>
+<a name="L98"></a><tt class="py-lineno"> 98</tt>  <tt class="py-line">                        <tt class="py-keyword">if</tt> <tt class="py-string">"\n"</tt> <tt class="py-keyword">in</tt> <tt class="py-name">listLigneTemp</tt><tt class="py-op">[</tt><tt class="py-op">-</tt><tt class="py-number">1</tt><tt class="py-op">]</tt><tt class="py-op">:</tt> </tt>
+<a name="L99"></a><tt class="py-lineno"> 99</tt>  <tt class="py-line">                                <tt class="py-name">listLigneTemp</tt><tt class="py-op">[</tt><tt class="py-op">-</tt><tt class="py-number">1</tt><tt class="py-op">]</tt> <tt class="py-op">=</tt> <tt class="py-name">listLigneTemp</tt><tt class="py-op">[</tt><tt class="py-op">-</tt><tt class="py-number">1</tt><tt class="py-op">]</tt><tt class="py-op">.</tt><tt class="py-name">replace</tt><tt class="py-op">(</tt><tt class="py-string">"\n"</tt><tt class="py-op">,</tt><tt class="py-string">""</tt><tt class="py-op">)</tt> </tt>
+<a name="L100"></a><tt class="py-lineno">100</tt>  <tt class="py-line">                                <tt class="py-name">listFinale</tt><tt class="py-op">.</tt><tt class="py-name">append</tt><tt class="py-op">(</tt><tt class="py-name">listLigneTemp</tt><tt class="py-op">)</tt> </tt>
+<a name="L101"></a><tt class="py-lineno">101</tt>  <tt class="py-line">                        <tt class="py-keyword">else</tt><tt class="py-op">:</tt> </tt>
+<a name="L102"></a><tt class="py-lineno">102</tt>  <tt class="py-line">                                <tt class="py-name">listFinale</tt><tt class="py-op">.</tt><tt class="py-name">append</tt><tt class="py-op">(</tt><tt class="py-name">listLigneTemp</tt><tt class="py-op">)</tt> </tt>
+<a name="L103"></a><tt class="py-lineno">103</tt>  <tt class="py-line">                <tt class="py-keyword">return</tt> <tt class="py-name">listFinale</tt> </tt>
+</div><a name="L104"></a><tt class="py-lineno">104</tt>  <tt class="py-line"> </tt>
+<a name="SeparationVariants.sort_informations"></a><div id="SeparationVariants.sort_informations-def"><a name="L105"></a><tt class="py-lineno">105</tt> <a class="py-toggle" href="#" id="SeparationVariants.sort_informations-toggle" onclick="return toggle('SeparationVariants.sort_informations');">-</a><tt class="py-line">        <tt class="py-keyword">def</tt> <a class="py-def-name" href="separationvariants.SeparationVariants-class.html#sort_informations">sort_informations</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">,</tt><tt class="py-param">listLigneTemp</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="SeparationVariants.sort_informations-collapsed" style="display:none;" pad="+++" indent="++++++++++++"></div><div id="SeparationVariants.sort_informations-expanded"><a name="L106"></a><tt class="py-lineno">106</tt>  <tt class="py-line">                <tt class="py-docstring">"""Suppression des legendes (FAO,AF,AO,...) </tt> </tt>
+<a name="L107"></a><tt class="py-lineno">107</tt>  <tt class="py-line"><tt class="py-docstring">                par recherche d'une expression reguliere."""</tt> </tt>
+<a name="L108"></a><tt class="py-lineno">108</tt>  <tt class="py-line">                <tt class="py-keyword">for</tt> <tt class="py-name">i</tt> <tt class="py-keyword">in</tt> <tt class="py-name">listLigneTemp</tt><tt class="py-op">[</tt><tt class="py-number">7</tt><tt class="py-op">]</tt><tt class="py-op">:</tt> </tt>
+<a name="L109"></a><tt class="py-lineno">109</tt>  <tt class="py-line">                        <tt class="py-name">temp</tt> <tt class="py-op">=</tt> <tt class="py-name">str</tt><tt class="py-op">(</tt><tt class="py-name">i</tt><tt class="py-op">[</tt><tt class="py-number">0</tt><tt class="py-op">]</tt><tt class="py-op">)</tt> </tt>
+<a name="L110"></a><tt class="py-lineno">110</tt>  <tt class="py-line">                        <tt class="py-name">temp</tt> <tt class="py-op">=</tt> <tt class="py-name">re</tt><tt class="py-op">.</tt><tt class="py-name">sub</tt><tt class="py-op">(</tt><tt class="py-string">r"([A-Z])+="</tt><tt class="py-op">,</tt><tt class="py-string">""</tt><tt class="py-op">,</tt><tt class="py-name">temp</tt><tt class="py-op">)</tt> </tt>
+<a name="L111"></a><tt class="py-lineno">111</tt>  <tt class="py-line">                        <tt class="py-name">i</tt><tt class="py-op">[</tt><tt class="py-number">0</tt><tt class="py-op">]</tt> <tt class="py-op">=</tt> <tt class="py-name">temp</tt> </tt>
+</div><a name="L112"></a><tt class="py-lineno">112</tt>  <tt class="py-line"> </tt>
+<a name="SeparationVariants.check_if_same_length"></a><div id="SeparationVariants.check_if_same_length-def"><a name="L113"></a><tt class="py-lineno">113</tt> <a class="py-toggle" href="#" id="SeparationVariants.check_if_same_length-toggle" onclick="return toggle('SeparationVariants.check_if_same_length');">-</a><tt class="py-line">        <tt class="py-keyword">def</tt> <a class="py-def-name" href="separationvariants.SeparationVariants-class.html#check_if_same_length">check_if_same_length</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">,</tt><tt class="py-param">listLigneTemp</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="SeparationVariants.check_if_same_length-collapsed" style="display:none;" pad="+++" indent="++++++++++++"></div><div id="SeparationVariants.check_if_same_length-expanded"><a name="L114"></a><tt class="py-lineno">114</tt>  <tt class="py-line">                <tt class="py-docstring">"""Verifie si la ligne possede le meme nombre d'ID cosmic</tt> </tt>
+<a name="L115"></a><tt class="py-lineno">115</tt>  <tt class="py-line"><tt class="py-docstring">                que de mutations."""</tt> </tt>
+<a name="L116"></a><tt class="py-lineno">116</tt>  <tt class="py-line">                <tt class="py-comment">#nombre d'elements de la cellule INFO</tt> </tt>
+<a name="L117"></a><tt class="py-lineno">117</tt>  <tt class="py-line">                <tt class="py-name">cmpt</tt> <tt class="py-op">=</tt> <tt class="py-name">len</tt><tt class="py-op">(</tt><tt class="py-name">listLigneTemp</tt><tt class="py-op">[</tt><tt class="py-number">7</tt><tt class="py-op">]</tt><tt class="py-op">)</tt> </tt>
+<a name="L118"></a><tt class="py-lineno">118</tt>  <tt class="py-line">                <tt class="py-name">newLines</tt> <tt class="py-op">=</tt> <tt class="py-op">[</tt><tt class="py-op">]</tt> </tt>
+<a name="L119"></a><tt class="py-lineno">119</tt>  <tt class="py-line">                <tt class="py-name">countID</tt><tt class="py-op">=</tt> <tt class="py-number">0</tt> </tt>
+<a name="L120"></a><tt class="py-lineno">120</tt>  <tt class="py-line">                <tt class="py-comment">#Pour chaque ligne , je cree une liste que je mets dans newLines</tt> </tt>
+<a name="L121"></a><tt class="py-lineno">121</tt>  <tt class="py-line">                <tt class="py-comment">#Verification si meme nombre ID cosmic que nombre de mutations</tt> </tt>
+<a name="L122"></a><tt class="py-lineno">122</tt>  <tt class="py-line">                <tt class="py-keyword">if</tt> <tt class="py-name">len</tt><tt class="py-op">(</tt><tt class="py-name">listLigneTemp</tt><tt class="py-op">[</tt><tt class="py-number">2</tt><tt class="py-op">]</tt><tt class="py-op">)</tt> <tt class="py-op">==</tt> <tt class="py-name">len</tt><tt class="py-op">(</tt><tt class="py-name">listLigneTemp</tt><tt class="py-op">[</tt><tt class="py-number">4</tt><tt class="py-op">]</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+<a name="L123"></a><tt class="py-lineno">123</tt>  <tt class="py-line">                        <tt class="py-name">loopNb</tt> <tt class="py-op">=</tt> <tt class="py-number">4</tt> </tt>
+<a name="L124"></a><tt class="py-lineno">124</tt>  <tt class="py-line">                        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-4" class="py-name" targets="Method separationvariants.SeparationVariants.create_line()=separationvariants.SeparationVariants-class.html#create_line"><a title="separationvariants.SeparationVariants.create_line" class="py-name" href="#" onclick="return doclink('link-4', 'create_line', 'link-4');">create_line</a></tt><tt class="py-op">(</tt><tt class="py-name">listLigneTemp</tt><tt class="py-op">,</tt><tt class="py-name">cmpt</tt><tt class="py-op">,</tt><tt class="py-name">countID</tt><tt class="py-op">,</tt><tt class="py-name">newLines</tt><tt class="py-op">,</tt><tt class="py-name">loopNb</tt><tt class="py-op">)</tt> </tt>
+<a name="L125"></a><tt class="py-lineno">125</tt>  <tt class="py-line">                <tt class="py-keyword">else</tt><tt class="py-op">:</tt> </tt>
+<a name="L126"></a><tt class="py-lineno">126</tt>  <tt class="py-line">                <tt class="py-comment">#boucle sur le plus petit element</tt> </tt>
+<a name="L127"></a><tt class="py-lineno">127</tt>  <tt class="py-line">                        <tt class="py-comment">#boucle sur ID cosmic</tt> </tt>
+<a name="L128"></a><tt class="py-lineno">128</tt>  <tt class="py-line">                        <tt class="py-keyword">if</tt> <tt class="py-name">len</tt><tt class="py-op">(</tt><tt class="py-name">listLigneTemp</tt><tt class="py-op">[</tt><tt class="py-number">2</tt><tt class="py-op">]</tt><tt class="py-op">)</tt> <tt class="py-op">&lt;</tt> <tt class="py-name">len</tt><tt class="py-op">(</tt><tt class="py-name">listLigneTemp</tt><tt class="py-op">[</tt><tt class="py-number">4</tt><tt class="py-op">]</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+<a name="L129"></a><tt class="py-lineno">129</tt>  <tt class="py-line">                                <tt class="py-name">loopNb</tt> <tt class="py-op">=</tt> <tt class="py-number">2</tt> </tt>
+<a name="L130"></a><tt class="py-lineno">130</tt>  <tt class="py-line">                                <tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-5" class="py-name"><a title="separationvariants.SeparationVariants.create_line" class="py-name" href="#" onclick="return doclink('link-5', 'create_line', 'link-4');">create_line</a></tt><tt class="py-op">(</tt><tt class="py-name">listLigneTemp</tt><tt class="py-op">,</tt><tt class="py-name">cmpt</tt><tt class="py-op">,</tt><tt class="py-name">countID</tt><tt class="py-op">,</tt><tt class="py-name">newLines</tt><tt class="py-op">,</tt><tt class="py-name">loopNb</tt><tt class="py-op">)</tt> </tt>
+<a name="L131"></a><tt class="py-lineno">131</tt>  <tt class="py-line">                        <tt class="py-comment">#boucle sur le nombre de mutations (/!\ Possible perte du dernier ID cosmic)</tt> </tt>
+<a name="L132"></a><tt class="py-lineno">132</tt>  <tt class="py-line">                        <tt class="py-keyword">else</tt><tt class="py-op">:</tt> </tt>
+<a name="L133"></a><tt class="py-lineno">133</tt>  <tt class="py-line">                                <tt class="py-name">loopNb</tt> <tt class="py-op">=</tt> <tt class="py-number">4</tt> </tt>
+<a name="L134"></a><tt class="py-lineno">134</tt>  <tt class="py-line">                                <tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-6" class="py-name"><a title="separationvariants.SeparationVariants.create_line" class="py-name" href="#" onclick="return doclink('link-6', 'create_line', 'link-4');">create_line</a></tt><tt class="py-op">(</tt><tt class="py-name">listLigneTemp</tt><tt class="py-op">,</tt><tt class="py-name">cmpt</tt><tt class="py-op">,</tt><tt class="py-name">countID</tt><tt class="py-op">,</tt><tt class="py-name">newLines</tt><tt class="py-op">,</tt><tt class="py-name">loopNb</tt><tt class="py-op">)</tt> </tt>
+<a name="L135"></a><tt class="py-lineno">135</tt>  <tt class="py-line">                <tt class="py-keyword">return</tt> <tt class="py-name">newLines</tt> </tt>
+</div><a name="L136"></a><tt class="py-lineno">136</tt>  <tt class="py-line"> </tt>
+<a name="SeparationVariants.create_line"></a><div id="SeparationVariants.create_line-def"><a name="L137"></a><tt class="py-lineno">137</tt> <a class="py-toggle" href="#" id="SeparationVariants.create_line-toggle" onclick="return toggle('SeparationVariants.create_line');">-</a><tt class="py-line">        <tt class="py-keyword">def</tt> <a class="py-def-name" href="separationvariants.SeparationVariants-class.html#create_line">create_line</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">,</tt><tt class="py-param">listLigneTemp</tt><tt class="py-op">,</tt><tt class="py-param">cmpt</tt><tt class="py-op">,</tt><tt class="py-param">countID</tt><tt class="py-op">,</tt><tt class="py-param">newLines</tt><tt class="py-op">,</tt><tt class="py-param">a</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="SeparationVariants.create_line-collapsed" style="display:none;" pad="+++" indent="++++++++++++"></div><div id="SeparationVariants.create_line-expanded"><a name="L138"></a><tt class="py-lineno">138</tt>  <tt class="py-line">                <tt class="py-docstring">"""Recupere les informations correspondants a chaque ID cosmic</tt> </tt>
+<a name="L139"></a><tt class="py-lineno">139</tt>  <tt class="py-line"><tt class="py-docstring">                et cree une nouvelle ligne avec ces informations."""</tt> </tt>
+<a name="L140"></a><tt class="py-lineno">140</tt>  <tt class="py-line">                <tt class="py-comment">#pour chaque elements de la liste, recuperation des informations</tt> </tt>
+<a name="L141"></a><tt class="py-lineno">141</tt>  <tt class="py-line">                <tt class="py-keyword">for</tt> <tt class="py-name">i</tt> <tt class="py-keyword">in</tt> <tt class="py-name">range</tt><tt class="py-op">(</tt><tt class="py-name">len</tt><tt class="py-op">(</tt><tt class="py-name">listLigneTemp</tt><tt class="py-op">[</tt><tt class="py-name">a</tt><tt class="py-op">]</tt><tt class="py-op">)</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+<a name="L142"></a><tt class="py-lineno">142</tt>  <tt class="py-line">                        <tt class="py-name">ligneTemp</tt> <tt class="py-op">=</tt> <tt class="py-op">[</tt><tt class="py-op">]</tt> </tt>
+<a name="L143"></a><tt class="py-lineno">143</tt>  <tt class="py-line">                        <tt class="py-keyword">for</tt> <tt class="py-name">element</tt> <tt class="py-keyword">in</tt> <tt class="py-name">listLigneTemp</tt><tt class="py-op">:</tt> </tt>
+<a name="L144"></a><tt class="py-lineno">144</tt>  <tt class="py-line">                                <tt class="py-comment"># Si c'est une string, on ajoute dans listLigneTemp.</tt> </tt>
+<a name="L145"></a><tt class="py-lineno">145</tt>  <tt class="py-line">                                <tt class="py-keyword">if</tt> <tt class="py-name">type</tt><tt class="py-op">(</tt><tt class="py-name">element</tt><tt class="py-op">)</tt> <tt class="py-op">==</tt> <tt class="py-name">str</tt><tt class="py-op">:</tt> </tt>
+<a name="L146"></a><tt class="py-lineno">146</tt>  <tt class="py-line">                                        <tt class="py-name">ligneTemp</tt><tt class="py-op">.</tt><tt class="py-name">append</tt><tt class="py-op">(</tt><tt class="py-name">element</tt><tt class="py-op">)</tt> </tt>
+<a name="L147"></a><tt class="py-lineno">147</tt>  <tt class="py-line">                                <tt class="py-comment"># Si c'est une liste, on on traite chaque elements de la liste</tt> </tt>
+<a name="L148"></a><tt class="py-lineno">148</tt>  <tt class="py-line">                                <tt class="py-keyword">if</tt> <tt class="py-name">type</tt><tt class="py-op">(</tt><tt class="py-name">element</tt><tt class="py-op">)</tt> <tt class="py-op">==</tt> <tt class="py-name">list</tt><tt class="py-op">:</tt> </tt>
+<a name="L149"></a><tt class="py-lineno">149</tt>  <tt class="py-line">                                        <tt class="py-keyword">if</tt> <tt class="py-name">type</tt><tt class="py-op">(</tt><tt class="py-name">element</tt><tt class="py-op">[</tt><tt class="py-name">countID</tt><tt class="py-op">]</tt><tt class="py-op">)</tt> <tt class="py-op">==</tt> <tt class="py-name">str</tt><tt class="py-op">:</tt> </tt>
+<a name="L150"></a><tt class="py-lineno">150</tt>  <tt class="py-line">                                                <tt class="py-name">ligneTemp</tt><tt class="py-op">.</tt><tt class="py-name">append</tt><tt class="py-op">(</tt><tt class="py-name">element</tt><tt class="py-op">[</tt><tt class="py-name">countID</tt><tt class="py-op">]</tt><tt class="py-op">)</tt> </tt>
+<a name="L151"></a><tt class="py-lineno">151</tt>  <tt class="py-line">                                        <tt class="py-keyword">else</tt><tt class="py-op">:</tt> </tt>
+<a name="L152"></a><tt class="py-lineno">152</tt>  <tt class="py-line">                                                <tt class="py-comment">#boucle sur la longueur de la cellule info pour extraire chaque donnees</tt> </tt>
+<a name="L153"></a><tt class="py-lineno">153</tt>  <tt class="py-line">                                                <tt class="py-keyword">for</tt> <tt class="py-name">number</tt> <tt class="py-keyword">in</tt> <tt class="py-name">range</tt><tt class="py-op">(</tt><tt class="py-name">cmpt</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+<a name="L154"></a><tt class="py-lineno">154</tt>  <tt class="py-line">                                                        <tt class="py-keyword">if</tt> <tt class="py-name">len</tt><tt class="py-op">(</tt><tt class="py-name">element</tt><tt class="py-op">[</tt><tt class="py-name">number</tt><tt class="py-op">]</tt><tt class="py-op">)</tt> <tt class="py-op">==</tt> <tt class="py-number">1</tt><tt class="py-op">:</tt> </tt>
+<a name="L155"></a><tt class="py-lineno">155</tt>  <tt class="py-line">                                                                <tt class="py-comment">#uniformisation du contenu de la liste</tt> </tt>
+<a name="L156"></a><tt class="py-lineno">156</tt>  <tt class="py-line">                                                                <tt class="py-name">temp</tt> <tt class="py-op">=</tt> <tt class="py-name">str</tt><tt class="py-op">(</tt><tt class="py-name">element</tt><tt class="py-op">[</tt><tt class="py-name">number</tt><tt class="py-op">]</tt><tt class="py-op">)</tt> </tt>
+<a name="L157"></a><tt class="py-lineno">157</tt>  <tt class="py-line">                                                                <tt class="py-name">temp</tt> <tt class="py-op">=</tt> <tt class="py-name">temp</tt><tt class="py-op">.</tt><tt class="py-name">replace</tt><tt class="py-op">(</tt><tt class="py-string">"["</tt><tt class="py-op">,</tt><tt class="py-string">""</tt><tt class="py-op">)</tt> </tt>
+<a name="L158"></a><tt class="py-lineno">158</tt>  <tt class="py-line">                                                                <tt class="py-name">temp</tt> <tt class="py-op">=</tt> <tt class="py-name">temp</tt><tt class="py-op">.</tt><tt class="py-name">replace</tt><tt class="py-op">(</tt><tt class="py-string">"]"</tt><tt class="py-op">,</tt><tt class="py-string">""</tt><tt class="py-op">)</tt> </tt>
+<a name="L159"></a><tt class="py-lineno">159</tt>  <tt class="py-line">                                                                <tt class="py-name">temp</tt> <tt class="py-op">=</tt> <tt class="py-name">temp</tt><tt class="py-op">.</tt><tt class="py-name">replace</tt><tt class="py-op">(</tt><tt class="py-string">"'"</tt><tt class="py-op">,</tt><tt class="py-string">""</tt><tt class="py-op">)</tt> </tt>
+<a name="L160"></a><tt class="py-lineno">160</tt>  <tt class="py-line">                                                                <tt class="py-name">temp</tt> <tt class="py-op">=</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">LEGENDES</tt><tt class="py-op">[</tt><tt class="py-name">number</tt><tt class="py-op">]</tt><tt class="py-op">+</tt><tt class="py-name">temp</tt> </tt>
+<a name="L161"></a><tt class="py-lineno">161</tt>  <tt class="py-line">                                                                <tt class="py-name">ligneTemp</tt><tt class="py-op">.</tt><tt class="py-name">append</tt><tt class="py-op">(</tt><tt class="py-name">temp</tt><tt class="py-op">)</tt> </tt>
+<a name="L162"></a><tt class="py-lineno">162</tt>  <tt class="py-line">                                                        <tt class="py-keyword">else</tt><tt class="py-op">:</tt> </tt>
+<a name="L163"></a><tt class="py-lineno">163</tt>  <tt class="py-line">                                                                <tt class="py-name">temp</tt> <tt class="py-op">=</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">LEGENDES</tt><tt class="py-op">[</tt><tt class="py-name">number</tt><tt class="py-op">]</tt><tt class="py-op">+</tt><tt class="py-name">element</tt><tt class="py-op">[</tt><tt class="py-name">number</tt><tt class="py-op">]</tt><tt class="py-op">[</tt><tt class="py-name">countID</tt><tt class="py-op">]</tt> </tt>
+<a name="L164"></a><tt class="py-lineno">164</tt>  <tt class="py-line">                                                                <tt class="py-name">ligneTemp</tt><tt class="py-op">.</tt><tt class="py-name">append</tt><tt class="py-op">(</tt><tt class="py-name">temp</tt><tt class="py-op">)</tt> </tt>
+<a name="L165"></a><tt class="py-lineno">165</tt>  <tt class="py-line">                        <tt class="py-comment">#mise en forme comme VCF                                </tt> </tt>
+<a name="L166"></a><tt class="py-lineno">166</tt>  <tt class="py-line">                        <tt class="py-name">listVCF</tt> <tt class="py-op">=</tt> <tt class="py-name">ligneTemp</tt><tt class="py-op">[</tt><tt class="py-op">:</tt><tt class="py-op">]</tt> </tt>
+<a name="L167"></a><tt class="py-lineno">167</tt>  <tt class="py-line">                        <tt class="py-keyword">del</tt> <tt class="py-name">listVCF</tt><tt class="py-op">[</tt><tt class="py-number">7</tt><tt class="py-op">:</tt><tt class="py-op">]</tt> </tt>
+<a name="L168"></a><tt class="py-lineno">168</tt>  <tt class="py-line">                        <tt class="py-keyword">del</tt> <tt class="py-name">ligneTemp</tt><tt class="py-op">[</tt><tt class="py-number">0</tt><tt class="py-op">:</tt><tt class="py-number">7</tt><tt class="py-op">]</tt> </tt>
+<a name="L169"></a><tt class="py-lineno">169</tt>  <tt class="py-line">                        <tt class="py-name">listTemptoString</tt> <tt class="py-op">=</tt> <tt class="py-string">";"</tt><tt class="py-op">.</tt><tt class="py-name">join</tt><tt class="py-op">(</tt><tt class="py-name">ligneTemp</tt><tt class="py-op">)</tt> </tt>
+<a name="L170"></a><tt class="py-lineno">170</tt>  <tt class="py-line">                        <tt class="py-name">listTemptoString</tt> <tt class="py-op">+=</tt> <tt class="py-string">"\n"</tt> </tt>
+<a name="L171"></a><tt class="py-lineno">171</tt>  <tt class="py-line">                        <tt class="py-name">listVCF</tt><tt class="py-op">.</tt><tt class="py-name">append</tt><tt class="py-op">(</tt><tt class="py-name">listTemptoString</tt><tt class="py-op">)</tt> </tt>
+<a name="L172"></a><tt class="py-lineno">172</tt>  <tt class="py-line">                        <tt class="py-name">newLines</tt><tt class="py-op">.</tt><tt class="py-name">append</tt><tt class="py-op">(</tt><tt class="py-name">listVCF</tt><tt class="py-op">)</tt> </tt>
+<a name="L173"></a><tt class="py-lineno">173</tt>  <tt class="py-line">                        <tt class="py-comment">#incrementation pour passer a un nouveau transcript de la meme ligne</tt> </tt>
+<a name="L174"></a><tt class="py-lineno">174</tt>  <tt class="py-line">                        <tt class="py-name">countID</tt> <tt class="py-op">+=</tt><tt class="py-number">1</tt> </tt>
+<a name="L175"></a><tt class="py-lineno">175</tt>  <tt class="py-line">                <tt class="py-keyword">return</tt> <tt class="py-name">newLines</tt> </tt>
+</div></div><a name="L176"></a><tt class="py-lineno">176</tt>  <tt class="py-line"> </tt><script type="text/javascript">
+<!--
+expandto(location.href);
+// -->
+</script>
+</pre>
+<br />
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+      <th class="navbar" width="100%"></th>
+  </tr>
+</table>
+<table border="0" cellpadding="0" cellspacing="0" width="100%%">
+  <tr>
+    <td align="left" class="footer">
+    Generated by Epydoc 3.0.1 on Mon Jun 13 13:22:59 2016
+    </td>
+    <td align="right" class="footer">
+      <a target="mainFrame" href="http://epydoc.sourceforge.net"
+        >http://epydoc.sourceforge.net</a>
+    </td>
+  </tr>
+</table>
+
+<script type="text/javascript">
+  <!--
+  // Private objects are initially displayed (because if
+  // javascript is turned off then we want them to be
+  // visible); but by default, we want to hide them.  So hide
+  // them unless we have a cookie that says to show them.
+  checkCookie();
+  // -->
+</script>
+</body>
+</html>
