@@ -24,14 +24,14 @@ class Updates:
 		################################################################################
 		# Etape de verification de MAJ du genome local avec la derniere version du genome sur ensembl
 		################################################################################
-		print("Verification version génome...")
+		print("Verification version genome...")
 		update = False
 		old = os.path.getsize('../System/Ensembl/')
 		os.system('rsync -u rsync://ftp.ensembl.org/ensembl/pub/current_variation/VEP/homo_sapiens_vep_84_GRCh37.tar.gz ../System/Ensembl/')
 		new = os.path.getsize('../System/Ensembl/')
 		if old != new:
 			update=True
-		print("Verification génome OK")
+		print("Verification genome OK")
 		#création base de données cosmic allégée
 		if not os.path.isfile("../System/Cosmic/Cosmic_lite.txt") or update:
 			CosmicLite()
