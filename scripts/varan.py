@@ -2,7 +2,7 @@
 # coding: utf-8 
 
 """
-Script principal du pipeline qui traite le fichier .vcf de chaque patients d'un run
+Script principal du pipeline qui traite le fichier .vcf de chaque patient d'un run
 afin d'obtenir un compte rendu de mutations.
 
 Ludovic KOSTHOWA (Debut : 06/04/16)
