@@ -32,7 +32,7 @@ __Repository :__
 
 - "__System__" contain files needed to launch the software.
 
-- "__System/Cosmic__": repository of Cosmic database with Complete and Lite database. If you download the git repository for the first time, you need to download the ["CosmicCompleteExport.tsv"](http://cancer.sanger.ac.uk/cosmic/download) from Cosmic database.
+- "__System/Cosmic__": repository of Cosmic database with Complete and Lite database. If you download the git repository for the first time, you need to download the ["CosmicCompleteExport.tsv"](http://cancer.sanger.ac.uk/cell_lines/files?data=/files/grch37/cosmic/v75/CosmicCompleteExport.tsv.gz) from Cosmic database. Follow the instructions on the link.
 
 - "__System/Ensembl__": repository of Ensembl tools (VEP script and database). If you download the git repository for the first time, you need to download the  ["homo_sapiens_vep_84_GRCh37.tar.gz"](http://ftp.ensembl.org/pub/current_variation/VEP/homo_sapiens_vep_84_GRCh37.tar.gz) from ensembl website.
 
