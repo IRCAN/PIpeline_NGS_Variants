@@ -169,17 +169,53 @@ class RefseqToEnsembl:
 			################################################################################
 			#Comparaison avec les lignes de MUTATIONS pour récupérer les couvertures
 			################################################################################
+			Continue=True
 			for mutation in mutationsFile:
 				if mutation[0]!="#":
 					mutationSplit = mutation.split("\t")
+					recalculPosition=0
+					#print( HGVSc)
+					if "del" in HGVSc:
+
+						HGV=HGVSc.split("del")
+						if "ins" in HGV[1]:
+							recupLen=HGV[1].split("ins")
+							recalculPosition=len(recupLen[-2]) -len(recupLen[-1])
+						else:
+							recalculPosition=len(HGV[-1])
+					#print(recalculPosition)
+					#elif "ins" in HGVSc:
+					#	HGV=HGVSc.split("ins")
+					#	recalculPosition=len(HGV[-1])
+					#break
 					chromPosMutation = mutationSplit[0]+"\t"+mutationSplit[1]
-					if chromPosMutation == chromPosVcf:
+					"""if HGVSc=="c.209+1_209+2delGT":
+						print(recalculPosition)
+						print(chromPosMutation)
+						print(chromPosVcf)"""
+					#if "del" in chromPosMutation
+					chromPosMutationSplit=chromPosMutation.split()
+					chromPosVcfSplit=chromPosVcf.split()
+					if (chromPosMutationSplit[0] == chromPosVcfSplit[0]) and (int(chromPosMutationSplit[1]) == (int(chromPosVcfSplit[1]) - int(recalculPosition))) and Continue:
+					#if chromPosMutation == chromPosVcf:
 						alleleCov = self.get_allele_cov(mutationSplit[7])
 						alleleFreq = self.get_allele_freq(mutationSplit[7])
 						string = string.replace("cov_not_find",alleleCov)
-						string = string.replace("freq_not_find",alleleFreq+" %")
+						string = string.replace("freq_not_find",alleleFreq+"%")
 						if mutationSplit[6] == "NOCALL":
 							string = string.replace("NO-NOCALL","NO CALL")
+						Continue=False
+
+					elif (chromPosMutationSplit[0] == chromPosVcfSplit[0]) and (int(chromPosMutationSplit[1]) == (int(chromPosVcfSplit[1])-1)) and Continue:
+					#if chromPosMutation == chromPosVcf:
+						alleleCov = self.get_allele_cov(mutationSplit[7])
+						alleleFreq = self.get_allele_freq(mutationSplit[7])
+						string = string.replace("cov_not_find",alleleCov)
+						string = string.replace("freq_not_find",alleleFreq+"%")
+						if mutationSplit[6] == "NOCALL":
+							string = string.replace("NO-NOCALL","NO CALL")
+
+						
 			################################################################################
 			#Recuperation identifiant COSMIC
 			################################################################################
@@ -251,7 +287,7 @@ class RefseqToEnsembl:
 
 	def get_allele_cov(self,string):
 		"""Recupere la couverture allelique pour chaque mutations."""
-		match = re.search(r"(AO)=[0-9]*", string)
+		match = re.search(r"(DP)=[0-9]*", string)
 		resultat = match.group(0)
 		#Supprime le "FAO="
 		resultat = resultat[3:]
@@ -277,6 +313,7 @@ class RefseqToEnsembl:
 		alleleFreq = "%1f" % alleleFreq
 		return(alleleFreq)
 
+
 	def create_dico_panel(self):
 		"""Cree un dictionnaire contenant tout les identifiants RefSeq su panel."""
 		#############################
@@ -294,5 +331,4 @@ class RefseqToEnsembl:
 				if "NM_" in idRefseqPanel:
 					idRefseqPanel = str(idRefseqPanel)
 					self.dicoPanel[idRefseqPanel] = i
-
 
