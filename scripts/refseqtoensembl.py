@@ -174,7 +174,6 @@ class RefseqToEnsembl:
 				if mutation[0]!="#":
 					mutationSplit = mutation.split("\t")
 					recalculPosition=0
-					#print( HGVSc)
 					if "del" in HGVSc:
 
 						HGV=HGVSc.split("del")
@@ -183,21 +182,12 @@ class RefseqToEnsembl:
 							recalculPosition=len(recupLen[-2]) -len(recupLen[-1])
 						else:
 							recalculPosition=len(HGV[-1])
-					#print(recalculPosition)
-					#elif "ins" in HGVSc:
-					#	HGV=HGVSc.split("ins")
-					#	recalculPosition=len(HGV[-1])
-					#break
+
 					chromPosMutation = mutationSplit[0]+"\t"+mutationSplit[1]
-					"""if HGVSc=="c.209+1_209+2delGT":
-						print(recalculPosition)
-						print(chromPosMutation)
-						print(chromPosVcf)"""
-					#if "del" in chromPosMutation
+
 					chromPosMutationSplit=chromPosMutation.split()
 					chromPosVcfSplit=chromPosVcf.split()
 					if (chromPosMutationSplit[0] == chromPosVcfSplit[0]) and (int(chromPosMutationSplit[1]) == (int(chromPosVcfSplit[1]) - int(recalculPosition))) and Continue:
-					#if chromPosMutation == chromPosVcf:
 						alleleCov = self.get_allele_cov(mutationSplit[7])
 						alleleFreq = self.get_allele_freq(mutationSplit[7])
 						string = string.replace("cov_not_find",alleleCov)
