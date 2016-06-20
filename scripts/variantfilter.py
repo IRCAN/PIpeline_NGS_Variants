@@ -65,10 +65,10 @@ class VariantFilter:
 				temp = sampleLigneSplit[0].split(":")
 				chrNumber = "chr" + temp[0]
 				position = temp[1]
-				cosmicNumber = sampleLigneSplit[6].replace("COSM","")
+				cosmicNumber = sampleLigneSplit[6]#.replace("COSM","")
 				hgvsp = sampleLigneSplit[5]
 				if hsLineSplit[0] == chrNumber and int(hsLineSplit[1]) <= int(position) <= int(hsLineSplit[2]) and hsLineSplit[3] == sampleLigneSplit[1]: # and cosmicNumber in hsLineSplit[6] and sampleLigneSplit[4] in hsLineSplit[7]:
-					HSm = sampleLigneSplit[1]+"\t"+hsLineSplit[4]+"\t"+sampleLigneSplit[2]+"\t"+sampleLigneSplit[3]+"\t"+sampleLigneSplit[4]+"\t"+hgvsp+"\t"+"COSM"+cosmicNumber+"\t"+sampleLigneSplit[7]+"\t"+sampleLigneSplit[8]+"\t"+sampleLigneSplit[9]+"\t"+sampleLigneSplit[10]+"\t"+sampleLigneSplit[11]+"\t"+sampleLigneSplit[12]+"\n"
+					HSm = sampleLigneSplit[1]+"\t"+hsLineSplit[4]+"\t"+sampleLigneSplit[2]+"\t"+sampleLigneSplit[3]+"\t"+sampleLigneSplit[4]+"\t"+hgvsp+"\t"+cosmicNumber+"\t"+sampleLigneSplit[7]+"\t"+sampleLigneSplit[8]+"\t"+sampleLigneSplit[9]+"\t"+sampleLigneSplit[10]+"\t"+sampleLigneSplit[11]+"\t"+sampleLigneSplit[12]+"\n"
 					##HS douteux si nocall ou <25reads: 
 					if sampleLigneSplit[7] != "cov_not_find":
 						if sampleLigneSplit[13] == "NO CALL" or int(sampleLigneSplit[7]) < 25:

@@ -177,7 +177,7 @@ class RefseqToEnsembl:
 						alleleCov = self.get_allele_cov(mutationSplit[7])
 						alleleFreq = self.get_allele_freq(mutationSplit[7])
 						string = string.replace("cov_not_find",alleleCov)
-						string = string.replace("freq_not_find",alleleFreq+"%")
+						string = string.replace("freq_not_find",alleleFreq+" %")
 						if mutationSplit[6] == "NOCALL":
 							string = string.replace("NO-NOCALL","NO CALL")
 			################################################################################
@@ -260,17 +260,22 @@ class RefseqToEnsembl:
 	def get_allele_freq(self,string):
 		"""Recupere la frequence allelique pour chaque mutations de l'echantillon."""
 
-
-		################################################################################
-		#TODO Modifier AF par DP et récupérer le nombre total de reads pour calculer la fréquence
-		################################################################################
-		match = re.search(r"(AF)=\d*.\d*;", string)
-		resultat = match.group(0)	
-		resultat = resultat.replace(";","")	#Supprime le "AF="
-		resultat = float(resultat[3:])
-		resultat = resultat*100
-		resultat = "%.1f" % resultat
-		return(resultat)
+		matchAO = re.search(r"AO=\d*;", string)
+		matchDP = re.search(r"DP=\d*;", string)
+		alleleObservation = matchAO.group(0)
+		alleleObservation = alleleObservation.replace(";","")
+		alleleObservation = alleleObservation.split("=")
+		alleleObservation = alleleObservation[1]
+		alleleObservation = int(alleleObservation)
+		totalReads = matchDP.group(0)
+		totalReads = totalReads.replace(";","")
+		totalReads = totalReads.split("=")
+		totalReads = totalReads[1]
+		totalReads = int(totalReads)
+		alleleFreq = alleleObservation / totalReads
+		alleleFreq = alleleFreq * 100
+		alleleFreq = "%1f" % alleleFreq
+		return(alleleFreq)
 
 	def create_dico_panel(self):
 		"""Cree un dictionnaire contenant tout les identifiants RefSeq su panel."""
