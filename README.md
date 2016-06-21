@@ -20,8 +20,26 @@ Workspace of created pipeline for variants NGS analysis:
 	It can be adapted to different research subject.
 
 __Quick Start :__
-
-This part is currently being set up.
+Download VarAn
+extract then go in the scripts repertory.
+Run the installLog.sh
+```
+sudo bash installLog.sh
+```
+follow the instructions, and write
+```
+43 45
+```
+to choose the species for VEP, and
+```
+27
+```
+for the fasta file.
+One last thing, you need to download the  ["CosmicCompleteExport.tsv"](http://cancer.sanger.ac.uk/cell_lines/files?data=/files/grch37/cosmic/v75/CosmicCompleteExport.tsv.gz) from Cosmic database. Follow the instructions on the link. After the download, don't forget to put and extract the file in the System/Cosmic/ repertory.
+You can now run VarAn, with the command:
+```
+python3 varan.py Path_to_the_run_repertory/
+```
 
 __Repository :__
 - "__scripts__" contain all python3 scripts.
