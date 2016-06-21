@@ -12,13 +12,7 @@ import re
 
 class RefseqToEnsembl:
 	def __init__(self):
-		############################
-		############################
-		############################
-		# TODO :Commentaire sur la fonction
-		############################
-		############################
-		############################
+		"""initiation des dictionnaires, parsing des bdd"""
 		self.cosmicDict = {}
 		self.gene2ensemblFinalDic = {}
 		self.dicoPanel = {}
