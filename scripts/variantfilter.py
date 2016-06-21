@@ -23,10 +23,11 @@ class VariantFilter:
 			sample = File.readlines()
 		del sample[0]
 		self.compare_hs(sample,file)
-		self.no_contributory(sample,file)
 		self.uncertain_mutation(sample,file)
 		self.find_polymorphism(sample,file)
+		self.no_contributory(sample,file)
 		self.uncaracterized_mutations(sample,file)
+
 
 	def parse_hs_file(self):
 		############################
