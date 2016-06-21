@@ -12,7 +12,7 @@ import re
 
 class RefseqToEnsembl:
 	def __init__(self):
-		"""initiation des dictionnaires, parsing des bdd"""
+		"""Initiation des dictionnaires, parsing des bases de données."""
 		self.cosmicDict = {}
 		self.gene2ensemblFinalDic = {}
 		self.dicoPanel = {}
@@ -279,7 +279,6 @@ class RefseqToEnsembl:
 
 	def get_allele_freq(self,string):
 		"""Recupere la frequence allelique pour chaque mutations de l'echantillon."""
-
 		matchAO = re.search(r"AO=\d*;", string)
 		matchDP = re.search(r"DP=\d*;", string)
 		alleleObservation = matchAO.group(0)
