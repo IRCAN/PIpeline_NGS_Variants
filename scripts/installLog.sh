@@ -4,6 +4,8 @@
 #ou les mettre? /usr/bin pour server: /scratch/bin ??
 
 
+apt-get install git
+apt-get install bio-perl
 #workFolder=$(readlink -f $(dirname $0))
 myPath=$(readlink -f $(dirname $0))
 #myPath=~/Documents/Variants/Pipeline_NGS_Variants/Logiciels/
@@ -48,14 +50,15 @@ cd $myPath
 
 
 ###install Module::Build  ####
-echo
-echo
+echo "#########################################################"
+echo "#########################################################"
 echo "Dans cpan Ecrire:"
 echo "install Module::Build"
 echo "exit"
+echo "#########################################################"
+echo "#########################################################"
 cpan
 #cpan install Module::Build
-
 
 
 #################   Bio-DB-HTS  #######################
