@@ -6,6 +6,8 @@
 
 apt-get install git
 apt-get install bio-perl
+apt-get install python3-pip
+pip3 install openpyxl
 #workFolder=$(readlink -f $(dirname $0))
 myPath=$(readlink -f $(dirname $0))
 #myPath=~/Documents/Variants/Pipeline_NGS_Variants/Logiciels/
