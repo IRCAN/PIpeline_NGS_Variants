@@ -10,17 +10,11 @@ from separationvariants import SeparationVariants
 from hotspot import HotspotProcess
 from variantfilter import VariantFilter
 from refseqtoensembl import RefseqToEnsembl
+from pdf import *
 
 class MainVaran(RefseqToEnsembl):
 
 	def __init__(self,pathREPERTORYVCF, REPERTORYVCF, ALL_HS_FILE=""):
-		############################
-		############################
-		############################
-		# TODO :Commentaire sur la fonction
-		############################
-		############################
-		############################
 		RefseqToEnsembl.__init__(self)
 		if ALL_HS_FILE != "":
 			ALL_HS_FILE,hotspots=self.concatenate_hs(ALL_HS_FILE)
@@ -119,14 +113,90 @@ class MainVaran(RefseqToEnsembl):
 			################################################################################
 			inputfile = "../Results/"+REPERTORYVCF+"/VariantCaller/MUTATIONS_"+file
 			outputFile2 = "../Results/"+REPERTORYVCF+"/VEP/VEP_"+file
-			commandVEP = "perl ../System/Ensembl/ensembl-tools-release-84/scripts/variant_effect_predictor/variant_effect_predictor.pl -cache --force --no_stats --refseq --gmaf --hgvs --sift b --polyphen b --port 3337 --input_file "+inputfile+ " --output_file "+outputFile2
-			os.system(commandVEP)
+			#commandVEP = "perl ../System/Ensembl/ensembl-tools-release-84/scripts/variant_effect_predictor/variant_effect_predictor.pl -cache --force --no_stats --refseq --gmaf --hgvs --sift b --polyphen b --port 3337 --input_file "+inputfile+ " --output_file "+outputFile2
+			#os.system(commandVEP)
 			################################################################################
 			#Filtrage des variants
 			################################################################################
 			self.make_file_for_filter(file,REPERTORYVCF)
 			if hotspot != "":
 				filtre = VariantFilter(REPERTORYVCF,file)
+
+			######
+			#Ecriture rapport
+			######
+			
+			report = open("../Report_"+i+".txt", "w")
+			report.write("Report of "+i+".\n\n")
+			if os.path.exists("../Results/"+REPERTORYVCF+"/temp/HSm_"+i+".vcf") == True:
+				report.write("Hotspots mutés:\n")
+				report.write("\n")
+				File = "../Results/"+REPERTORYVCF+"/temp/HSm_"+i+".vcf"
+				with open(File,'r') as file:
+					file = file.readlines()
+					for element in file:
+						report.write(element)
+					report.write("\n")
+			if os.path.exists("../Results/"+REPERTORYVCF+"/temp/HSm_questionable_"+i+".vcf") == True:
+				report.write("Hotspots mutés douteux:\n")
+				report.write("\n")
+				File = "../Results/"+REPERTORYVCF+"/temp/HSm_questionable_"+i+".vcf"
+				with open(File,'r') as file:
+					file = file.readlines()
+					for element in file:
+						report.write(element)
+					report.write("\n")
+			if os.path.exists("../Results/"+REPERTORYVCF+"/temp/nonMutatedHS_"+i+".vcf")== True:
+				report.write("Hotspots non mutés:\n")
+				report.write("\n")
+				File = "../Results/"+REPERTORYVCF+"/temp/nonMutatedHS_"+i+".vcf"
+				with open(File,'r') as file:
+					file = file.readlines()
+					for element in file:
+						report.write(element)
+					report.write("\n")
+			if os.path.exists("../Results/"+REPERTORYVCF+"/temp/uncertain_mutation_"+i+".vcf")== True:
+				report.write("Uncertain mutation (mutation douteuse):\n")
+				report.write("\n")
+				File = "../Results/"+REPERTORYVCF+"/temp/uncertain_mutation_"+i+".vcf"
+				with open(File,'r') as file:
+					file = file.readlines()
+					for element in file:
+						report.write(element)
+					report.write("\n")
+			if os.path.exists("../Results/"+REPERTORYVCF+"/temp/Polymorphism_"+i+".vcf")== True:
+				report.write("Polymorphism:\n")
+				report.write("\n")
+				File = "../Results/"+REPERTORYVCF+"/temp/Polymorphism_"+i+".vcf"
+				with open(File,'r') as file:
+					file = file.readlines()
+					for element in file:
+						report.write(element)
+					report.write("\n")
+			if os.path.exists("../Results/"+REPERTORYVCF+"/temp/no_contributory_"+i+".vcf")== True:
+				report.write("No contributory mutations (non contributif):\n")
+				report.write("\n")
+				File = "../Results/"+REPERTORYVCF+"/temp/no_contributory_"+i+".vcf"
+				with open(File,'r') as file:
+					file = file.readlines()
+					for element in file:
+						report.write(element)
+					report.write("\n")
+			if os.path.exists("../Results/"+REPERTORYVCF+"/temp/uncaracterized_mutations_"+i+".vcf")== True:
+				report.write("Uncaracterized mutations (non filtrées):\n")
+				report.write("\n")
+				File = "../Results/"+REPERTORYVCF+"/temp/uncaracterized_mutations_"+i+".vcf"
+				with open(File,'r') as file:
+					file = file.readlines()
+					for element in file:
+						report.write(element)
+					report.write("\n")
+			report.close()
+			fichier2 = open("../Report_"+i+".txt","r")
+			content = fichier2.readlines()
+			print(len(content))
+			pyxl(i)
+
 			
 	def file_to_list(self,contentFile):
 		"""Cree une liste contenant toutes les lignes du file .vcf.

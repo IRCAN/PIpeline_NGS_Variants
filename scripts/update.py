@@ -12,7 +12,7 @@ import os
 
 class Updates:
 	def __init__(self,REPERTORYVCF):
-		"""Verification si nouvelle version base de donnees VEP, creation Cosmic_lite si inexistante, creation repertoires contenant les resultats."""
+		"""verification si nouvelle version base de donnees VEP, creation Cosmic_lite si inexistante, creation repertoires contenant les resultats"""
 
 
 		################################################################################

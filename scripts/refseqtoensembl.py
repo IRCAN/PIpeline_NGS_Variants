@@ -12,7 +12,7 @@ import re
 
 class RefseqToEnsembl:
 	def __init__(self):
-		"""Initiation des dictionnaires, parsing des bases de données."""
+		"""initiation des dictionnaires, parsing des bdd"""
 		self.cosmicDict = {}
 		self.gene2ensemblFinalDic = {}
 		self.dicoPanel = {}
@@ -26,7 +26,7 @@ class RefseqToEnsembl:
 			vepFile = vepFile0.readlines()
 		tempList = []
 		vcfFileFinalList = []
-		vcfFileFinalList.append("gene\tgene Id\tRefSeq id\tTranscript\tHGVSc\tHGVSp\tcosmic ID\tallele_cov\tallele_freq\tfunction\tmaf\tsift\tpolyphen\n")
+		vcfFileFinalList.append("gene\tgene Id\tRefSeq id\tTranscript\tHGVSc\tHGVSp\tcosmic ID\tDP\tAO\tallele_freq\tfunction\tmaf\tsift\tpolyphen\n")
 		idNotFindList = []
 		mutationsFile = self.parse_mutations_file(file,REPERTORYVCF)
 		################################################################################
@@ -157,9 +157,9 @@ class RefseqToEnsembl:
 			
 			if idEnsembleFind:
 				idEnsembl = self.gene2ensemblFinalDic[idRefseq]
-				string = chromPos[0]+":"+position + "\t"+ geneId +"\t" + idRefseq + "\t" + idEnsembl + "\t" + HGVSc + "\t" + HGVSp + "\tidCosmicNotFound\tcov_not_find\tfreq_not_find\t"+ function + "\t" + MAF + "\t" + SIFT + "\t" +PolyPhen + "\t"+ "NO-NOCALL" + "\n"
+				string = chromPos[0]+":"+position + "\t"+ geneId +"\t" + idRefseq + "\t" + idEnsembl + "\t" + HGVSc + "\t" + HGVSp + "\tidCosmicNotFound\tDP_not_find\tAO_not_find\tfreq_not_find\t"+ function + "\t" + MAF + "\t" + SIFT + "\t" +PolyPhen + "\t"+ "NO-NOCALL" + "\n"
 			else:
-				string = chromPos[0]+":"+position + "\t"+ geneId +"\t" + idRefseq + "\t" + "NA" + "\t" + HGVSc + "\t" + HGVSp + "\tidCosmicNotFound\tcov_not_find\tfreq_not_find\t"+ function + "\t" + MAF + "\t" + SIFT + "\t" +PolyPhen + "\t"+ "NO-NOCALL" + "\n"
+				string = chromPos[0]+":"+position + "\t"+ geneId +"\t" + idRefseq + "\t" + "NA" + "\t" + HGVSc + "\t" + HGVSp + "\tidCosmicNotFound\tDP_not_find\tAO_not_find\tfreq_not_find\t"+ function + "\t" + MAF + "\t" + SIFT + "\t" +PolyPhen + "\t"+ "NO-NOCALL" + "\n"
 			################################################################################
 			#Comparaison avec les lignes de MUTATIONS pour récupérer les couvertures
 			################################################################################
@@ -182,9 +182,11 @@ class RefseqToEnsembl:
 					chromPosMutationSplit=chromPosMutation.split()
 					chromPosVcfSplit=chromPosVcf.split()
 					if (chromPosMutationSplit[0] == chromPosVcfSplit[0]) and (int(chromPosMutationSplit[1]) == (int(chromPosVcfSplit[1]) - int(recalculPosition))) and Continue:
-						alleleCov = self.get_allele_cov(mutationSplit[7])
+						DP = self.get_DP(mutationSplit[7])
+						AO = self.get_AO(mutationSplit[7])
 						alleleFreq = self.get_allele_freq(mutationSplit[7])
-						string = string.replace("cov_not_find",alleleCov)
+						string = string.replace("DP_not_find",DP)
+						string = string.replace("AO_not_find",AO)
 						string = string.replace("freq_not_find",alleleFreq+"%")
 						if mutationSplit[6] == "NOCALL":
 							string = string.replace("NO-NOCALL","NO CALL")
@@ -192,9 +194,11 @@ class RefseqToEnsembl:
 
 					elif (chromPosMutationSplit[0] == chromPosVcfSplit[0]) and (int(chromPosMutationSplit[1]) == (int(chromPosVcfSplit[1])-1)) and Continue:
 					#if chromPosMutation == chromPosVcf:
-						alleleCov = self.get_allele_cov(mutationSplit[7])
+						DP = self.get_DP(mutationSplit[7])
+						AO = self.get_AO(mutationSplit[7])
 						alleleFreq = self.get_allele_freq(mutationSplit[7])
-						string = string.replace("cov_not_find",alleleCov)
+						string = string.replace("DP_not_find",DP)
+						string = string.replace("AO_not_find",AO)
 						string = string.replace("freq_not_find",alleleFreq+"%")
 						if mutationSplit[6] == "NOCALL":
 							string = string.replace("NO-NOCALL","NO CALL")
@@ -269,16 +273,27 @@ class RefseqToEnsembl:
 			mutationsFile=mutationsFile0.readlines()
 		return mutationsFile
 
-	def get_allele_cov(self,string):
-		"""Recupere la couverture allelique pour chaque mutations."""
+	def get_DP(self,string):
+		"""Recupere la profondeur totale pour chaque mutations."""
 		match = re.search(r"(DP)=[0-9]*", string)
 		resultat = match.group(0)
 		#Supprime le "FAO="
 		resultat = resultat[3:]
 		return(resultat)
 
+	def get_AO(self,string):
+		"""Recupere le nombre d'allèles mutés pour chaque mutations."""
+		match = re.search(r"(AO)=[0-9]*", string)
+		resultat = match.group(0)
+		#Supprime le "FAO="
+		resultat = resultat[3:]
+		return(resultat)
+
+
+
 	def get_allele_freq(self,string):
 		"""Recupere la frequence allelique pour chaque mutations de l'echantillon."""
+
 		matchAO = re.search(r"AO=\d*;", string)
 		matchDP = re.search(r"DP=\d*;", string)
 		alleleObservation = matchAO.group(0)
@@ -293,7 +308,7 @@ class RefseqToEnsembl:
 		totalReads = int(totalReads)
 		alleleFreq = alleleObservation / totalReads
 		alleleFreq = alleleFreq * 100
-		alleleFreq = "%1f" % alleleFreq
+		alleleFreq = "%.2f" % alleleFreq
 		return(alleleFreq)
 
 

@@ -10,13 +10,6 @@ import os
 class HotspotProcess:
 
 	def __init__(self,REPERTORYVCF,hotspot,list_of_transcripts,fichier):
-		############################
-		############################
-		############################
-		# TODO :Commentaire sur la fonction
-		############################
-		############################
-		############################
 		self.dicoHS = self.create_dico_HS(hotspot)
 		#ajout dans le dictionnaire des profondeurs des variants
 		self.find_depth_HSnm(list_of_transcripts,hotspot,self.dicoHS)
@@ -60,7 +53,7 @@ class HotspotProcess:
 		"""Calcul de la profondeur mean et minimale pour chaque HS."""
 		for key,value in dicoHS.items():
 			if not value : 
-				dicoHS[key] = "N/A"
+				dicoHS[key] = "N/A\tN/A"
 			else:
 				#calcul de la profondeur mean pour le hotspot et arrondi de la value
 				mean = round(sum(value) / len(value),2)

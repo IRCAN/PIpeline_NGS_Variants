@@ -12,14 +12,6 @@ from argparse import ArgumentParser
 
 class GlobalInformations():
 	def __init__(self,REPERTORYVCF):
-		############################
-		############################
-		############################
-		# TODO :Commentaire sur la fonction
-		############################
-		############################
-		############################
-		
 		#liste vide de x elements par echantillon
 			self.sampleList = [None]*14
 		#liste contenant tout les barcodes du run
