@@ -21,19 +21,19 @@ Workspace of created pipeline for variants NGS analysis:
 
 __Quick Start :__
 
-Download VarAn.
+Download VarAn (green button, in top rigth).
 
 Extract and go in the scripts repertory. Open the terminal and write:
 
 ```
-cd your/path/to/the/repertory
+cd your/path/to/the/repertory/Pipeline_NGS_Variants/scripts
 ```
 
 Run the installLog.sh with this command
 ```
 sudo bash installLog.sh
 ```
-Follow the instructions, and choose __43 , 45__ to download the Human Grch37 data from VEP, and __27__ for the Human genome fasta file.
+Follow the instructions, and when you will need to download the Human Grch37 data from VEP, choose __43 45__ , and for the Human genome fasta file, write __27__ .
 
 You also need to download ["CosmicCompleteExport.tsv"](http://cancer.sanger.ac.uk/cell_lines/files?data=/files/grch37/cosmic/v75/CosmicCompleteExport.tsv.gz) from Cosmic database. Follow the instructions on the link. 
 
