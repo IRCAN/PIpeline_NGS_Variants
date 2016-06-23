@@ -1,7 +1,9 @@
 #!/usr/bin/python
 # coding: utf-8 
 
-"""TODO : Si une liste de hotspot est fournie par l'utilisateur, HotspotProcess va regarder les si les differentes mutations sont presentes dans ces Hotposts.
+"""
+A COMMENTER EN MODE "comentaire de fichier"..
+TODO : Si une liste de hotspot est fournie par l'utilisateur, HotspotProcess va regarder les si les differentes mutations sont presentes dans ces Hotposts.
 Cela permettra de ressortir une liste des hotspots non mutes, avec la profondeur pour chacun de ces HSnm.
 preciser HSnm et HSm"""
 
