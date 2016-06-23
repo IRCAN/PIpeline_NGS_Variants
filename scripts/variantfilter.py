@@ -38,9 +38,9 @@ class VariantFilter:
 		"""Compare les mutations de l'echantillon au fichier des hotspots d'interet."""
 		hotspots = self.parse_hs_file()
 		outputFile = open("../Results/"+self.REPERTORYVCF+"/temp/HSm_"+file, 'w')
-		outputFile.write("gene\tposition\tRefSeq id\tHGVSc\tHGVSp\tcosmic ID\ttotal_cov\tvariant_cov\tallele_freq\tfunction\tsift\tpolyphen\n")
+		outputFile.write("Gene\tposition\tRefSeq id\tHGVSc\tHGVSp\tcosmic ID\ttotal_cov\tvariant_cov\tallele_freq\tfunction\tsift\tpolyphen\n")
 		o_f_uncertain = open("../Results/"+self.REPERTORYVCF+"/temp/HSm_questionable_"+file, 'w')
-		o_f_uncertain.write("gene\tposition\tRefSeq id\tHGVSc\tHGVSp\tcosmic ID\ttotal_cov\tvariant_cov\tallele_freq\tfunction\tsift\tpolyphen\n")
+		o_f_uncertain.write("Gene\tposition\tRefSeq id\tHGVSc\tHGVSp\tcosmic ID\ttotal_cov\tvariant_cov\tallele_freq\tfunction\tsift\tpolyphen\n")
 		suppList = []
 		# If 0 = file is empty, if 1 file is not empty
 		fileEmpty1 =True
@@ -49,8 +49,8 @@ class VariantFilter:
 			hsLineSplit = hsLine.split("\t")
 			for sampleLigne in sample:
 				sampleLigneReplace = sampleLigne.replace("\n","")
-				sampleLigneReplace = sampleLigneReplace.replace("idCosmicNotFound","")
-				sampleLigneReplace = sampleLigneReplace.replace("NA","")
+				sampleLigneReplace = sampleLigneReplace.replace("idCosmicNotFound"," ")
+				sampleLigneReplace = sampleLigneReplace.replace("NA"," ")
 				sampleLigneSplit = sampleLigneReplace.split("\t")
 				
 				temp = sampleLigneSplit[0].split(":")
@@ -82,14 +82,14 @@ class VariantFilter:
 	def uncertain_mutation(self,sample,file):
 		"""Recherche parmis les mutations si elle est douteuse, cad si frequence allelique < 1 et couverture < 25 ou NOCALL."""
 		outputFile = open("../Results/"+self.REPERTORYVCF+"/temp/uncertain_mutation_"+file, 'w')
-		outputFile.write("gene\tposition\tRefSeq id\tHGVSc\tHGVSp\tcosmic ID\ttotal_cov\tvariant_cov\tallele_freq\tfunction\tsift\tpolyphen\n")
+		outputFile.write("Gene\tposition\tRefSeq id\tHGVSc\tHGVSp\tcosmic ID\ttotal_cov\tvariant_cov\tallele_freq\tfunction\tsift\tpolyphen\n")
 		suppList = []
 		# If 0 = file is empty, if 1 file is not empty
 		fileEmpty = True
 		for sampleLigne in sample:
 			sampleLigneReplace = sampleLigne.replace("\n","")
-			sampleLigneReplace = sampleLigneReplace.replace("idCosmicNotFound","")
-			sampleLigneReplace = sampleLigneReplace.replace("NA","")
+			sampleLigneReplace = sampleLigneReplace.replace("idCosmicNotFound"," ")
+			sampleLigneReplace = sampleLigneReplace.replace("NA"," ")
 			sampleLigneSplit = sampleLigneReplace.split("\t")
 			alleleCov = sampleLigneSplit[7]
 			alleleFreq = sampleLigneSplit[9].replace("%","")
@@ -109,14 +109,14 @@ class VariantFilter:
 	def find_polymorphism(self,sample,file):
 		"""Recherche parmis les mutations si c'est un polymorphisme, cad si la minor allele frequency > 0.01."""
 		outputFile = open("../Results/"+self.REPERTORYVCF+"/temp/Polymorphism_"+file, 'w')
-		outputFile.write("gene\tposition\tRefSeq id\tHGVSc\tHGVSp\tcosmic ID\ttotal_cov\tvariant_cov\tallele_freq\tfunction\tsift\tpolyphen\n")
+		outputFile.write("Gene\tposition\tRefSeq id\tHGVSc\tHGVSp\tcosmic ID\ttotal_cov\tvariant_cov\tallele_freq\tfunction\tsift\tpolyphen\n")
 		# If 0 = file is empty, if 1 file is not empty
 		fileEmpty = True
 		suppList = []
 		for sampleLigne in sample:
 			sampleLigneReplace = sampleLigne.replace("\n","")
-			sampleLigneReplace = sampleLigneReplace.replace("idCosmicNotFound","")
-			sampleLigneReplace = sampleLigneReplace.replace("NA","")
+			sampleLigneReplace = sampleLigneReplace.replace("idCosmicNotFound"," ")
+			sampleLigneReplace = sampleLigneReplace.replace("NA"," ")
 			sampleLigneSplit = sampleLigneReplace.split("\t")
 			maf = sampleLigneSplit[11]
 			if maf != "NA":
@@ -137,12 +137,12 @@ class VariantFilter:
 	def uncaracterized_mutations(self,sample,file):
 		"""Cree un fichier contenant toutes les mutations qui ne sont pas categorisees."""
 		outputFile = open("../Results/"+self.REPERTORYVCF+"/temp/uncaracterized_mutations_"+file, 'w')
-		outputFile.write("gene\tposition\tRefSeq id\tHGVSc\tHGVSp\tcosmic ID\ttotal_cov\tvariant_cov\tallele_freq\tfunction\tsift\tpolyphen\n")
+		outputFile.write("Gene\tposition\tRefSeq id\tHGVSc\tHGVSp\tcosmic ID\ttotal_cov\tvariant_cov\tallele_freq\tfunction\tsift\tpolyphen\n")
 		if len(sample) != 0:
 			for sampleLigne in sample:
 				sampleLigneReplace = sampleLigne.replace("\n","")
-				sampleLigneReplace = sampleLigneReplace.replace("idCosmicNotFound","")
-				sampleLigneReplace = sampleLigneReplace.replace("NA","")
+				sampleLigneReplace = sampleLigneReplace.replace("idCosmicNotFound"," ")
+				sampleLigneReplace = sampleLigneReplace.replace("NA"," ")
 				sampleLigneSplit = sampleLigneReplace.split("\t")
 				string = sampleLigneSplit[1]+"\t"+sampleLigneSplit[0]+"\t"+sampleLigneSplit[2]+"\t"+sampleLigneSplit[4]+"\t"+sampleLigneSplit[5]+"\t"+sampleLigneSplit[6]+"\t"+sampleLigneSplit[7]+"\t"+sampleLigneSplit[8]+"\t"+sampleLigneSplit[9]+"\t"+sampleLigneSplit[10]+"\t"+sampleLigneSplit[12]+"\t"+sampleLigneSplit[13]+"\n"
 				outputFile.write(string)
@@ -152,17 +152,17 @@ class VariantFilter:
 	def no_contributory(self,sample,file):
 		"""Cree un fichier contenant toutes les mutations qui ne sont pas categorisees."""
 		outputFile = open("../Results/"+self.REPERTORYVCF+"/temp/no_contributory_"+file, 'w')
-		outputFile.write("gene\tposition\tRefSeq id\tHGVSc\tHGVSp\tcosmic ID\ttotal_cov\tvariant_cov\tallele_freq\tfunction\tsift\tpolyphen\n")
+		outputFile.write("Gene\tposition\tRefSeq id\tHGVSc\tHGVSp\tcosmic ID\ttotal_cov\tvariant_cov\tallele_freq\tfunction\tsift\tpolyphen\n")
 		fileEmpty = True
 		suppList = []
 		for sampleLigne in sample:
 			sampleLigneReplace = sampleLigne.replace("\n","")
-			sampleLigneReplace = sampleLigneReplace.replace("idCosmicNotFound","")
-			sampleLigneReplace = sampleLigneReplace.replace("NA","")
+			sampleLigneReplace = sampleLigneReplace.replace("idCosmicNotFound"," ")
+			sampleLigneReplace = sampleLigneReplace.replace("NA"," ")
 			sampleLigneSplit = sampleLigneReplace.split("\t")
 			if sampleLigneSplit[7] != "DP_not_find" and int(sampleLigneSplit[7]) < 300:
 				fileEmpty = False
-				string = sampleLigneSplit[1]+"\t"+sampleLigneSplit[0]+"\t"+sampleLigneSplit[2]+"\t"+sampleLigneSplit[4]+"\t"+sampleLigneSplit[5]+"\t"+sampleLigneSplit[6]+"\t"+sampleLigneSplit[7]+"\t"+sampleLigneSplit[8]+"\t"+sampleLigneSplit[9]+"\t"+sampleLigneSplit[10]+"\t"+sampleLigneSplit[12]+"\n"
+				string = sampleLigneSplit[1]+"\t"+sampleLigneSplit[0]+"\t"+sampleLigneSplit[2]+"\t"+sampleLigneSplit[4]+"\t"+sampleLigneSplit[5]+"\t"+sampleLigneSplit[6]+"\t"+sampleLigneSplit[7]+"\t"+sampleLigneSplit[8]+"\t"+sampleLigneSplit[9]+"\t"+sampleLigneSplit[10]+"\t"+sampleLigneSplit[12]+"\t"+sampleLigneSplit[13]+"\n"
 				outputFile.write(string)
 				suppList.append(sampleLigne)
 		if fileEmpty:

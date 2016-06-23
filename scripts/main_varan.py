@@ -10,7 +10,7 @@ from separationvariants import SeparationVariants
 from hotspot import HotspotProcess
 from variantfilter import VariantFilter
 from refseqtoensembl import RefseqToEnsembl
-from pdf import *
+from makeReport import *
 
 class MainVaran(RefseqToEnsembl):
 
@@ -113,8 +113,8 @@ class MainVaran(RefseqToEnsembl):
 			################################################################################
 			inputfile = "../Results/"+REPERTORYVCF+"/VariantCaller/MUTATIONS_"+file
 			outputFile2 = "../Results/"+REPERTORYVCF+"/VEP/VEP_"+file
-			#commandVEP = "perl ../System/Ensembl/ensembl-tools-release-84/scripts/variant_effect_predictor/variant_effect_predictor.pl -cache --force --no_stats --refseq --gmaf --hgvs --sift b --polyphen b --port 3337 --input_file "+inputfile+ " --output_file "+outputFile2
-			#os.system(commandVEP)
+			commandVEP = "perl ../System/Ensembl/ensembl-tools-release-84/scripts/variant_effect_predictor/variant_effect_predictor.pl -cache --force --no_stats --refseq --gmaf --hgvs --sift b --polyphen b --port 3337 --input_file "+inputfile+ " --output_file "+outputFile2
+			os.system(commandVEP)
 			################################################################################
 			#Filtrage des variants
 			################################################################################
@@ -194,8 +194,7 @@ class MainVaran(RefseqToEnsembl):
 			report.close()
 			fichier2 = open("../Report_"+i+".txt","r")
 			content = fichier2.readlines()
-			print(len(content))
-			pyxl(i)
+			pyxl(i,REPERTORYVCF)
 
 			
 	def file_to_list(self,contentFile):
