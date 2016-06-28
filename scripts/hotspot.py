@@ -77,13 +77,14 @@ class HotspotProcess:
 			hsLine.append(key)
 			hsLine.append(value)
 			hsLine = "\t".join(hsLine)
+			hsLine = hsLine+"\t"
 			HSnmGlobalList.append(hsLine)
 		#Trie de la liste de genes par ordre alphabetique pour meilleure lisibilite.
 		HSnmGlobalList = sorted(HSnmGlobalList)
 		HSnmGlobalList = "\n".join(HSnmGlobalList)
 		f_out = "../Results/"+REPERTORYVCF+"/temp/nonMutatedHS_"+nomFichier
 		File = open(f_out,'w')	# creation et ouverture du File
-		File.write("Gene\texon\tMean Depth\tMinimal Depth\n")	#Ecriture de la legende.
+		File.write("Gene\texon\tMean Depth\tMinimal Depth\t\n")	#Ecriture de la legende.
 		for i in HSnmGlobalList:	#ecriture des donnees
 			File.write(i)
 		File.close()

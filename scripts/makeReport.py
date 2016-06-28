@@ -13,18 +13,20 @@ from openpyxl.styles import PatternFill, Border, Side, Alignment, Protection, Fo
 def pyxl(i, REPERTORYVCF):
 	wb = Workbook()
 	ws = wb.active
-	ws.column_dimensions["A"].width = 20.0
+	ws.column_dimensions["A"].width = 15.0
 	ws.column_dimensions["B"].width = 17.0		
 	ws.column_dimensions["C"].width = 17.0
 	ws.column_dimensions["D"].width = 22.0		
 	ws.column_dimensions["E"].width = 22.0		
 	ws.column_dimensions["F"].width = 17.0
-	ws.column_dimensions["G"].width = 15.0
-	ws.column_dimensions["H"].width = 15.0
-	ws.column_dimensions["I"].width = 15.0
-	ws.column_dimensions["J"].width = 25.0
+	ws.column_dimensions["G"].width = 18.0
+	ws.column_dimensions["H"].width = 18.0
+	ws.column_dimensions["I"].width = 21.0
+	ws.column_dimensions["J"].width = 20.0
 	ws.column_dimensions["K"].width = 22.0
-	ws.column_dimensions["L"].width = 30.0
+	ws.column_dimensions["L"].width = 27.0
+	ws.column_dimensions["M"].width = 15.0
+	ws.column_dimensions["N"].width = 15.0
 	ws.title = "New Title"
 	fichier2 = open("../Report_"+i+".txt","r")
 	content = fichier2.readlines()
@@ -33,20 +35,26 @@ def pyxl(i, REPERTORYVCF):
 	for row in range(len(content)):
 		contentrowsplit = content[row].split("\t")
 		# Met en gras les legendes
-		if contentrowsplit[0] == "Gene":
-			font = Font(name='Cal­ibri',size=11, bold=True)
+		if contentrowsplit[0] == "Gene" or contentrowsplit[0] == "Sample":
+			font = Font(name='Arial',size=11, bold=True)
 		else:
-			font = Font(name='Cal­ibri',size=11, bold=False)
+			font = Font(name='Arial',size=11, bold=False)
 		if len(contentrowsplit) == 1:
+			font = Font(name='Arial',size=11, bold=True, underline='single')
 			cell = "A"+str(row+1)
 			ws[cell] = content[row]
+			ws[cell].font = font
 		else:
 			for col in range(len(contentrowsplit)):
-				cell = alpahabet[col]+str(row+1)
-				ws[cell] = contentrowsplit[col]
-				ws[cell].font = font
-				ws[cell].border = border_thin
-				ws[cell].alignment = Alignment(horizontal="center")
+				if col == len(contentrowsplit)-1:
+					cell = alpahabet[col]+str(row+1)
+					ws[cell] = contentrowsplit[col]
+					ws[cell].font = font
+					ws[cell].alignment = Alignment(horizontal="center",vertical="center")
+				else:
+					cell = alpahabet[col]+str(row+1)
+					ws[cell] = contentrowsplit[col]
+					ws[cell].font = font
+					ws[cell].border = border_thin
+					ws[cell].alignment = Alignment(horizontal="left",vertical="center")
 	wb.save("../Results/"+REPERTORYVCF+"/Rapport_Final_"+i+".xlsx")
-
-#worksheet.column_dimensions["C"].width = 60.0

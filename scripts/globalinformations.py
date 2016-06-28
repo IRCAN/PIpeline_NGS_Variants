@@ -23,7 +23,7 @@ class GlobalInformations():
 		#liste contenant les reads "mappes"
 			self.mappedReadsList = []
 		#liste qui contiendra chaque sampleList
-			self.finalList = [['Sample','Barcode','Kit','Run date','Chip','Mapped Reads','ID','Reads On-Target','Reads On-SampleID','Mean Read Depth','Base at 1x Coverage','Base at 20x Coverage','Base at 100x Coverage','Base at 500x Coverage']]
+			self.finalList = [['Sample','Barcode','Kit','Run date','Chip','Mapped Reads','ID','Reads On-Target','Reads On-SampleID','Mean Read Depth','Base at 1x Coverage','20x','100x','500x',' ']]
 		#############################
 		#############################
 		# Attention chemins
@@ -56,7 +56,7 @@ class GlobalInformations():
 			curentBarecodeNumber =0
 			for barecode in self.barcodeList:
 			
-				sampleList=['NA','NA','NA','NA','NA','NA','NA','NA','NA','NA','NA','NA','NA','NA']
+				sampleList=['NA','NA','NA','NA','NA','NA','NA','NA','NA','NA','NA','NA','NA','NA','NA']
 				"""Creation de la ligne pour chaque echantillons"""
 				sampleList[0] = self.sampleNameList[curentBarecodeNumber]
 				sampleList[1] = barecode
@@ -86,6 +86,7 @@ class GlobalInformations():
 				sampleList[11]=self.get_coverage_20x(fileContent)
 				sampleList[12]=self.get_coverage_100x(fileContent)
 				sampleList[13]=self.get_coverage_500x(fileContent)
+				sampleList[14]=" "
 				self.finalList.append(sampleList)
 				curentBarecodeNumber += 1
 

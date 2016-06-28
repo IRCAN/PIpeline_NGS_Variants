@@ -38,9 +38,9 @@ class VariantFilter:
 		"""Compare les mutations de l'echantillon au fichier des hotspots d'interet."""
 		hotspots = self.parse_hs_file()
 		outputFile = open("../Results/"+self.REPERTORYVCF+"/temp/HSm_"+file, 'w')
-		outputFile.write("Gene\tposition\tRefSeq id\tHGVSc\tHGVSp\tcosmic ID\ttotal_cov\tvariant_cov\tallele_freq\tfunction\tsift\tpolyphen\n")
+		outputFile.write("Gene\tposition\tRefSeq id\tHGVSc\tHGVSp\tcosmic ID\ttotal_cov\tvariant_cov\tallele_freq\tfunction\tsift\tpolyphen\t\n")
 		o_f_uncertain = open("../Results/"+self.REPERTORYVCF+"/temp/HSm_questionable_"+file, 'w')
-		o_f_uncertain.write("Gene\tposition\tRefSeq id\tHGVSc\tHGVSp\tcosmic ID\ttotal_cov\tvariant_cov\tallele_freq\tfunction\tsift\tpolyphen\n")
+		o_f_uncertain.write("Gene\tposition\tRefSeq id\tHGVSc\tHGVSp\tcosmic ID\ttotal_cov\tvariant_cov\tallele_freq\tfunction\tsift\tpolyphen\t\n")
 		suppList = []
 		# If 0 = file is empty, if 1 file is not empty
 		fileEmpty1 =True
@@ -56,10 +56,10 @@ class VariantFilter:
 				temp = sampleLigneSplit[0].split(":")
 				chrNumber = "chr" + temp[0]
 				position = temp[1]
-				cosmicNumber = sampleLigneSplit[6]#.replace("COSM","")
+				cosmicNumber = sampleLigneSplit[6]
 				hgvsp = sampleLigneSplit[5]
 				if hsLineSplit[0] == chrNumber and int(hsLineSplit[1]) <= int(position) <= int(hsLineSplit[2]) and hsLineSplit[3] == sampleLigneSplit[1]: # and cosmicNumber in hsLineSplit[6] and sampleLigneSplit[4] in hsLineSplit[7]:
-					HSm = sampleLigneSplit[1]+"\t"+sampleLigneSplit[0]+"\t"+sampleLigneSplit[2]+"\t"+sampleLigneSplit[4]+"\t"+sampleLigneSplit[5]+"\t"+sampleLigneSplit[6]+"\t"+sampleLigneSplit[7]+"\t"+sampleLigneSplit[8]+"\t"+sampleLigneSplit[9]+"\t"+sampleLigneSplit[10]+"\t"+sampleLigneSplit[12]+"\t"+sampleLigneSplit[13]+"\n"
+					HSm = sampleLigneSplit[1]+"\t"+sampleLigneSplit[0]+"\t"+sampleLigneSplit[2]+"\t"+sampleLigneSplit[4]+"\t"+sampleLigneSplit[5]+"\t"+sampleLigneSplit[6]+"\t"+sampleLigneSplit[7]+"\t"+sampleLigneSplit[8]+"\t"+sampleLigneSplit[9]+"\t"+sampleLigneSplit[10]+"\t"+sampleLigneSplit[12]+"\t"+sampleLigneSplit[13]+"\t\n"
 					##HS douteux si nocall ou <25reads: 
 					if sampleLigneSplit[7] != "DP_not_find":
 						if sampleLigneSplit[14] == "NO CALL" or int(sampleLigneSplit[7]) < 25:
@@ -82,7 +82,7 @@ class VariantFilter:
 	def uncertain_mutation(self,sample,file):
 		"""Recherche parmis les mutations si elle est douteuse, cad si frequence allelique < 1 et couverture < 25 ou NOCALL."""
 		outputFile = open("../Results/"+self.REPERTORYVCF+"/temp/uncertain_mutation_"+file, 'w')
-		outputFile.write("Gene\tposition\tRefSeq id\tHGVSc\tHGVSp\tcosmic ID\ttotal_cov\tvariant_cov\tallele_freq\tfunction\tsift\tpolyphen\n")
+		outputFile.write("Gene\tposition\tRefSeq id\tHGVSc\tHGVSp\tcosmic ID\ttotal_cov\tvariant_cov\tallele_freq\tfunction\tsift\tpolyphen\t\n")
 		suppList = []
 		# If 0 = file is empty, if 1 file is not empty
 		fileEmpty = True
@@ -97,7 +97,7 @@ class VariantFilter:
 				#Filtres pour determiner si mutation douteuse:
 				# DP < 25 et allele_freq < 1
 				if int(alleleCov) <= 25 and float(alleleFreq) < 1 or sampleLigneSplit[14] == "NO CALL":
-					string = sampleLigneSplit[1]+"\t"+sampleLigneSplit[0]+"\t"+sampleLigneSplit[2]+"\t"+sampleLigneSplit[4]+"\t"+sampleLigneSplit[5]+"\t"+sampleLigneSplit[6]+"\t"+sampleLigneSplit[7]+"\t"+sampleLigneSplit[8]+"\t"+sampleLigneSplit[9]+"\t"+sampleLigneSplit[10]+"\t"+sampleLigneSplit[12]+"\t"+sampleLigneSplit[13]+"\n"
+					string = sampleLigneSplit[1]+"\t"+sampleLigneSplit[0]+"\t"+sampleLigneSplit[2]+"\t"+sampleLigneSplit[4]+"\t"+sampleLigneSplit[5]+"\t"+sampleLigneSplit[6]+"\t"+sampleLigneSplit[7]+"\t"+sampleLigneSplit[8]+"\t"+sampleLigneSplit[9]+"\t"+sampleLigneSplit[10]+"\t"+sampleLigneSplit[12]+"\t"+sampleLigneSplit[13]+"\t\n"
 					outputFile.write(string)
 					suppList.append(sampleLigne)
 					fileEmpty = False
@@ -109,7 +109,7 @@ class VariantFilter:
 	def find_polymorphism(self,sample,file):
 		"""Recherche parmis les mutations si c'est un polymorphisme, cad si la minor allele frequency > 0.01."""
 		outputFile = open("../Results/"+self.REPERTORYVCF+"/temp/Polymorphism_"+file, 'w')
-		outputFile.write("Gene\tposition\tRefSeq id\tHGVSc\tHGVSp\tcosmic ID\ttotal_cov\tvariant_cov\tallele_freq\tfunction\tsift\tpolyphen\n")
+		outputFile.write("Gene\tposition\tRefSeq id\tHGVSc\tHGVSp\tcosmic ID\ttotal_cov\tvariant_cov\tallele_freq\tfunction\tsift\tpolyphen\t\n")
 		# If 0 = file is empty, if 1 file is not empty
 		fileEmpty = True
 		suppList = []
@@ -126,7 +126,7 @@ class VariantFilter:
 				mafValue = "%.2f" % mafValue
 				if float(mafValue) > 0.01:
 					fileEmpty = False
-					string = sampleLigneSplit[1]+"\t"+sampleLigneSplit[0]+"\t"+sampleLigneSplit[2]+"\t"+sampleLigneSplit[4]+"\t"+sampleLigneSplit[5]+"\t"+sampleLigneSplit[6]+"\t"+sampleLigneSplit[7]+"\t"+sampleLigneSplit[8]+"\t"+sampleLigneSplit[9]+"\t"+sampleLigneSplit[10]+"\t"+sampleLigneSplit[12]+"\t"+sampleLigneSplit[13]+"\n"
+					string = sampleLigneSplit[1]+"\t"+sampleLigneSplit[0]+"\t"+sampleLigneSplit[2]+"\t"+sampleLigneSplit[4]+"\t"+sampleLigneSplit[5]+"\t"+sampleLigneSplit[6]+"\t"+sampleLigneSplit[7]+"\t"+sampleLigneSplit[8]+"\t"+sampleLigneSplit[9]+"\t"+sampleLigneSplit[10]+"\t"+sampleLigneSplit[12]+"\t"+sampleLigneSplit[13]+"\t\n"
 					outputFile.write(string)
 					suppList.append(sampleLigne)
 		if fileEmpty:
@@ -137,14 +137,14 @@ class VariantFilter:
 	def uncaracterized_mutations(self,sample,file):
 		"""Cree un fichier contenant toutes les mutations qui ne sont pas categorisees."""
 		outputFile = open("../Results/"+self.REPERTORYVCF+"/temp/uncaracterized_mutations_"+file, 'w')
-		outputFile.write("Gene\tposition\tRefSeq id\tHGVSc\tHGVSp\tcosmic ID\ttotal_cov\tvariant_cov\tallele_freq\tfunction\tsift\tpolyphen\n")
+		outputFile.write("Gene\tposition\tRefSeq id\tHGVSc\tHGVSp\tcosmic ID\ttotal_cov\tvariant_cov\tallele_freq\tfunction\tsift\tpolyphen\t\n")
 		if len(sample) != 0:
 			for sampleLigne in sample:
 				sampleLigneReplace = sampleLigne.replace("\n","")
 				sampleLigneReplace = sampleLigneReplace.replace("idCosmicNotFound"," ")
 				sampleLigneReplace = sampleLigneReplace.replace("NA"," ")
 				sampleLigneSplit = sampleLigneReplace.split("\t")
-				string = sampleLigneSplit[1]+"\t"+sampleLigneSplit[0]+"\t"+sampleLigneSplit[2]+"\t"+sampleLigneSplit[4]+"\t"+sampleLigneSplit[5]+"\t"+sampleLigneSplit[6]+"\t"+sampleLigneSplit[7]+"\t"+sampleLigneSplit[8]+"\t"+sampleLigneSplit[9]+"\t"+sampleLigneSplit[10]+"\t"+sampleLigneSplit[12]+"\t"+sampleLigneSplit[13]+"\n"
+				string = sampleLigneSplit[1]+"\t"+sampleLigneSplit[0]+"\t"+sampleLigneSplit[2]+"\t"+sampleLigneSplit[4]+"\t"+sampleLigneSplit[5]+"\t"+sampleLigneSplit[6]+"\t"+sampleLigneSplit[7]+"\t"+sampleLigneSplit[8]+"\t"+sampleLigneSplit[9]+"\t"+sampleLigneSplit[10]+"\t"+sampleLigneSplit[12]+"\t"+sampleLigneSplit[13]+"\t\n"
 				outputFile.write(string)
 		else:
 			os.remove("../Results/"+self.REPERTORYVCF+"/temp/uncaracterized_mutations_"+file)
@@ -152,7 +152,7 @@ class VariantFilter:
 	def no_contributory(self,sample,file):
 		"""Cree un fichier contenant toutes les mutations qui ne sont pas categorisees."""
 		outputFile = open("../Results/"+self.REPERTORYVCF+"/temp/no_contributory_"+file, 'w')
-		outputFile.write("Gene\tposition\tRefSeq id\tHGVSc\tHGVSp\tcosmic ID\ttotal_cov\tvariant_cov\tallele_freq\tfunction\tsift\tpolyphen\n")
+		outputFile.write("Gene\tposition\tRefSeq id\tHGVSc\tHGVSp\tcosmic ID\ttotal_cov\tvariant_cov\tallele_freq\tfunction\tsift\tpolyphen\t\n")
 		fileEmpty = True
 		suppList = []
 		for sampleLigne in sample:
@@ -162,7 +162,7 @@ class VariantFilter:
 			sampleLigneSplit = sampleLigneReplace.split("\t")
 			if sampleLigneSplit[7] != "DP_not_find" and int(sampleLigneSplit[7]) < 300:
 				fileEmpty = False
-				string = sampleLigneSplit[1]+"\t"+sampleLigneSplit[0]+"\t"+sampleLigneSplit[2]+"\t"+sampleLigneSplit[4]+"\t"+sampleLigneSplit[5]+"\t"+sampleLigneSplit[6]+"\t"+sampleLigneSplit[7]+"\t"+sampleLigneSplit[8]+"\t"+sampleLigneSplit[9]+"\t"+sampleLigneSplit[10]+"\t"+sampleLigneSplit[12]+"\t"+sampleLigneSplit[13]+"\n"
+				string = sampleLigneSplit[1]+"\t"+sampleLigneSplit[0]+"\t"+sampleLigneSplit[2]+"\t"+sampleLigneSplit[4]+"\t"+sampleLigneSplit[5]+"\t"+sampleLigneSplit[6]+"\t"+sampleLigneSplit[7]+"\t"+sampleLigneSplit[8]+"\t"+sampleLigneSplit[9]+"\t"+sampleLigneSplit[10]+"\t"+sampleLigneSplit[12]+"\t"+sampleLigneSplit[13]+"\t\n"
 				outputFile.write(string)
 				suppList.append(sampleLigne)
 		if fileEmpty:
