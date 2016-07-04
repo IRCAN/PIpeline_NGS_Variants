@@ -55,13 +55,13 @@ class MainVaran(RefseqToEnsembl):
 		for element in pathBarecode:
 			a=element.split('/')
 			barecode.append(a[-1])
-		print(barecode)
 		for i in barecode:
 			if path1:
 				file = i+'.vcf'
 				TSVC_variants = glob.glob(pathREPERTORYVCF+"/plugin_out/variantCaller_out*/"+i+"/TSVC_variants_"+file)
 				print('Traitement du file: \n',TSVC_variants[0],'\n')
-				print(i)
+				extract = "gzip -d "+ TSVC_variants[0]+".gz"
+				os.system(extract)
 			else:
 				file = i+'.vcf'
 				TSVC_variants = glob.glob(pathREPERTORYVCF+"/Variants/"+i+"/"+file)
@@ -126,74 +126,90 @@ class MainVaran(RefseqToEnsembl):
 			#Ecriture rapport
 			######
 			
-			report = open("../Report_"+i+".txt", "w")
+			report = open("../Results/"+REPERTORYVCF+"/temp/Report_"+i+".txt", "w")
 			report.write("Report of "+i+".\n\n")
+			if os.path.exists("../Results/"+REPERTORYVCF+"/"+REPERTORYVCF+"_globalInformations.txt") == True:
+				report.write("Informations:")
+				report.write("\n")
+				File = "../Results/"+REPERTORYVCF+"/"+REPERTORYVCF+"_globalInformations.txt"
+				with open(File,'r') as file:
+					file = file.readlines()
+					legendes = str(file[0])
+					legendesReplace = legendes.replace(", ","\t")
+					legendesReplace = legendesReplace.replace("\n","")
+					report.write(legendesReplace)
+					report.write("\n")
+					for element in file:
+						element = element.replace(", ","\t")
+						if i in element:
+							report.write(element)
+			report.write("\n")
 			if os.path.exists("../Results/"+REPERTORYVCF+"/temp/HSm_"+i+".vcf") == True:
-				report.write("Hotspots mutés:\n")
+				report.write("Hotspots mutés:")
 				report.write("\n")
 				File = "../Results/"+REPERTORYVCF+"/temp/HSm_"+i+".vcf"
 				with open(File,'r') as file:
 					file = file.readlines()
 					for element in file:
 						report.write(element)
-					report.write("\n")
+			report.write("\n")
 			if os.path.exists("../Results/"+REPERTORYVCF+"/temp/HSm_questionable_"+i+".vcf") == True:
-				report.write("Hotspots mutés douteux:\n")
+				report.write("Hotspots mutés douteux:")
 				report.write("\n")
 				File = "../Results/"+REPERTORYVCF+"/temp/HSm_questionable_"+i+".vcf"
 				with open(File,'r') as file:
 					file = file.readlines()
 					for element in file:
 						report.write(element)
-					report.write("\n")
+			report.write("\n")
 			if os.path.exists("../Results/"+REPERTORYVCF+"/temp/nonMutatedHS_"+i+".vcf")== True:
-				report.write("Hotspots non mutés:\n")
+				report.write("Hotspots non mutés:")
 				report.write("\n")
 				File = "../Results/"+REPERTORYVCF+"/temp/nonMutatedHS_"+i+".vcf"
 				with open(File,'r') as file:
 					file = file.readlines()
 					for element in file:
 						report.write(element)
-					report.write("\n")
+			report.write("\n")
+			report.write("\n")
 			if os.path.exists("../Results/"+REPERTORYVCF+"/temp/uncertain_mutation_"+i+".vcf")== True:
-				report.write("Uncertain mutation (mutation douteuse):\n")
+				report.write("Uncertain mutation (mutation douteuse):")
 				report.write("\n")
 				File = "../Results/"+REPERTORYVCF+"/temp/uncertain_mutation_"+i+".vcf"
 				with open(File,'r') as file:
 					file = file.readlines()
 					for element in file:
 						report.write(element)
-					report.write("\n")
+			report.write("\n")
 			if os.path.exists("../Results/"+REPERTORYVCF+"/temp/Polymorphism_"+i+".vcf")== True:
-				report.write("Polymorphism:\n")
+				report.write("Polymorphism:")
 				report.write("\n")
 				File = "../Results/"+REPERTORYVCF+"/temp/Polymorphism_"+i+".vcf"
 				with open(File,'r') as file:
 					file = file.readlines()
 					for element in file:
 						report.write(element)
-					report.write("\n")
+			report.write("\n")
 			if os.path.exists("../Results/"+REPERTORYVCF+"/temp/no_contributory_"+i+".vcf")== True:
-				report.write("No contributory mutations (non contributif):\n")
+				report.write("No contributory mutations (non contributif):")
 				report.write("\n")
 				File = "../Results/"+REPERTORYVCF+"/temp/no_contributory_"+i+".vcf"
 				with open(File,'r') as file:
 					file = file.readlines()
 					for element in file:
 						report.write(element)
-					report.write("\n")
+			report.write("\n")
+
 			if os.path.exists("../Results/"+REPERTORYVCF+"/temp/uncaracterized_mutations_"+i+".vcf")== True:
-				report.write("Uncaracterized mutations (non filtrées):\n")
+				report.write("Uncaracterized mutations (non filtrées):")
 				report.write("\n")
 				File = "../Results/"+REPERTORYVCF+"/temp/uncaracterized_mutations_"+i+".vcf"
 				with open(File,'r') as file:
 					file = file.readlines()
 					for element in file:
 						report.write(element)
-					report.write("\n")
+			report.write("\n")
 			report.close()
-			fichier2 = open("../Report_"+i+".txt","r")
-			content = fichier2.readlines()
 			pyxl(i,REPERTORYVCF)
 
 			

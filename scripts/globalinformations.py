@@ -94,7 +94,6 @@ class GlobalInformations():
 			# Creation du fichier final globalInformations.txt
 			################################################################################
 			if os.path.isdir('../Results/'+REPERTORYVCF) == False:
-				#print("creation du repertoire")
 				os.mkdir('../Results/'+REPERTORYVCF) 
 			FileName = '../Results/'+REPERTORYVCF+'/'+REPERTORYVCF+'_globalInformations.txt'
 			self.output_file(FileName, self.finalList)
