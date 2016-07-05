@@ -51,7 +51,7 @@ class MainVaran(RefseqToEnsembl):
 			a=element.split('/')
 			barecode.append(a[-1])
 		for i in barecode:
-			print(i)
+
 			if path1:
 				file = i+'.vcf'
 				#print(pathREPERTORYVCF+"/plugin_out/variantCaller_out*/"+i+"/TSVC_variants_"+file)
@@ -78,6 +78,12 @@ class MainVaran(RefseqToEnsembl):
 				file = i+'.vcf'
 				TSVC_variants = glob.glob(pathREPERTORYVCF+"/Variants/"+i+"/"+file)
 				print('Traitement du file: \n',TSVC_variants[0],'\n')
+			#print("oui")
+			#os.getcwd()
+			#command="myPath=$(readlink -f $(dirname $0))"
+			#os.system(command)
+			#os.system("echo $myPath")
+			#print("non")
 			with open(TSVC_variants[0],'r') as contentFile:
 				TSVC_variants=contentFile.readlines()
 			#Cree une liste avec chaque elements correspondant a une ligne du file
