@@ -56,12 +56,21 @@ class MainVaran(RefseqToEnsembl):
 			a=element.split('/')
 			barecode.append(a[-1])
 		for i in barecode:
+					for i in barecode:
 			if path1:
-				file = i+'.vcf'
-				TSVC_variants = glob.glob(pathREPERTORYVCF+"/plugin_out/variantCaller_out*/"+i+"/TSVC_variants_"+file)
+				file = i+'.vcf.gz'
+				#print(pathREPERTORYVCF+"/plugin_out/variantCaller_out*/"+i+"/TSVC_variants_"+file)
+				TSVC_variantsGZ = glob.glob(pathREPERTORYVCF+"/plugin_out/variantCaller_out*/"+i+"/TSVC_variants_"+file)
+				if TSVC_variantsGZ != []:
+					extract = "gzip -d "+ TSVC_variantsGZ[0]
+					os.system(extract)
+					file = i+'.vcf'
+					TSVC_variants = glob.glob(pathREPERTORYVCF+"/plugin_out/variantCaller_out*/"+i+"/TSVC_variants_"+file)	
+				else:
+					TSVC_variants = glob.glob(pathREPERTORYVCF+"/plugin_out/variantCaller_out*/"+i+"/TSVC_variants.vcf")
+				#print(TSVC_variants)
 				print('Traitement du file: \n',TSVC_variants[0],'\n')
-				extract = "gzip -d "+ TSVC_variants[0]+".gz"
-				os.system(extract)
+
 			else:
 				file = i+'.vcf'
 				TSVC_variants = glob.glob(pathREPERTORYVCF+"/Variants/"+i+"/"+file)
