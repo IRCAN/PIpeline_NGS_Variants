@@ -68,8 +68,7 @@ def pyxl(i, REPERTORYVCF):
 	wb.save("../Results/"+REPERTORYVCF+"/Report_"+i+".xlsx")
 	a = "libreoffice --headless --invisible --convert-to pdf --outdir ../Results/"+REPERTORYVCF+" ../Results/"+REPERTORYVCF+"/Report_"+i+".xlsx"
 	os.system(a)
-	os.chdir("../Results/"+REPERTORYVCF)
-	c = "tar cf Report_"+i+".tar Report_"+i+".xlsx Report_"+i+".pdf"
+	c = "tar cf ../Results/"+REPERTORYVCF+"/Report_"+i+".tar ../Results/"+REPERTORYVCF+"/Report_"+i+".xlsx ../Results/"+REPERTORYVCF+"/Report_"+i+".pdf"
 	os.system(c)
-	os.remove("Report_"+i+".xlsx")
-	os.remove("Report_"+i+".pdf")
+	os.remove("../Results/"+REPERTORYVCF+"/Report_"+i+".xlsx")
+	os.remove("../Results/"+REPERTORYVCF+"/Report_"+i+".pdf")
