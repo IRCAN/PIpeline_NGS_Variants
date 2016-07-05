@@ -40,11 +40,6 @@ class MainVaran(RefseqToEnsembl):
 
 	def run_VEP(self,pathREPERTORYVCF,REPERTORYVCF, hotspot="", ALL_HS_FILE=""):
 		"""Lance le logiciel VEP sur les mutations présentes dans chaque échantillons pour les annoter."""
-		######################
-		######################
-		#A modifier pour chemin
-		######################
-		######################
 		pathBarecode=glob.glob(pathREPERTORYVCF+"/plugin_out/variantCaller_out*/IonXpress_[0-9]*")
 		if not pathBarecode:
 			path1=False
@@ -56,31 +51,33 @@ class MainVaran(RefseqToEnsembl):
 			a=element.split('/')
 			barecode.append(a[-1])
 		for i in barecode:
+			print(i)
 			if path1:
 				file = i+'.vcf'
 				#print(pathREPERTORYVCF+"/plugin_out/variantCaller_out*/"+i+"/TSVC_variants_"+file)
-				TSVC_variantsGZ = glob.glob(pathREPERTORYVCF+"/plugin_out/variantCaller_out*/"+i+"/TSVC_variants_"+file)
-				if TSVC_variantsGZ == []:
+				print(file)
+				#Si vcf dezipe
+				TSVC_variants = glob.glob(pathREPERTORYVCF+"/plugin_out/variantCaller_out*/"+i+"/TSVC_variants_"+file)
+				print(TSVC_variants)
+				if TSVC_variants == []:
+					#si vcf zippe
 					file = i+'.vcf.gz'
-					TSVC_variants = glob.glob(pathREPERTORYVCF+"/plugin_out/variantCaller_out*/"+i+"/TSVC_variants_"+file)	
-					extract = "gzip -d "+ TSVC_variantsGZ[0]
-					os.system(extract)
-					file = i+'.vcf'
-					TSVC_variants = glob.glob(pathREPERTORYVCF+"/plugin_out/variantCaller_out*/"+i+"/TSVC_variants_"+file)
-					if TSVC_variantsGZ == []:
+					TSVC_variantsGZ = glob.glob(pathREPERTORYVCF+"/plugin_out/variantCaller_out*/"+i+"/TSVC_variants_"+file)
+					if TSVC_variantsGZ != []:	
+						extract = "gzip -d "+ TSVC_variantsGZ[0]
+						os.system(extract)
+						file = i+'.vcf'
+						TSVC_variants = glob.glob(pathREPERTORYVCF+"/plugin_out/variantCaller_out*/"+i+"/TSVC_variants_"+file)
+					else:
+						#Prend fichier vcf genome
 						TSVC_variants = glob.glob(pathREPERTORYVCF+"/plugin_out/variantCaller_out*/"+i+"/TSVC_variants.vcf")
-				#print(TSVC_variants)
 				print('Traitement du file: \n',TSVC_variants[0],'\n')
 
 			else:
+				# Format fichier Raynaud
 				file = i+'.vcf'
 				TSVC_variants = glob.glob(pathREPERTORYVCF+"/Variants/"+i+"/"+file)
 				print('Traitement du file: \n',TSVC_variants[0],'\n')
-		######################
-		######################
-		#A modifier pour chemin
-		######################
-		######################
 			with open(TSVC_variants[0],'r') as contentFile:
 				TSVC_variants=contentFile.readlines()
 			#Cree une liste avec chaque elements correspondant a une ligne du file
