@@ -11,7 +11,7 @@ import glob
 from argparse import ArgumentParser
 
 class GlobalInformations():
-	def __init__(self,REPERTORYVCF):
+	def __init__(self,REPERTORYVCF,PATH):
 		#liste vide de x elements par echantillon
 			self.sampleList = [None]*14
 		#liste contenant tout les barcodes du run
@@ -29,8 +29,9 @@ class GlobalInformations():
 		# Attention chemins
 		#############################
 		#############################
-			fileSummary = glob.glob("../Run_test/"+REPERTORYVCF+"/plugin_out/coverageAnalysis_out.*/*.bc_summary.xls")
-		
+			fileSummary = glob.glob(PATH+REPERTORYVCF+"/plugin_out/coverageAnalysis_out.*/*.bc_summary.xls")
+			print(fileSummary)
+			print(REPERTORYVCF)
 			self.file1 = open(fileSummary[0],"r")
 			self.fileContent = self.read_file(self.file1)
 			self.get_list_barcode(self.fileContent)
@@ -47,7 +48,7 @@ class GlobalInformations():
 			################################################################################
 			# Ouverture et Analyse du fichier explog_final.txt
 			################################################################################
-			fileExplogFinal="../Run_test/"+REPERTORYVCF+"/explog_final.txt"
+			fileExplogFinal=PATH+REPERTORYVCF+"/explog_final.txt"
 			self.file2=open(fileExplogFinal, 'r')  # "../Data/Run_test/Auto_user_INS-80-TF_23-02-16_151_198/explog_final.txt"
 			self.fileContent = self.read_file(self.file2)
 			kit = self.get_kit(self.fileContent)
@@ -61,14 +62,14 @@ class GlobalInformations():
 				sampleList[0] = self.sampleNameList[curentBarecodeNumber]
 				sampleList[1] = barecode
 				sampleList[2] = kit
-				sampleList[3] = self.get_run_date()
+				sampleList[3] = self.get_run_date(PATH)
 				sampleList[4] = chip
 				sampleList[5] = self.mappedReadsList[curentBarecodeNumber]
 				sampleList[7] = self.listReadsOnTarget[curentBarecodeNumber]
 				################################################################################
 				# Ouverture et Analyse du fichier read_stats.txt
 				################################################################################
-				fileName =glob.glob("../Run_test/"+REPERTORYVCF+"/plugin_out/sampleID_out.*/"+barecode+"/read_stats.txt")
+				fileName =glob.glob(PATH+REPERTORYVCF+"/plugin_out/sampleID_out.*/"+barecode+"/read_stats.txt")
 				fichier = open(fileName[0],"r")
 				fileContent = self.read_file(fichier)
 		
@@ -78,7 +79,7 @@ class GlobalInformations():
 				################################################################################
 				# Ouverture et Analyse du fichier .stats.cov.txt
 				################################################################################
-				fileName=glob.glob("../Run_test/"+REPERTORYVCF+"/plugin_out/coverageAnalysis_out.*/"+barecode+"/"+barecode+"*.stats.cov.txt")
+				fileName=glob.glob(PATH+REPERTORYVCF+"/plugin_out/coverageAnalysis_out.*/"+barecode+"/"+barecode+"*.stats.cov.txt")
 				fichier = open(fileName[0],"r")
 				fileContent = self.read_file(fichier)
 				sampleList[9]=self.get_mean_read_depth(fileContent)
@@ -130,7 +131,7 @@ class GlobalInformations():
 			kit = "not define"
 		return kit
 
-	def get_run_date(self):
+	def get_run_date(self,PATH):
 		"""Recupere la date d'execution du run."""
 		listdir = []
 		#############################
@@ -138,7 +139,7 @@ class GlobalInformations():
 		# Attention chemins
 		#############################
 		#############################
-		listdir = os.listdir("../Run_test/")
+		listdir = os.listdir(PATH)
 		for i in listdir:
 			m = re.search('\d.-\d.-\d.', i)
 			if m is not None:
@@ -230,6 +231,5 @@ class GlobalInformations():
 				i = str(i).replace("]","")
 				fout.write(str(i))
 				fout.write('\n')
-
 
 
