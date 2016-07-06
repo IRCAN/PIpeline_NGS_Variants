@@ -35,7 +35,8 @@ if __name__=='__main__':
 	else:
 		Updates(REPERTORYVCF)
 	if args.globalinformations:
-		GlobalInformations(REPERTORYVCF)
+		PATH=pathREPERTORYVCF.split(REPERTORYVCF)[0]
+		GlobalInformations(REPERTORYVCF,PATH)
 	################################################################################
 	# Lancement du fichier principal
 	################################################################################
