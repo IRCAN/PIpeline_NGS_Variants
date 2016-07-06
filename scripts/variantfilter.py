@@ -150,7 +150,7 @@ class VariantFilter:
 			os.remove("../Results/"+self.REPERTORYVCF+"/temp/uncaracterized_mutations_"+file)
 
 	def no_contributory(self,sample,file):
-		"""Cree un fichier contenant toutes les mutations qui ne sont pas categorisees."""
+		"""Mutations avec couv < 300."""
 		outputFile = open("../Results/"+self.REPERTORYVCF+"/temp/no_contributory_"+file, 'w')
 		outputFile.write("Gene\tposition\tRefSeq id\tHGVSc\tHGVSp\tcosmic ID\ttotal_cov\tvariant_cov\tallele_freq\tfunction\tsift\tpolyphen\t\n")
 		fileEmpty = True

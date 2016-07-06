@@ -127,7 +127,7 @@ class MainVaran(RefseqToEnsembl):
 			inputfile = "../Results/"+REPERTORYVCF+"/VariantCaller/MUTATIONS_"+file
 			outputFile2 = "../Results/"+REPERTORYVCF+"/VEP/VEP_"+file
 			commandVEP = "perl ../System/Ensembl/ensembl-tools-release-84/scripts/variant_effect_predictor/variant_effect_predictor.pl -cache --force --no_stats --refseq --gmaf --hgvs --sift b --polyphen b --port 3337 --input_file "+inputfile+ " --output_file "+outputFile2
-			os.system(commandVEP)
+			#os.system(commandVEP)
 			################################################################################
 			#Filtrage des variants
 			################################################################################
@@ -140,7 +140,7 @@ class MainVaran(RefseqToEnsembl):
 			######
 			
 			report = open("../Results/"+REPERTORYVCF+"/temp/Report_"+i+".txt", "w")
-			report.write("Report of "+i+".\n\n")
+			report.write("Report of "+i+"  from  "+REPERTORYVCF+".\n\n")
 			if os.path.exists("../Results/"+REPERTORYVCF+"/"+REPERTORYVCF+"_globalInformations.txt") == True:
 				report.write("Informations:")
 				report.write("\n")
@@ -157,8 +157,10 @@ class MainVaran(RefseqToEnsembl):
 						if i in element:
 							report.write(element)
 			report.write("\n")
+			report.write("Inside Hotspots Panel:")
+			report.write("\n")
 			if os.path.exists("../Results/"+REPERTORYVCF+"/temp/HSm_"+i+".vcf") == True:
-				report.write("Hotspots mutés:")
+				report.write("Mutated Hotspots:")
 				report.write("\n")
 				File = "../Results/"+REPERTORYVCF+"/temp/HSm_"+i+".vcf"
 				with open(File,'r') as file:
@@ -167,7 +169,7 @@ class MainVaran(RefseqToEnsembl):
 						report.write(element)
 			report.write("\n")
 			if os.path.exists("../Results/"+REPERTORYVCF+"/temp/HSm_questionable_"+i+".vcf") == True:
-				report.write("Hotspots mutés douteux:")
+				report.write("No significant mutations:")
 				report.write("\n")
 				File = "../Results/"+REPERTORYVCF+"/temp/HSm_questionable_"+i+".vcf"
 				with open(File,'r') as file:
@@ -176,7 +178,7 @@ class MainVaran(RefseqToEnsembl):
 						report.write(element)
 			report.write("\n")
 			if os.path.exists("../Results/"+REPERTORYVCF+"/temp/nonMutatedHS_"+i+".vcf")== True:
-				report.write("Hotspots non mutés:")
+				report.write("No mutated Hotspots:")
 				report.write("\n")
 				File = "../Results/"+REPERTORYVCF+"/temp/nonMutatedHS_"+i+".vcf"
 				with open(File,'r') as file:
@@ -185,8 +187,19 @@ class MainVaran(RefseqToEnsembl):
 						report.write(element)
 			report.write("\n")
 			report.write("\n")
+			report.write("Outside Hotspots Panel:")
+			report.write("\n")
+			if os.path.exists("../Results/"+REPERTORYVCF+"/temp/uncaracterized_mutations_"+i+".vcf")== True:
+				report.write("Mutations:")
+				report.write("\n")
+				File = "../Results/"+REPERTORYVCF+"/temp/uncaracterized_mutations_"+i+".vcf"
+				with open(File,'r') as file:
+					file = file.readlines()
+					for element in file:
+						report.write(element)
+			report.write("\n")
 			if os.path.exists("../Results/"+REPERTORYVCF+"/temp/uncertain_mutation_"+i+".vcf")== True:
-				report.write("Uncertain mutation (mutation douteuse):")
+				report.write("Uncertain mutation: (cov < 300)")
 				report.write("\n")
 				File = "../Results/"+REPERTORYVCF+"/temp/uncertain_mutation_"+i+".vcf"
 				with open(File,'r') as file:
@@ -204,7 +217,7 @@ class MainVaran(RefseqToEnsembl):
 						report.write(element)
 			report.write("\n")
 			if os.path.exists("../Results/"+REPERTORYVCF+"/temp/no_contributory_"+i+".vcf")== True:
-				report.write("No contributory mutations (non contributif):")
+				report.write("No contributory mutations: (NOCALL or allele_freq < 1%  or < 25 reads)")
 				report.write("\n")
 				File = "../Results/"+REPERTORYVCF+"/temp/no_contributory_"+i+".vcf"
 				with open(File,'r') as file:
@@ -213,15 +226,7 @@ class MainVaran(RefseqToEnsembl):
 						report.write(element)
 			report.write("\n")
 
-			if os.path.exists("../Results/"+REPERTORYVCF+"/temp/uncaracterized_mutations_"+i+".vcf")== True:
-				report.write("Uncaracterized mutations (non filtrées):")
-				report.write("\n")
-				File = "../Results/"+REPERTORYVCF+"/temp/uncaracterized_mutations_"+i+".vcf"
-				with open(File,'r') as file:
-					file = file.readlines()
-					for element in file:
-						report.write(element)
-			report.write("\n")
+			
 			report.close()
 			pyxl(i,REPERTORYVCF)
 
