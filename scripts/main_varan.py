@@ -10,7 +10,7 @@ from separationvariants import SeparationVariants
 from hotspot import HotspotProcess
 from variantfilter import VariantFilter
 from refseqtoensembl import RefseqToEnsembl
-from makeReport import *
+from makeReport import MakeReport
 
 class MainVaran(RefseqToEnsembl):
 
@@ -134,101 +134,24 @@ class MainVaran(RefseqToEnsembl):
 			self.make_file_for_filter(file,REPERTORYVCF)
 			if hotspot != "":
 				filtre = VariantFilter(REPERTORYVCF,file)
-
+				filtre.compare_hs(filtre.sample,file)
+				filtre.no_contributory(filtre.sample,file)
+				filtre.uncertain_mutation(filtre.sample,file)
+				filtre.mutations(filtre.sample,file)
+			else:
+				filtre = VariantFilter(REPERTORYVCF,file)
+				filtre.no_contributory(filtre.sample,file)
+				filtre.uncertain_mutation(filtre.sample,file)
+				filtre.mutations(filtre.sample,file)
 			######
 			#Ecriture rapport
 			######
-			
-			report = open("../Results/"+REPERTORYVCF+"/temp/Report_"+i+".txt", "w")
-			report.write("Report of "+i+"  from  "+REPERTORYVCF+".\n\n")
-			if os.path.exists("../Results/"+REPERTORYVCF+"/"+REPERTORYVCF+"_globalInformations.txt") == True:
-				report.write("Informations:")
-				report.write("\n")
-				File = "../Results/"+REPERTORYVCF+"/"+REPERTORYVCF+"_globalInformations.txt"
-				with open(File,'r') as file:
-					file = file.readlines()
-					legendes = str(file[0])
-					legendesReplace = legendes.replace(", ","\t")
-					legendesReplace = legendesReplace.replace("\n","")
-					report.write(legendesReplace)
-					report.write("\n")
-					for element in file:
-						element = element.replace(", ","\t")
-						if i in element:
-							report.write(element)
-			report.write("\n")
-			report.write("Inside Hotspots Panel:")
-			report.write("\n")
-			if os.path.exists("../Results/"+REPERTORYVCF+"/temp/HSm_"+i+".vcf") == True:
-				report.write("Mutated Hotspots:")
-				report.write("\n")
-				File = "../Results/"+REPERTORYVCF+"/temp/HSm_"+i+".vcf"
-				with open(File,'r') as file:
-					file = file.readlines()
-					for element in file:
-						report.write(element)
-			report.write("\n")
-			if os.path.exists("../Results/"+REPERTORYVCF+"/temp/HSm_questionable_"+i+".vcf") == True:
-				report.write("No significant mutations:")
-				report.write("\n")
-				File = "../Results/"+REPERTORYVCF+"/temp/HSm_questionable_"+i+".vcf"
-				with open(File,'r') as file:
-					file = file.readlines()
-					for element in file:
-						report.write(element)
-			report.write("\n")
-			if os.path.exists("../Results/"+REPERTORYVCF+"/temp/nonMutatedHS_"+i+".vcf")== True:
-				report.write("No mutated Hotspots:")
-				report.write("\n")
-				File = "../Results/"+REPERTORYVCF+"/temp/nonMutatedHS_"+i+".vcf"
-				with open(File,'r') as file:
-					file = file.readlines()
-					for element in file:
-						report.write(element)
-			report.write("\n")
-			report.write("\n")
-			report.write("Outside Hotspots Panel:")
-			report.write("\n")
-			if os.path.exists("../Results/"+REPERTORYVCF+"/temp/uncaracterized_mutations_"+i+".vcf")== True:
-				report.write("Mutations:")
-				report.write("\n")
-				File = "../Results/"+REPERTORYVCF+"/temp/uncaracterized_mutations_"+i+".vcf"
-				with open(File,'r') as file:
-					file = file.readlines()
-					for element in file:
-						report.write(element)
-			report.write("\n")
-			if os.path.exists("../Results/"+REPERTORYVCF+"/temp/uncertain_mutation_"+i+".vcf")== True:
-				report.write("Uncertain mutation: (cov < 300)")
-				report.write("\n")
-				File = "../Results/"+REPERTORYVCF+"/temp/uncertain_mutation_"+i+".vcf"
-				with open(File,'r') as file:
-					file = file.readlines()
-					for element in file:
-						report.write(element)
-			report.write("\n")
-			if os.path.exists("../Results/"+REPERTORYVCF+"/temp/Polymorphism_"+i+".vcf")== True:
-				report.write("Polymorphism:")
-				report.write("\n")
-				File = "../Results/"+REPERTORYVCF+"/temp/Polymorphism_"+i+".vcf"
-				with open(File,'r') as file:
-					file = file.readlines()
-					for element in file:
-						report.write(element)
-			report.write("\n")
-			if os.path.exists("../Results/"+REPERTORYVCF+"/temp/no_contributory_"+i+".vcf")== True:
-				report.write("No contributory mutations: (NOCALL or allele_freq < 1%  or < 25 reads)")
-				report.write("\n")
-				File = "../Results/"+REPERTORYVCF+"/temp/no_contributory_"+i+".vcf"
-				with open(File,'r') as file:
-					file = file.readlines()
-					for element in file:
-						report.write(element)
-			report.write("\n")
+			report=MakeReport(REPERTORYVCF,i)
+			report.pyxl(i,REPERTORYVCF)
 
 			
-			report.close()
-			pyxl(i,REPERTORYVCF)
+			
+			
 
 			
 	def file_to_list(self,contentFile):

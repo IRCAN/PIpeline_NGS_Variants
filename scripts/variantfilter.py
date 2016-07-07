@@ -13,13 +13,8 @@ class VariantFilter:
 	def __init__(self,REPERTORYVCF,file):
 		self.REPERTORYVCF = REPERTORYVCF
 		with open("../Results/"+self.REPERTORYVCF+"/temp/Results_"+file,'r') as File:
-			sample = File.readlines()
-		del sample[0]
-		self.compare_hs(sample,file)
-		self.uncertain_mutation(sample,file)
-		#self.find_polymorphism(sample,file)
-		self.no_contributory(sample,file)
-		self.uncaracterized_mutations(sample,file)
+			self.sample = File.readlines()
+		del self.sample[0]
 
 
 	def parse_hs_file(self):
@@ -63,8 +58,9 @@ class VariantFilter:
 					##HS douteux si nocall ou <25reads: 
 					if sampleLigneSplit[7] != "DP_not_find":
 						if sampleLigneSplit[14] == "NO CALL" or int(sampleLigneSplit[7]) < 25:
-							o_f_uncertain.write(HSm)
-							fileEmpty2 = False
+							if int(sampleLigneSplit[8]) !=0:
+								o_f_uncertain.write(HSm)
+								fileEmpty2 = False
 						else:
 							fileEmpty1 = False
 							outputFile.write(HSm)
@@ -79,9 +75,9 @@ class VariantFilter:
 		for supp in suppList:
 			sample.remove(supp)
 
-	def uncertain_mutation(self,sample,file):
+	def no_contributory(self,sample,file):
 		"""Recherche parmis les mutations si elle est douteuse, cad si frequence allelique < 1 et couverture < 25 ou NOCALL."""
-		outputFile = open("../Results/"+self.REPERTORYVCF+"/temp/uncertain_mutation_"+file, 'w')
+		outputFile = open("../Results/"+self.REPERTORYVCF+"/temp/no_contributory_"+file, 'w')
 		outputFile.write("Gene\tposition\tRefSeq id\tHGVSc\tHGVSp\tcosmic ID\ttotal_cov\tvariant_cov\tallele_freq\tfunction\tsift\tpolyphen\t\n")
 		suppList = []
 		# If 0 = file is empty, if 1 file is not empty
@@ -97,12 +93,13 @@ class VariantFilter:
 				#Filtres pour determiner si mutation douteuse:
 				# DP < 25 et allele_freq < 1
 				if int(alleleCov) <= 25 and float(alleleFreq) < 1 or sampleLigneSplit[14] == "NO CALL":
-					string = sampleLigneSplit[1]+"\t"+sampleLigneSplit[0]+"\t"+sampleLigneSplit[2]+"\t"+sampleLigneSplit[4]+"\t"+sampleLigneSplit[5]+"\t"+sampleLigneSplit[6]+"\t"+sampleLigneSplit[7]+"\t"+sampleLigneSplit[8]+"\t"+sampleLigneSplit[9]+"\t"+sampleLigneSplit[10]+"\t"+sampleLigneSplit[12]+"\t"+sampleLigneSplit[13]+"\t\n"
-					outputFile.write(string)
+					if int(sampleLigneSplit[8]) !=0:
+						string = sampleLigneSplit[1]+"\t"+sampleLigneSplit[0]+"\t"+sampleLigneSplit[2]+"\t"+sampleLigneSplit[4]+"\t"+sampleLigneSplit[5]+"\t"+sampleLigneSplit[6]+"\t"+sampleLigneSplit[7]+"\t"+sampleLigneSplit[8]+"\t"+sampleLigneSplit[9]+"\t"+sampleLigneSplit[10]+"\t"+sampleLigneSplit[12]+"\t"+sampleLigneSplit[13]+"\t\n"
+						outputFile.write(string)
+						fileEmpty = False
 					suppList.append(sampleLigne)
-					fileEmpty = False
 		if fileEmpty:
-			os.remove("../Results/"+self.REPERTORYVCF+"/temp/uncertain_mutation_"+file)
+			os.remove("../Results/"+self.REPERTORYVCF+"/temp/no_contributory_"+file)
 		for supp in suppList:
 			sample.remove(supp)
 
@@ -134,24 +131,10 @@ class VariantFilter:
 		for supp in suppList:
 			sample.remove(supp)
 
-	def uncaracterized_mutations(self,sample,file):
-		"""Cree un fichier contenant toutes les mutations qui ne sont pas categorisees."""
-		outputFile = open("../Results/"+self.REPERTORYVCF+"/temp/uncaracterized_mutations_"+file, 'w')
-		outputFile.write("Gene\tposition\tRefSeq id\tHGVSc\tHGVSp\tcosmic ID\ttotal_cov\tvariant_cov\tallele_freq\tfunction\tsift\tpolyphen\t\n")
-		if len(sample) != 0:
-			for sampleLigne in sample:
-				sampleLigneReplace = sampleLigne.replace("\n","")
-				sampleLigneReplace = sampleLigneReplace.replace("idCosmicNotFound"," ")
-				sampleLigneReplace = sampleLigneReplace.replace("NA"," ")
-				sampleLigneSplit = sampleLigneReplace.split("\t")
-				string = sampleLigneSplit[1]+"\t"+sampleLigneSplit[0]+"\t"+sampleLigneSplit[2]+"\t"+sampleLigneSplit[4]+"\t"+sampleLigneSplit[5]+"\t"+sampleLigneSplit[6]+"\t"+sampleLigneSplit[7]+"\t"+sampleLigneSplit[8]+"\t"+sampleLigneSplit[9]+"\t"+sampleLigneSplit[10]+"\t"+sampleLigneSplit[12]+"\t"+sampleLigneSplit[13]+"\t\n"
-				outputFile.write(string)
-		else:
-			os.remove("../Results/"+self.REPERTORYVCF+"/temp/uncaracterized_mutations_"+file)
 
-	def no_contributory(self,sample,file):
-		"""Mutations avec couv < 300."""
-		outputFile = open("../Results/"+self.REPERTORYVCF+"/temp/no_contributory_"+file, 'w')
+	def uncertain_mutation(self,sample,file):
+		"""Mutations avec 25< couv < 300."""
+		outputFile = open("../Results/"+self.REPERTORYVCF+"/temp/uncertain_mutation_"+file, 'w')
 		outputFile.write("Gene\tposition\tRefSeq id\tHGVSc\tHGVSp\tcosmic ID\ttotal_cov\tvariant_cov\tallele_freq\tfunction\tsift\tpolyphen\t\n")
 		fileEmpty = True
 		suppList = []
@@ -166,6 +149,23 @@ class VariantFilter:
 				outputFile.write(string)
 				suppList.append(sampleLigne)
 		if fileEmpty:
-			os.remove("../Results/"+self.REPERTORYVCF+"/temp/no_contributory_"+file)
+			os.remove("../Results/"+self.REPERTORYVCF+"/temp/uncertain_mutation_"+file)
 		for supp in suppList:
 			sample.remove(supp)
+
+
+
+	def mutations(self,sample,file):
+		"""Cree un fichier contenant toutes les mutations qui ne sont pas filtrees."""
+		outputFile = open("../Results/"+self.REPERTORYVCF+"/temp/mutations_"+file, 'w')
+		outputFile.write("Gene\tposition\tRefSeq id\tHGVSc\tHGVSp\tcosmic ID\ttotal_cov\tvariant_cov\tallele_freq\tfunction\tsift\tpolyphen\t\n")
+		if len(sample) != 0:
+			for sampleLigne in sample:
+				sampleLigneReplace = sampleLigne.replace("\n","")
+				sampleLigneReplace = sampleLigneReplace.replace("idCosmicNotFound"," ")
+				sampleLigneReplace = sampleLigneReplace.replace("NA"," ")
+				sampleLigneSplit = sampleLigneReplace.split("\t")
+				string = sampleLigneSplit[1]+"\t"+sampleLigneSplit[0]+"\t"+sampleLigneSplit[2]+"\t"+sampleLigneSplit[4]+"\t"+sampleLigneSplit[5]+"\t"+sampleLigneSplit[6]+"\t"+sampleLigneSplit[7]+"\t"+sampleLigneSplit[8]+"\t"+sampleLigneSplit[9]+"\t"+sampleLigneSplit[10]+"\t"+sampleLigneSplit[12]+"\t"+sampleLigneSplit[13]+"\t\n"
+				outputFile.write(string)
+		else:
+			os.remove("../Results/"+self.REPERTORYVCF+"/temp/mutations_"+file)

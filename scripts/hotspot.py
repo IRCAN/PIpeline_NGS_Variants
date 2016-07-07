@@ -39,17 +39,16 @@ class HotspotProcess:
 		key = nomGene-numeroExon
 		value = profondeurDuVariant"""
 		for l in lignes:
-			if "FAO=0;" in l:
-				ligne = l.split("\t")
-				for hs in hotspots:
-					if ligne[0] == hs[0] and int(hs[1]) <= int(ligne[1]) <= int(hs[2]):
-						geneExon = hs[3]+'-'+hs[4]
-						#recherche de la profondeur du variant par expression reguliere
-						match = re.search(r"(FDP)=[0-9]*", ligne[7])
-						result = match.group(0)
-						result = int(result[4:])
-						#ajout pour chaque variants du HS la profondeur.
-						dicoHS[geneExon].append(result)				
+			ligne = l.split("\t")
+			for hs in hotspots:
+				if ligne[0] == hs[0] and int(hs[1]) <= int(ligne[1]) <= int(hs[2]):
+					geneExon = hs[3]+'-'+hs[4]
+					#recherche de la profondeur du variant par expression reguliere
+					match = re.search(r"(FDP)=[0-9]*", ligne[7])
+					result = match.group(0)
+					result = int(result[4:])
+					#ajout pour chaque variants du HS la profondeur.
+					dicoHS[geneExon].append(result)				
 		return dicoHS
 
 	def get_depth(self,dicoHS):
@@ -62,7 +61,8 @@ class HotspotProcess:
 				mean = round(sum(value) / len(value),2)
 				#calcul de la profondeur minimale pour le hotspot
 				minDepthHSnm = min(value)
-				value = str(mean) + "\t" + str(minDepthHSnm)
+				maxDepthHSnm = max(value)
+				value = str(mean) + "\t" + str(minDepthHSnm)+ "\t" + str(maxDepthHSnm)
 				dicoHS[key] = value
 		return dicoHS
 
@@ -84,7 +84,7 @@ class HotspotProcess:
 		HSnmGlobalList = "\n".join(HSnmGlobalList)
 		f_out = "../Results/"+REPERTORYVCF+"/temp/nonMutatedHS_"+nomFichier
 		File = open(f_out,'w')	# creation et ouverture du File
-		File.write("Gene\texon\tMean Depth\tMinimal Depth\t\n")	#Ecriture de la legende.
+		File.write("Gene\texon\tMean Depth\tMinimal Depth\tMaximal Depth\t\n")	#Ecriture de la legende.
 		for i in HSnmGlobalList:	#ecriture des donnees
 			File.write(i)
 		File.close()
