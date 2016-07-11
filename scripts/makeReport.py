@@ -33,8 +33,8 @@ class MakeReport:
 				report.write("\n")
 				for element in file:
 					element = element.replace(", ","\t")
-				if i in element:
-					report.write(element)
+					if i in element:
+						report.write(element)
 			report.write("\n")
 		notAlreadyDone=True
 		if os.path.exists("../Results/"+REPERTORYVCF+"/temp/HSm_"+i+".vcf") == True:

@@ -55,7 +55,7 @@ class HotspotProcess:
 		"""Calcul de la profondeur mean et minimale pour chaque HS."""
 		for key,value in dicoHS.items():
 			if not value : 
-				dicoHS[key] = "N/A\tN/A"
+				dicoHS[key] = "N/A\tN/A\tN/A"
 			else:
 				#calcul de la profondeur mean pour le hotspot et arrondi de la value
 				mean = round(sum(value) / len(value),2)

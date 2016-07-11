@@ -148,6 +148,7 @@ class MainVaran(RefseqToEnsembl):
 			######
 			report=MakeReport(REPERTORYVCF,i)
 			report.pyxl(i,REPERTORYVCF)
+		os.remove("liste_hotspot_temp.txt")
 
 			
 			
