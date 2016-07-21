@@ -11,7 +11,7 @@ from cosmiclite import CosmicLite
 import os
 
 class Updates:
-	def __init__(self,REPERTORYVCF):
+	def __init__(self,REPERTORYVCF,RESULTDIR):
 		"""verification si nouvelle version base de donnees VEP, creation Cosmic_lite si inexistante, creation repertoires contenant les resultats"""
 
 
@@ -33,10 +33,10 @@ class Updates:
 		# Etape de creation des repertoires
 		################################################################################
 	
-		if os.path.isdir("../Results/"+REPERTORYVCF+"/VariantCaller")== False:
-			os.makedirs("../Results/"+REPERTORYVCF+"/VariantCaller") 
-		if os.path.isdir("../Results/"+REPERTORYVCF+"/VEP/")== False:
-			os.mkdir("../Results/"+REPERTORYVCF+"/VEP/")
-		if os.path.isdir("../Results/"+REPERTORYVCF+"/temp/")== False:
-			os.mkdir("../Results/"+REPERTORYVCF+"/temp/")  
+		if os.path.isdir(RESULTDIR+"/"+REPERTORYVCF+"/VariantCaller")== False:
+			os.makedirs(RESULTDIR+"/"+REPERTORYVCF+"/VariantCaller") 
+		if os.path.isdir(RESULTDIR+"/"+REPERTORYVCF+"/VEP/")== False:
+			os.mkdir(RESULTDIR+"/"+REPERTORYVCF+"/VEP/")
+		if os.path.isdir(RESULTDIR+"/"+REPERTORYVCF+"/temp/")== False:
+			os.mkdir(RESULTDIR+"/"+REPERTORYVCF+"/temp/")  
 

@@ -19,16 +19,16 @@ class RefseqToEnsembl:
 		self.parse_gene2ensembl()
 		self.parse_cosmic_lite()
 
-	def make_file_for_filter(self,file,REPERTORYVCF):
+	def make_file_for_filter(self,file,REPERTORYVCF, RESULTDIR):
 		"""Parse le file de sortie de VEP et cree un nouveau file avec les lignes qui match avec les ID ensembl."""
-		File = "../Results/"+REPERTORYVCF+"/VEP/VEP_"+file
+		File =  RESULTDIR+"/"+REPERTORYVCF+"/VEP/VEP_"+file
 		with open(File,'r') as vepFile0:
 			vepFile = vepFile0.readlines()
 		tempList = []
 		vcfFileFinalList = []
 		vcfFileFinalList.append("gene\tgene Id\tRefSeq id\tTranscript\tHGVSc\tHGVSp\tcosmic ID\tDP\tAO\tallele_freq\tfunction\tmaf\tsift\tpolyphen\n")
 		idNotFindList = []
-		mutationsFile = self.parse_mutations_file(file,REPERTORYVCF)
+		mutationsFile = self.parse_mutations_file(file,REPERTORYVCF, RESULTDIR)
 		################################################################################
 		#Recherche si correspondance entre ID refseq de gene2ensembl avec ID refseq du fichier VEP
 		################################################################################
@@ -216,7 +216,7 @@ class RefseqToEnsembl:
 						if infoCosmicSplit[5] == HGVSc:
 							string = string.replace("idCosmicNotFound",infoCosmicSplit[4])
 			vcfFileFinalList.append(string)
-		self.output_file("../Results/"+REPERTORYVCF+"/temp/Results_"+file,vcfFileFinalList)
+		self.output_file( RESULTDIR+"/"+REPERTORYVCF+"/temp/Results_"+file,vcfFileFinalList)
 
 	def parse_gene2ensembl(self):
 		"""Parse le file de correlation RefSeq vers Ensembl."""
@@ -266,9 +266,9 @@ class RefseqToEnsembl:
 			File.write(str(line))
 		File.close()
 
-	def parse_mutations_file(self,file,REPERTORYVCF):
+	def parse_mutations_file(self,file,REPERTORYVCF,RESULTDIR):
 		"""Parse le fichier contenant toutes les mutations présentes dans l'echantillon."""
-		File = "../Results/"+REPERTORYVCF+"/VariantCaller/MUTATIONS_"+file
+		File =  RESULTDIR+"/"+REPERTORYVCF+"/VariantCaller/MUTATIONS_"+file
 		with open(File,'r') as mutationsFile0:
 			mutationsFile=mutationsFile0.readlines()
 		return mutationsFile

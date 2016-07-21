@@ -12,14 +12,14 @@ import os
 
 class HotspotProcess:
 
-	def __init__(self,REPERTORYVCF,hotspot,list_of_transcripts,fichier):
+	def __init__(self,REPERTORYVCF,RESULTDIR,hotspot,list_of_transcripts,fichier):
 		self.dicoHS = self.create_dico_HS(hotspot)
 		#ajout dans le dictionnaire des profondeurs des variants
 		self.find_depth_HSnm(list_of_transcripts,hotspot,self.dicoHS)
 		#calcul et ajout de la profondeur mean et minimale de chaque hotspot 
 		self.globalInfoHSnm = self.get_depth(self.dicoHS)
 		#creation fichier de sortie du tableau Hotspots non mutes
-		self.output_nmHS(fichier,self.globalInfoHSnm,REPERTORYVCF)
+		self.output_nmHS(fichier,self.globalInfoHSnm,REPERTORYVCF,RESULTDIR)
 
 	def create_dico_HS(self, hotspots):
 		"""Creation d'un dictionnaire a partir de la liste de hotspots avec:
@@ -66,7 +66,7 @@ class HotspotProcess:
 				dicoHS[key] = value
 		return dicoHS
 
-	def output_nmHS(self,nomFichier,globalInfoHSnm,REPERTORYVCF):
+	def output_nmHS(self,nomFichier,globalInfoHSnm,REPERTORYVCF,RESULTDIR):
 		"""Traitement du dictionnaire contenant les HS et leurs profondeurs puis ecriture dans un fichier tabule (utile pour le rapport final)."""
 		HSnmGlobalList = []
 		for key, value in globalInfoHSnm.items():
@@ -82,7 +82,7 @@ class HotspotProcess:
 		#Trie de la liste de genes par ordre alphabetique pour meilleure lisibilite.
 		HSnmGlobalList = sorted(HSnmGlobalList)
 		HSnmGlobalList = "\n".join(HSnmGlobalList)
-		f_out = "../Results/"+REPERTORYVCF+"/temp/nonMutatedHS_"+nomFichier
+		f_out = RESULTDIR+"/"+REPERTORYVCF+"/temp/nonMutatedHS_"+nomFichier
 		File = open(f_out,'w')	# creation et ouverture du File
 		File.write("Gene\texon\tMean Depth\tMinimal Depth\tMaximal Depth\t\n")	#Ecriture de la legende.
 		for i in HSnmGlobalList:	#ecriture des donnees

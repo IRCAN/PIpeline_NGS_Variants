@@ -14,13 +14,13 @@ from makeReport import MakeReport
 
 class MainVaran(RefseqToEnsembl):
 
-	def __init__(self,pathREPERTORYVCF, REPERTORYVCF, ALL_HS_FILE=""):
+	def __init__(self,pathREPERTORYVCF, REPERTORYVCF,RESULTDIR, ALL_HS_FILE=""):
 		RefseqToEnsembl.__init__(self)
 		if ALL_HS_FILE != "":
 			ALL_HS_FILE,hotspots=self.concatenate_hs(ALL_HS_FILE)
-			self.run_VEP(pathREPERTORYVCF,REPERTORYVCF, hotspots, ALL_HS_FILE)
+			self.run_VEP(pathREPERTORYVCF,REPERTORYVCF,RESULTDIR, hotspots, ALL_HS_FILE)
 		else:
-			self.run_VEP(pathREPERTORYVCF,REPERTORYVCF)
+			self.run_VEP(pathREPERTORYVCF,REPERTORYVCF,RESULTDIR)
 
 	def concatenate_hs(self,ALL_HS_FILE):
 			""" TODO : Commentaires"""
@@ -38,12 +38,13 @@ class MainVaran(RefseqToEnsembl):
 			hotspots = self.file_to_list(hotspotsTemp)
 			return (ALL_HS_FILE,hotspots)
 
-	def run_VEP(self,pathREPERTORYVCF,REPERTORYVCF, hotspot="", ALL_HS_FILE=""):
+	def run_VEP(self,pathREPERTORYVCF,REPERTORYVCF,RESULTDIR, hotspot="", ALL_HS_FILE=""):
 		"""Lance le logiciel VEP sur les mutations présentes dans chaque échantillons pour les annoter."""
 		pathBarecode=glob.glob(pathREPERTORYVCF+"/plugin_out/variantCaller_out*/IonXpress_[0-9]*")
 		if not pathBarecode:
 			path1=False
-			pathBarecode=glob.glob(pathREPERTORYVCF+"/Variants/*")
+			pathBarecode=glob.glob(pathREPERTORYVCF+"/*.vcf")
+			print(pathBarecode)
 		else:
 			path1=True
 		barecode=[]
@@ -51,7 +52,7 @@ class MainVaran(RefseqToEnsembl):
 			a=element.split('/')
 			barecode.append(a[-1])
 		for i in barecode:
-
+			print(i)
 			if path1:
 				file = i+'.vcf'
 				#print(pathREPERTORYVCF+"/plugin_out/variantCaller_out*/"+i+"/TSVC_variants_"+file)
@@ -75,8 +76,8 @@ class MainVaran(RefseqToEnsembl):
 
 			else:
 				# Format fichier Raynaud
-				file = i+'.vcf'
-				TSVC_variants = glob.glob(pathREPERTORYVCF+"/Variants/"+i+"/"+file)
+				file = i
+				TSVC_variants = glob.glob(pathREPERTORYVCF+"/"+file)
 				print('Traitement du file: \n',TSVC_variants[0],'\n')
 			#print("oui")
 			#os.getcwd()
@@ -100,7 +101,7 @@ class MainVaran(RefseqToEnsembl):
 			# dans listOfList et les autres dans ListdeNewLines + ajf_oute seulement les mutations
 			listOfTranscripts = self.check_if_multiple_id(listOfList,sep.listNewLines)
 			#//TODO A modifier lorsque arborescence finale connue
-			f_out = "../Results/"+REPERTORYVCF+"/VariantCaller/SEP_LIGNES_"+file
+			f_out = RESULTDIR+"/"+REPERTORYVCF+"/VariantCaller/SEP_LIGNES_"+file
 			#creation du file de sortie: file VCF avec un transcript par ligne
 			self.output_file(f_out,listOfTranscripts,legendList)
 			print('Creation de ',f_out,'\n')
@@ -109,7 +110,7 @@ class MainVaran(RefseqToEnsembl):
 			################################################################################
 			#Etape de recherche de Hotspots non mutes
 			if hotspot != "":
-				resumeHotspot= HotspotProcess(REPERTORYVCF,hotspot,listOfTranscripts,file)
+				resumeHotspot= HotspotProcess(REPERTORYVCF,RESULTDIR,hotspot,listOfTranscripts,file)
 			################################################################################
 			#Etape de creation du file ne contenant que les mutations
 			################################################################################
@@ -118,37 +119,39 @@ class MainVaran(RefseqToEnsembl):
 				transcript = listOfTranscripts[indice].split('\t')
 				if "FAO=0;" not in transcript[7]:
 					mutationsList.append(listOfTranscripts[indice])
-			f_out2 = "../Results/"+REPERTORYVCF+"/VariantCaller/MUTATIONS_"+file
+			f_out2 = RESULTDIR+"/"+REPERTORYVCF+"/VariantCaller/MUTATIONS_"+file
 			print('Creation de ',f_out2,'\n')
 			self.output_file(f_out2,mutationsList,legendList)
 			################################################################################
 			#Etape de lancement de VEP avec en input le file de mutations
 			################################################################################
-			inputfile = "../Results/"+REPERTORYVCF+"/VariantCaller/MUTATIONS_"+file
-			outputFile2 = "../Results/"+REPERTORYVCF+"/VEP/VEP_"+file
+			inputfile = RESULTDIR+"/"+REPERTORYVCF+"/VariantCaller/MUTATIONS_"+file
+			outputFile2 = RESULTDIR+"/"+REPERTORYVCF+"/VEP/VEP_"+file
 			commandVEP = "perl ../System/Ensembl/ensembl-tools-release-84/scripts/variant_effect_predictor/variant_effect_predictor.pl -cache --force --no_stats --refseq --gmaf --hgvs --sift b --polyphen b --port 3337 --input_file "+inputfile+ " --output_file "+outputFile2
-			os.system(commandVEP)
+			#os.system(commandVEP)
 			################################################################################
 			#Filtrage des variants
 			################################################################################
-			self.make_file_for_filter(file,REPERTORYVCF)
+			self.make_file_for_filter(file,REPERTORYVCF,RESULTDIR)
 			if hotspot != "":
-				filtre = VariantFilter(REPERTORYVCF,file)
-				filtre.compare_hs(filtre.sample,file)
-				filtre.no_contributory(filtre.sample,file)
-				filtre.uncertain_mutation(filtre.sample,file)
-				filtre.mutations(filtre.sample,file)
+				filtre = VariantFilter(REPERTORYVCF,file,RESULTDIR)
+				filtre.compare_hs(filtre.sample,file,RESULTDIR)
+				filtre.no_contributory(filtre.sample,file,RESULTDIR)
+				filtre.uncertain_mutation(filtre.sample,file,RESULTDIR)
+				filtre.mutations(filtre.sample,file,RESULTDIR)
 			else:
-				filtre = VariantFilter(REPERTORYVCF,file)
-				filtre.no_contributory(filtre.sample,file)
-				filtre.uncertain_mutation(filtre.sample,file)
-				filtre.mutations(filtre.sample,file)
+				filtre = VariantFilter(REPERTORYVCF,file,RESULTDIR)
+				filtre.no_contributory(filtre.sample,file,RESULTDIR)
+				filtre.uncertain_mutation(filtre.sample,file,RESULTDIR)
+				filtre.mutations(filtre.sample,file,RESULTDIR)
 			######
 			#Ecriture rapport
 			######
-			report=MakeReport(REPERTORYVCF,i)
-			report.pyxl(i,REPERTORYVCF)
-		os.remove("liste_hotspot_temp.txt")
+			report=MakeReport(REPERTORYVCF,i,RESULTDIR)
+			print(i)
+			report.pyxl(i,REPERTORYVCF,RESULTDIR)
+		if hotspot != "":
+			os.remove("liste_hotspot_temp.txt")
 
 			
 			

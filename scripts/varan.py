@@ -21,29 +21,34 @@ if __name__=='__main__':
 	description = ("A partir d'un fichier VCF, ......")
 	parser = ArgumentParser(description=description)
 	parser.add_argument('run',  action='store' ,help="path to run repertory")
+	parser.add_argument('resultDir',  action='store' ,help="path to result repertory")
 	parser.add_argument('-lh','--listHotspot', default=False, nargs='+', help="fournir une liste de hotspots")
 	parser.add_argument('-gi','--globalinformations', action='store_true', help="need result of plugin CoverageAnalysis")
 	parser.add_argument('-NoUp','--NoUpdates', action='store_false', help="pas de mise à jour des bdd")
 	args = parser.parse_args()
 	pathREPERTORYVCF=args.run
+	RESULTDIR=args.resultDir
 	if pathREPERTORYVCF[-1]=="/":
 		pathREPERTORYVCF=pathREPERTORYVCF[:-1]
 	splitPathREPERTORYVCF=pathREPERTORYVCF.split("/")
 	REPERTORYVCF=splitPathREPERTORYVCF[-1]
+	if RESULTDIR[-1]=="/":
+		RESULTDIR=RESULTDIR[:-1]
+	
 	if args.NoUpdates==False:
 		print("....")
 	else:
-		Updates(REPERTORYVCF)
+		Updates(REPERTORYVCF,RESULTDIR)
 	if args.globalinformations:
 		PATH=pathREPERTORYVCF.split(REPERTORYVCF)[0]
-		GlobalInformations(REPERTORYVCF,PATH)
+		GlobalInformations(REPERTORYVCF,PATH,RESULTDIR)
 	################################################################################
 	# Lancement du fichier principal
 	################################################################################
 	if args.listHotspot:
-		MainVaran(pathREPERTORYVCF,REPERTORYVCF,ALL_HS_FILE=args.listHotspot)
+		MainVaran(pathREPERTORYVCF,REPERTORYVCF,RESULTDIR,ALL_HS_FILE=args.listHotspot)
 	else:
-		MainVaran(pathREPERTORYVCF,REPERTORYVCF)
+		MainVaran(pathREPERTORYVCF,REPERTORYVCF,RESULTDIR)
 
 	print("######################\n Fin du script!\n######################")
 	interval = time.time() - start_time

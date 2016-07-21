@@ -11,7 +11,7 @@ import glob
 from argparse import ArgumentParser
 
 class GlobalInformations():
-	def __init__(self,REPERTORYVCF,PATH):
+	def __init__(self,REPERTORYVCF,PATH,RESULTDIR):
 		#liste vide de x elements par echantillon
 			self.sampleList = [None]*14
 		#liste contenant tout les barcodes du run
@@ -23,18 +23,20 @@ class GlobalInformations():
 		#liste contenant les reads "mappes"
 			self.mappedReadsList = []
 		#liste qui contiendra chaque sampleList
-			self.finalList = [['Sample','Barcode','Kit','Run date','Chip','Mapped Reads','ID','Reads On-Target','Reads On-SampleID','Mean Read Depth','Base at 1x Coverage','20x','100x','500x',' ']]
+			self.finalList = [['Echantillon','Barcode','Kit','Date','Chip','Reads mappés','ID','% reads mappés','Reads On SampleID','Profondeur moyenne','Base avec 1x Couverture','20x','100x','500x',' ']]
 		#############################
 		#############################
 		# Attention chemins
 		#############################
 		#############################
 			fileSummary = glob.glob(PATH+REPERTORYVCF+"/plugin_out/coverageAnalysis_out.*/*.bc_summary.xls")
-			print(fileSummary)
-			print(REPERTORYVCF)
+			if not fileSummary:
+				fileSummary = glob.glob(PATH+REPERTORYVCF+"/*.bc_summary.xls")
 			self.file1 = open(fileSummary[0],"r")
 			self.fileContent = self.read_file(self.file1)
 			self.get_list_barcode(self.fileContent)
+
+
 			self.get_list_reads_on_target(self.fileContent)
 			self.get_sample(self.fileContent)
 			self.get_mapped_reads(self.fileContent)
@@ -56,7 +58,7 @@ class GlobalInformations():
 
 			curentBarecodeNumber =0
 			for barecode in self.barcodeList:
-			
+				deletion=False
 				sampleList=['NA','NA','NA','NA','NA','NA','NA','NA','NA','NA','NA','NA','NA','NA','NA']
 				"""Creation de la ligne pour chaque echantillons"""
 				sampleList[0] = self.sampleNameList[curentBarecodeNumber]
@@ -70,17 +72,26 @@ class GlobalInformations():
 				# Ouverture et Analyse du fichier read_stats.txt
 				################################################################################
 				fileName =glob.glob(PATH+REPERTORYVCF+"/plugin_out/sampleID_out.*/"+barecode+"/read_stats.txt")
+				if not fileName:
+
+					fileName =glob.glob(PATH+REPERTORYVCF+"/read_stats"+barecode[-1]+".txt")
 				fichier = open(fileName[0],"r")
 				fileContent = self.read_file(fichier)
 		
 				sampleList[6] = self.get_id(fileContent)
-				sampleList[8] = self.get_reads_on_sample_ID(fileContent)
+				#print(sampleList[6])
+				if sampleList[6]!="N/A":
+					sampleList[8] = self.get_reads_on_sample_ID(fileContent)
+				else:
+					deletion=True
 				fichier.close()
 				################################################################################
 				# Ouverture et Analyse du fichier .stats.cov.txt
 				################################################################################
-				fileName=glob.glob(PATH+REPERTORYVCF+"/plugin_out/coverageAnalysis_out.*/"+barecode+"/"+barecode+"*.stats.cov.txt")
-				fichier = open(fileName[0],"r")
+				fileName2=glob.glob(PATH+REPERTORYVCF+"/plugin_out/coverageAnalysis_out.*/"+barecode+"/"+barecode+"*.stats.cov.txt")
+				if not fileName2:
+					fileName2=glob.glob(PATH+REPERTORYVCF+"/"+barecode+"*.stats.cov.txt")				
+				fichier = open(fileName2[0],"r")
 				fileContent = self.read_file(fichier)
 				sampleList[9]=self.get_mean_read_depth(fileContent)
 				sampleList[10]=self.get_coverage_1x(fileContent)
@@ -90,13 +101,19 @@ class GlobalInformations():
 				sampleList[14]=" "
 				self.finalList.append(sampleList)
 				curentBarecodeNumber += 1
-
+				if deletion:
+					del sampleList[6]
+					del sampleList[7]
 			################################################################################
 			# Creation du fichier final globalInformations.txt
 			################################################################################
-			if os.path.isdir('../Results/'+REPERTORYVCF) == False:
-				os.mkdir('../Results/'+REPERTORYVCF) 
-			FileName = '../Results/'+REPERTORYVCF+'/'+REPERTORYVCF+'_globalInformations.txt'
+			if os.path.isdir(RESULTDIR+"/"+REPERTORYVCF) == False:
+				os.mkdir(RESULTDIR+"/"+REPERTORYVCF) 
+			FileName = RESULTDIR+"/"+REPERTORYVCF+"/"+REPERTORYVCF+"_globalInformations.txt"
+			if deletion:
+				print(self.finalList)
+				del self.finalList[0][6]
+				del self.finalList[0][7]
 			self.output_file(FileName, self.finalList)
 			print("\nCreation fichier informations OK \n")
 
@@ -153,7 +170,11 @@ class GlobalInformations():
 				chip = indice
 		if '318C' in chip:
 			chip = 'Ion 318 Chip V2'
-		else:
+		elif '316' in chip:
+			chip = 'Ion 316 Chip V2'
+		elif '314' in chip:
+			chip = 'Ion 314 Chip V2'
+		else:		
 			chip = "chip non define"
 		return chip
 
@@ -182,6 +203,7 @@ class GlobalInformations():
 		readsOnSampleID = fileContent[4]
 		readsOnSampleID = readsOnSampleID.replace('Percent reads in sample ID regions:   ','')
 		readsOnSampleID = readsOnSampleID.replace('\n','')
+		#self.finalList
 		return readsOnSampleID
 
 	def get_mean_read_depth(self,fileContent):
