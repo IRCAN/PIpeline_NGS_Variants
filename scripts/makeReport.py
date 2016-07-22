@@ -20,6 +20,7 @@ class MakeReport:
 
 
 	def report_body(self,REPERTORYVCF,i,RESULTDIR):
+		avecHotspot=False
 		if i[-3:]=="vcf":
 			i=i[:-4]
 			#dans le cas d'un titre avec NOMPATIENT_v1
@@ -54,9 +55,9 @@ class MakeReport:
 		notAlreadyDone=True
 		if os.path.exists(RESULTDIR+"/"+REPERTORYVCF+"/temp/HSm_"+i+".vcf") == True:
 			notAlreadyDone=False
-			report.write("Inside Hotspots Panel:")
+			report.write("Dans les Hotspots:")
 			report.write("\n")
-			report.write("Mutated Hotspots:")
+			report.write("Variants:")
 			report.write("\n")
 			File = RESULTDIR+"/"+REPERTORYVCF+"/temp/HSm_"+i+".vcf"
 			with open(File,'r') as file:
@@ -66,9 +67,9 @@ class MakeReport:
 			report.write("\n")
 		if os.path.exists(RESULTDIR+"/"+REPERTORYVCF+"/temp/HSm_questionable_"+i+".vcf") == True:
 			if notAlreadyDone:
-				report.write("Inside Hotspots Panel:")
+				report.write("Dans les Hotspots")
 				report.write("\n")
-			report.write("No significant mutations:")
+			report.write("Variants détectés mais non retenus: (NOCALL or allele_freq < 1%  or < 25 reads)")
 			report.write("\n")
 			File = RESULTDIR+"/"+REPERTORYVCF+"/temp/HSm_questionable_"+i+".vcf"
 			with open(File,'r') as file:
@@ -77,6 +78,7 @@ class MakeReport:
 					report.write(element)
 			report.write("\n")
 		if os.path.exists(RESULTDIR+"/"+REPERTORYVCF+"/temp/nonMutatedHS_"+i+".vcf")== True:
+			avecHotspot=True
 			report.write("Couverture Hotspots:")
 			report.write("\n")
 			File = RESULTDIR+"/"+REPERTORYVCF+"/temp/nonMutatedHS_"+i+".vcf"
@@ -89,8 +91,9 @@ class MakeReport:
 		##########################################
 		###TODO a virer
 		###################
-		#report.write("Outside Hotspots Panel:")
-		report.write("\n")
+		if avecHotspot:
+			report.write("Hors Hotspots:")
+			report.write("\n")
 		if os.path.exists(RESULTDIR+"/"+REPERTORYVCF+"/temp/mutations_"+i+".vcf")== True:
 			report.write("Variants:")
 			report.write("\n")
@@ -101,7 +104,7 @@ class MakeReport:
 					report.write(element)
 			report.write("\n")
 		if os.path.exists(RESULTDIR+"/"+REPERTORYVCF+"/temp/uncertain_mutation_"+i+".vcf")== True:
-			report.write("Uncertain mutation: (cov < 300)")
+			report.write("Variants détectés mais avec faible couverture: (cov < 300)")
 			report.write("\n")
 			File = RESULTDIR+"/"+REPERTORYVCF+"/temp/uncertain_mutation_"+i+".vcf"
 			with open(File,'r') as file:
@@ -119,7 +122,7 @@ class MakeReport:
 					report.write(element)
 		report.write("\n")"""
 		if os.path.exists(RESULTDIR+"/"+REPERTORYVCF+"/temp/no_contributory_"+i+".vcf")== True:
-			report.write("No contributory mutations: (NOCALL or allele_freq < 1%  or < 25 reads)")
+			report.write("Variants détectés mais non retenus: (NOCALL or allele_freq < 1%  or < 25 reads)")
 			report.write("\n")
 			File = RESULTDIR+"/"+REPERTORYVCF+"/temp/no_contributory_"+i+".vcf"
 			with open(File,'r') as file:
@@ -129,6 +132,13 @@ class MakeReport:
 			report.write("\n")
 
 		#rajouter definitions
+		report.write("Définitions:\n")
+		report.write("SIFT : Prediction de l'impact d'une substitution sur la fonction de la protéine en se basant sur le degré de conservation des acides aminés\n")
+		report.write("Polyphen : Prédiction de l'impact d'une substitution sur la structure et la fonction des protéines en utilisant des informations de séquences et de structure\n")
+		report.write("HGVSc: the HGVS (Human Genome Variation Society) coding sequence name\n")
+		report.write("HGVSp: the HGVS protein sequence name\n")
+		report.write("Profondeur: La profondeur de lecture est le nombre de lectures («reads») indépendantes d'une base par le séquenceur\n")
+		report.write("Couverture: La couverture de séquence est le pourcentage de bases couvertes par rapport au nombre total de bases de la région d'intérêt (pour une profondeur de lecture donnée)\n")
 		report.close()
 
 
@@ -181,6 +191,7 @@ class MakeReport:
 		for a, column_width in enumerate(column_widths):
 			ws.column_dimensions[get_column_letter(a+1)].width = column_width
 		"""
+		NotDef=True
 		for row in range(len(content)):
 			contentrowsplit = content[row].split("\t")
 			# Met en gras les legendes
@@ -190,13 +201,22 @@ class MakeReport:
 				
 			#else:
 				#font = Font(name='Arial',size=8, bold=False)
-			
 			for col in range(len(contentrowsplit)):
 				if len(contentrowsplit) == 1:
-					font = Font(name='Arial',size=10, bold=True, underline='single')
-					cell = "A"+str(row+1)
-					ws[cell] = content[row]
-					ws[cell].font = font
+					if NotDef:
+						font = Font(name='Arial',size=10, bold=True, underline='single')
+						cell = "A"+str(row+1)
+						ws[cell] = content[row]
+						ws[cell].font = font
+						if str(content[row][:12])=="Définitions:":
+							NotDef=False
+
+					else:
+						font = Font(name='Arial',size=8, bold=False)
+						cell = "A"+str(row+1)
+						ws[cell] = content[row]
+						ws[cell].font = font
+
 				else:
 					if Gras:
 						font = Font(name='Arial',size=8, bold=True)
@@ -249,7 +269,6 @@ class MakeReport:
 		os.remove("Report_"+i+".xlsx")
 		os.remove("Report_"+i+".pdf")
 		os.chdir(mycwd)
-
 
 
 
