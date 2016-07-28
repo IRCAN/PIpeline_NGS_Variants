@@ -26,7 +26,7 @@ class RefseqToEnsembl:
 			vepFile = vepFile0.readlines()
 		tempList = []
 		vcfFileFinalList = []
-		vcfFileFinalList.append("gene\tgene Id\tRefSeq id\tTranscript\tHGVSc\tHGVSp\tcosmic ID\tDP\tAO\tallele_freq\tfunction\tmaf\tsift\tpolyphen\n")
+		vcfFileFinalList.append("gene\tgene Id\tRefSeq id\tTranscript\tHGVSc\tHGVSp\tcosmic ID\tDP\tAO\tallele_freq\tfunction\tmaf\tsift\tpolyphen\texon ou intron\n")
 		idNotFindList = []
 		mutationsFile = self.parse_mutations_file(file,REPERTORYVCF, RESULTDIR)
 		################################################################################
@@ -145,6 +145,26 @@ class RefseqToEnsembl:
 					PolyPhenTemp = PolyPhenTemp.split("=")
 					PolyPhen = PolyPhenTemp[1]
 			################################################################################
+			#Recuperation du EXON
+			################################################################################
+			regexExon = "EXON=[0-9]*\/[0-9]*;"
+			matchExon = re.search(regexExon, ligneInfoVcf)
+			if matchExon == None:
+				regexIntron = "INTRON=[0-9]*\/[0-9]*;"
+				matchIntron = re.search(regexIntron, ligneInfoVcf)
+				if matchIntron == None: 
+					Exon = "NA"
+				else: 
+					temp = matchIntron.group(0)
+					tempSplit = temp.split(";")
+					tempSplit = tempSplit[0]
+					Exon = tempSplit
+			else: 
+				temp = matchExon.group(0)
+				tempSplit = temp.split(";")
+				tempSplit = tempSplit[0]
+				Exon = tempSplit
+			################################################################################
 			#Creation de la string resume
 			################################################################################
 			if "-" in ligneSplit[1]:
@@ -157,9 +177,9 @@ class RefseqToEnsembl:
 			
 			if idEnsembleFind:
 				idEnsembl = self.gene2ensemblFinalDic[idRefseq]
-				string = chromPos[0]+":"+position + "\t"+ geneId +"\t" + idRefseq + "\t" + idEnsembl + "\t" + HGVSc + "\t" + HGVSp + "\tidCosmicNotFound\tDP_not_find\tAO_not_find\tfreq_not_find\t"+ function + "\t" + MAF + "\t" + SIFT + "\t" +PolyPhen + "\t"+ "NO-NOCALL" + "\n"
+				string = chromPos[0]+":"+position + "\t"+ geneId +"\t" + idRefseq + "\t" + idEnsembl + "\t" + HGVSc + "\t" + HGVSp + "\tidCosmicNotFound\tDP_not_find\tAO_not_find\tfreq_not_find\t"+ function + "\t" + MAF + "\t" + SIFT + "\t" +PolyPhen + "\t"+ Exon +"\t"+ "NO-NOCALL" + "\n"
 			else:
-				string = chromPos[0]+":"+position + "\t"+ geneId +"\t" + idRefseq + "\t" + "NA" + "\t" + HGVSc + "\t" + HGVSp + "\tidCosmicNotFound\tDP_not_find\tAO_not_find\tfreq_not_find\t"+ function + "\t" + MAF + "\t" + SIFT + "\t" +PolyPhen + "\t"+ "NO-NOCALL" + "\n"
+				string = chromPos[0]+":"+position + "\t"+ geneId +"\t" + idRefseq + "\t" + "NA" + "\t" + HGVSc + "\t" + HGVSp + "\tidCosmicNotFound\tDP_not_find\tAO_not_find\tfreq_not_find\t"+ function + "\t" + MAF + "\t" + SIFT + "\t" +PolyPhen + "\t"+ Exon +"\t"+ "NO-NOCALL" + "\n"
 			################################################################################
 			#Comparaison avec les lignes de MUTATIONS pour récupérer les couvertures
 			################################################################################

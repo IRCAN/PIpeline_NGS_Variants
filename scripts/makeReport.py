@@ -9,8 +9,6 @@ Info: Creation en cours, script peut etre modifie a tout moment.
 from openpyxl import *
 from openpyxl.styles import PatternFill, Border, Side, Alignment, Protection, Font
 from openpyxl.cell import get_column_letter
-
-from pdfrw import PdfWriter
 import os
 
 class MakeReport:
@@ -28,8 +26,8 @@ class MakeReport:
 		else: title =i
 		mycwd = os.getcwd()
 
-		report = open(RESULTDIR+"/"+REPERTORYVCF+"/temp/Report_"+i+".txt", "w")
-		
+		report = open(RESULTDIR+"/"+REPERTORYVCF+"/temp/Report_info_"+i+".txt", "w")
+		report.write("\n")
 		report.write("Rapport de "+title+"\n\n")
 		report.write("\n")
 		if os.path.exists(RESULTDIR+"/"+REPERTORYVCF+"/"+REPERTORYVCF+"_globalInformations.txt") == True:
@@ -52,6 +50,8 @@ class MakeReport:
 					elif element1[1] in i:
 						report.write(element)
 			report.write("\n")
+
+		report = open(RESULTDIR+"/"+REPERTORYVCF+"/temp/Report_"+i+".txt", "w")
 		notAlreadyDone=True
 		if os.path.exists(RESULTDIR+"/"+REPERTORYVCF+"/temp/HSm_"+i+".vcf") == True:
 			notAlreadyDone=False
@@ -79,7 +79,7 @@ class MakeReport:
 			report.write("\n")
 		if os.path.exists(RESULTDIR+"/"+REPERTORYVCF+"/temp/nonMutatedHS_"+i+".vcf")== True:
 			avecHotspot=True
-			report.write("Couverture Hotspots:")
+			report.write("Profondeur Hotspots:")
 			report.write("\n")
 			File = RESULTDIR+"/"+REPERTORYVCF+"/temp/nonMutatedHS_"+i+".vcf"
 			with open(File,'r') as file:
@@ -152,27 +152,118 @@ class MakeReport:
 		#####
 		# Largeur des colonnes
 		#####
-		
+		#Pour le sinformations:
 		ws.column_dimensions["A"].width = 10.0
-		ws.column_dimensions["B"].width =0# 10.0		
-		ws.column_dimensions["C"].width = 10.0
-		ws.column_dimensions["D"].width =0# 12.0		
-		ws.column_dimensions["E"].width =0# 12.0		
-		ws.column_dimensions["F"].width =0# 10.0
+		ws.column_dimensions["B"].width =12.0		
+		ws.column_dimensions["C"].width = 15.0
+		ws.column_dimensions["D"].width =12.0		
+		ws.column_dimensions["E"].width =12.0		
+		ws.column_dimensions["F"].width =10.0
 		ws.column_dimensions["G"].width = 10.0
 		ws.column_dimensions["H"].width = 10.0
-		ws.column_dimensions["I"].width = 0# 12.0
+		ws.column_dimensions["I"].width = 12.0
 		ws.column_dimensions["J"].width = 12.0
 		ws.column_dimensions["K"].width = 10.0
-		ws.column_dimensions["L"].width =0# 14.0
+		ws.column_dimensions["L"].width =6.0
 		ws.column_dimensions["M"].width = 6.0
 		ws.column_dimensions["N"].width = 6.0
-		
-		#Titre du fichier
+				#Titre du fichier
 		if i[-3:]=="vcf":
 			i=i[:-4]
 		titre=i
 		ws.title = titre
+
+		fichier = open(RESULTDIR+"/"+REPERTORYVCF+"/temp/Report_info_"+i+".txt","r")
+		content = fichier.readlines()
+		border_thin = Border(left=Side(style='thin',color='FF000000'),right=Side(style='thin',color='FF000000'),top=Side(style='thin',color='FF000000'),bottom=Side(style='thin',color='FF000000'))
+		alpahabet = ["A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W"]
+
+		for row in range(len(content)):
+			contentrowsplit = content[row].split("\t")
+			# Met en gras les legendes
+			Gras=False
+			if contentrowsplit[0] == "Gene" or contentrowsplit[0] == "Echantillon":
+				Gras=True
+				
+			#else:
+				#font = Font(name='Arial',size=8, bold=False)
+			for col in range(len(contentrowsplit)):
+				if len(contentrowsplit) == 1:
+					font = Font(name='Arial',size=10, bold=True, underline='single')
+					cell = "A"+str(row+1)
+					ws[cell] = content[row]
+					ws[cell].font = font
+
+				else:
+					if Gras:
+						font = Font(name='Arial',size=8, bold=True)
+					else:
+						font = Font(name='Arial',size=8, bold=False)
+					if ws.column_dimensions[alpahabet[col]].width != None:
+						if ws.column_dimensions[alpahabet[col]].width < len(contentrowsplit[col]):
+								if len(contentrowsplit[col])>15:
+
+									if Gras:
+										font = Font(name='Arial',size=8, bold=True)
+										contentrowsplit[col]=str(contentrowsplit[col][:7])+str(contentrowsplit[col][7:]).replace(" ","\n",1)
+										ws.row_dimensions[row+1].height = 20
+									else:
+										if len(contentrowsplit[col])<20:
+											font = Font(name='Arial',size=7, bold=False)
+										elif len(contentrowsplit[col])<25:
+											font = Font(name='Arial',size=6, bold=False)
+										else:
+											font = Font(name='Arial',size=5, bold=False)
+##########OK
+									#contentrowsplit[col]=str(contentrowsplit[col][:10])+str(contentrowsplit[col][10:]).replace(" ","\n",1)
+									#if a!=contentrowsplit[col]:
+									#	ws.row_dimensions[row].height = 50
+						
+						if col == len(contentrowsplit)-1:
+							cell = alpahabet[col]+str(row+1)
+							#print(cell)
+							ws[cell] = contentrowsplit[col]
+							ws[cell].font = font
+							ws[cell].alignment = Alignment(horizontal="center",vertical="center")
+						else:
+							cell = alpahabet[col]+str(row+1)
+							#print(ws.column_dimensions[alpahabet[col]].width)
+							"""if ws.column_dimensions[alpahabet[col]].width< len(contentrowsplit[col]):
+								ws.column_dimensions[alpahabet[col]].width= len(contentrowsplit[col])-(25/100*len(contentrowsplit[col]))"""
+							ws[cell] = contentrowsplit[col]
+							#print(contentrowsplit[col])
+							ws[cell].font = font
+							ws[cell].border = border_thin
+							ws[cell].alignment = Alignment(horizontal="center",vertical="center")
+
+
+		#Pour les variants:
+		ws1 = wb.create_sheet(title="OK")
+		ws1.page_setup.orientation = ws1.ORIENTATION_LANDSCAPE
+		ws1.page_setup.paperSize = ws1.PAPERSIZE_TABLOID
+		#####
+		# Largeur des colonnes
+		#####
+		#Pour le sinformations:
+		ws1.column_dimensions["A"].width = 10.0
+		ws1.column_dimensions["B"].width =0# 10.0		
+		ws1.column_dimensions["C"].width = 10.0
+		ws1.column_dimensions["D"].width =10		
+		ws1.column_dimensions["E"].width =0# 12.0		
+		ws1.column_dimensions["F"].width =0# 10.0
+		ws1.column_dimensions["G"].width = 0
+		ws1.column_dimensions["H"].width = 10.0
+		ws1.column_dimensions["I"].width = 10
+		ws1.column_dimensions["J"].width = 0
+		ws1.column_dimensions["K"].width = 12
+		ws1.column_dimensions["L"].width =10
+		ws1.column_dimensions["M"].width =0 
+		ws1.column_dimensions["N"].width =6.0
+		ws1.column_dimensions["O"].width = 6.0
+		ws1.column_dimensions["P"].width = 6.0
+
+		
+
 		fichier2 = open(RESULTDIR+"/"+REPERTORYVCF+"/temp/Report_"+i+".txt","r")
 		content = fichier2.readlines()
 		border_thin = Border(left=Side(style='thin',color='FF000000'),right=Side(style='thin',color='FF000000'),top=Side(style='thin',color='FF000000'),bottom=Side(style='thin',color='FF000000'))
@@ -206,30 +297,30 @@ class MakeReport:
 					if NotDef:
 						font = Font(name='Arial',size=10, bold=True, underline='single')
 						cell = "A"+str(row+1)
-						ws[cell] = content[row]
-						ws[cell].font = font
+						ws1[cell] = content[row]
+						ws1[cell].font = font
 						if str(content[row][:12])=="Définitions:":
 							NotDef=False
 
 					else:
 						font = Font(name='Arial',size=8, bold=False)
 						cell = "A"+str(row+1)
-						ws[cell] = content[row]
-						ws[cell].font = font
+						ws1[cell] = content[row]
+						ws1[cell].font = font
 
 				else:
 					if Gras:
 						font = Font(name='Arial',size=8, bold=True)
 					else:
 						font = Font(name='Arial',size=8, bold=False)
-					if ws.column_dimensions[alpahabet[col]].width != None:
-						if ws.column_dimensions[alpahabet[col]].width < len(contentrowsplit[col]):
+					if ws1.column_dimensions[alpahabet[col]].width != None:
+						if ws1.column_dimensions[alpahabet[col]].width < len(contentrowsplit[col]):
 								if len(contentrowsplit[col])>15:
 
 									if Gras:
 										font = Font(name='Arial',size=8, bold=True)
 										contentrowsplit[col]=str(contentrowsplit[col][:7])+str(contentrowsplit[col][7:]).replace(" ","\n",1)
-										ws.row_dimensions[row+1].height = 20
+										ws1.row_dimensions[row+1].height = 20
 									else:
 										if len(contentrowsplit[col])<20:
 											font = Font(name='Arial',size=7, bold=False)
@@ -245,19 +336,19 @@ class MakeReport:
 						if col == len(contentrowsplit)-1:
 							cell = alpahabet[col]+str(row+1)
 							#print(cell)
-							ws[cell] = contentrowsplit[col]
-							ws[cell].font = font
-							ws[cell].alignment = Alignment(horizontal="center")
+							ws1[cell] = contentrowsplit[col]
+							ws1[cell].font = font
+							ws1[cell].alignment = Alignment(horizontal="center",vertical="center")
 						else:
 							cell = alpahabet[col]+str(row+1)
 							#print(ws.column_dimensions[alpahabet[col]].width)
 							"""if ws.column_dimensions[alpahabet[col]].width< len(contentrowsplit[col]):
 								ws.column_dimensions[alpahabet[col]].width= len(contentrowsplit[col])-(25/100*len(contentrowsplit[col]))"""
-							ws[cell] = contentrowsplit[col]
+							ws1[cell] = contentrowsplit[col]
 							#print(contentrowsplit[col])
-							ws[cell].font = font
-							ws[cell].border = border_thin
-							ws[cell].alignment = Alignment(horizontal="center")
+							ws1[cell].font = font
+							ws1[cell].border = border_thin
+							ws1[cell].alignment = Alignment(horizontal="center",vertical="center")
 		
 		wb.save(RESULTDIR+"/"+REPERTORYVCF+"/Report_"+i+".xlsx")
 		a = "libreoffice --headless --invisible --convert-to pdf --outdir "+RESULTDIR+"/"+REPERTORYVCF+" "+RESULTDIR+"/"+REPERTORYVCF+"/Report_"+i+".xlsx"

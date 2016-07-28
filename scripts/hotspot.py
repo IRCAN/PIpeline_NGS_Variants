@@ -55,14 +55,17 @@ class HotspotProcess:
 		"""Calcul de la profondeur mean et minimale pour chaque HS."""
 		for key,value in dicoHS.items():
 			if not value : 
-				dicoHS[key] = "N/A\tN/A\tN/A"
+				dicoHS[key] = "N/A\tN/A\tN/A\tN/A"
 			else:
 				#calcul de la profondeur mean pour le hotspot et arrondi de la value
 				mean = round(sum(value) / len(value),2)
 				#calcul de la profondeur minimale pour le hotspot
 				minDepthHSnm = min(value)
 				maxDepthHSnm = max(value)
-				value = str(mean) + "\t" + str(minDepthHSnm)+ "\t" + str(maxDepthHSnm)
+				if mean < 300:
+					value = str(mean) + "\t" + str(minDepthHSnm)+ "\t" + str(maxDepthHSnm) + "\t Faible"
+				else:
+					value = str(mean) + "\t" + str(minDepthHSnm)+ "\t" + str(maxDepthHSnm) + "\t Bonne"
 				dicoHS[key] = value
 		return dicoHS
 
@@ -84,7 +87,7 @@ class HotspotProcess:
 		HSnmGlobalList = "\n".join(HSnmGlobalList)
 		f_out = RESULTDIR+"/"+REPERTORYVCF+"/temp/nonMutatedHS_"+nomFichier
 		File = open(f_out,'w')	# creation et ouverture du File
-		File.write("Gene\texon\tMean Depth\tMinimal Depth\tMaximal Depth\t\n")	#Ecriture de la legende.
+		File.write("Gene\texon\tProfondeur moyenne\tProfondeur Minimale\tProfondeur Maximale\tQualité\t\n")	#Ecriture de la legende.
 		for i in HSnmGlobalList:	#ecriture des donnees
 			File.write(i)
 		File.close()
