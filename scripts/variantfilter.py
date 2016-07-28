@@ -33,9 +33,9 @@ class VariantFilter:
 		"""Compare les mutations de l'echantillon au fichier des hotspots d'interet."""
 		hotspots = self.parse_hs_file()
 		outputFile = open(RESULTDIR+"/"+self.REPERTORYVCF+"/temp/HSm_"+file, 'w')
-		outputFile.write("Gene\tposition\tExon-Intron\tRefSeq id\tHGVSc\tHGVSp\tcosmic ID\ttotal_cov\tvariant_cov\tallele_freq\tfunction\tsift\tpolyphen\t\n")
+		outputFile.write("Gene\tposition\tExon-Intron\tRefSeq id\tHGVSc\tHGVSp\tcosmic ID\ttotal_cov\tvariant_cov\tallele_freq\tfunction\tsift\tpolyphen\tmaf\t\n")
 		o_f_uncertain = open(RESULTDIR+"/"+self.REPERTORYVCF+"/temp/HSm_questionable_"+file, 'w')
-		o_f_uncertain.write("Gene\tposition\tExon-Intron\tRefSeq id\tHGVSc\tHGVSp\tcosmic ID\ttotal_cov\tvariant_cov\tallele_freq\tfunction\tsift\tpolyphen\t\n")
+		o_f_uncertain.write("Gene\tposition\tExon-Intron\tRefSeq id\tHGVSc\tHGVSp\tcosmic ID\ttotal_cov\tvariant_cov\tallele_freq\tfunction\tsift\tpolyphen\tmaf\t\n")
 		suppList = []
 		# If 0 = file is empty, if 1 file is not empty
 		fileEmpty1 =True
