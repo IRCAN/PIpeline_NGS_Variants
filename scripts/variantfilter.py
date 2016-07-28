@@ -143,7 +143,7 @@ class VariantFilter:
 			sampleLigneReplace = sampleLigneReplace.replace("idCosmicNotFound"," ")
 			sampleLigneReplace = sampleLigneReplace.replace("NA"," ")
 			sampleLigneSplit = sampleLigneReplace.split("\t")
-			if sampleLigneSplit[7] != "DP_not_find" and int(sampleLigneSplit[7]) < 300:
+			if sampleLigneSplit[7] != "DP_not_find" and int(sampleLigneSplit[8]) < 25:
 				fileEmpty = False
 				string = sampleLigneSplit[1]+"\t"+sampleLigneSplit[0]+"\t"+sampleLigneSplit[14]+"\t"+sampleLigneSplit[2]+"\t"+sampleLigneSplit[4]+"\t"+sampleLigneSplit[5]+"\t"+sampleLigneSplit[6]+"\t"+sampleLigneSplit[7]+"\t"+sampleLigneSplit[8]+"\t"+sampleLigneSplit[9]+"\t"+sampleLigneSplit[10]+"\t"+sampleLigneSplit[12]+"\t"+sampleLigneSplit[13]+"\t"+sampleLigneSplit[11]+"\t\n"
 				outputFile.write(string)
@@ -152,8 +152,6 @@ class VariantFilter:
 			os.remove(RESULTDIR+"/"+self.REPERTORYVCF+"/temp/uncertain_mutation_"+file)
 		for supp in suppList:
 			sample.remove(supp)
-
-
 
 	def mutations(self,sample,file,RESULTDIR):
 		"""Cree un fichier contenant toutes les mutations qui ne sont pas filtrees."""

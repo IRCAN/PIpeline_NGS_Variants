@@ -87,7 +87,7 @@ class HotspotProcess:
 		HSnmGlobalList = "\n".join(HSnmGlobalList)
 		f_out = RESULTDIR+"/"+REPERTORYVCF+"/temp/nonMutatedHS_"+nomFichier
 		File = open(f_out,'w')	# creation et ouverture du File
-		File.write("Gene\texon\tProfondeur moyenne\tProfondeur Minimale\tProfondeur Maximale\tQualité\t\n")	#Ecriture de la legende.
+		File.write("Gene\texon\tProfondeur moyenne\tProfondeur Minimale\tProfondeur Maximale\tQualité (couv<300)\t\n")	#Ecriture de la legende.
 		for i in HSnmGlobalList:	#ecriture des donnees
 			File.write(i)
 		File.close()

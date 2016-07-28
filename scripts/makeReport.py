@@ -10,14 +10,15 @@ from openpyxl import *
 from openpyxl.styles import PatternFill, Border, Side, Alignment, Protection, Font
 from openpyxl.cell import get_column_letter
 import os
+import codecs
 
 class MakeReport:
-	def __init__(self,REPERTORYVCF,i,RESULTDIR):
-		self.report_body(REPERTORYVCF,i,RESULTDIR)
+	def __init__(self,REPERTORYVCF,i,RESULTDIR,pathREPERTORYVCF):
+		self.report_body(REPERTORYVCF,i,RESULTDIR,pathREPERTORYVCF)
 
 
 
-	def report_body(self,REPERTORYVCF,i,RESULTDIR):
+	def report_body(self,REPERTORYVCF,i,RESULTDIR,pathREPERTORYVCF):
 		avecHotspot=False
 		if i[-3:]=="vcf":
 			i=i[:-4]
@@ -30,6 +31,10 @@ class MakeReport:
 		report.write("\n")
 		report.write("Rapport de "+title+"\n\n")
 		report.write("\n")
+		infos = MakeReport.informations(self,REPERTORYVCF,i,RESULTDIR,pathREPERTORYVCF)
+		if infos != None:
+			report.write(infos)
+			report.write("\n")
 		if os.path.exists(RESULTDIR+"/"+REPERTORYVCF+"/"+REPERTORYVCF+"_globalInformations.txt") == True:
 			report.write("Informations:")
 			report.write("\n")
@@ -69,7 +74,7 @@ class MakeReport:
 			if notAlreadyDone:
 				report.write("Dans les Hotspots")
 				report.write("\n")
-			report.write("Variants détectés mais non retenus: (NOCALL or allele_freq < 1%  or < 25 reads)")
+			report.write("Variants détectés mais non retenus: (NOCALL ou allele_freq < 1%  ou < 25 reads)")
 			report.write("\n")
 			File = RESULTDIR+"/"+REPERTORYVCF+"/temp/HSm_questionable_"+i+".vcf"
 			with open(File,'r') as file:
@@ -122,7 +127,7 @@ class MakeReport:
 					report.write(element)
 		report.write("\n")"""
 		if os.path.exists(RESULTDIR+"/"+REPERTORYVCF+"/temp/no_contributory_"+i+".vcf")== True:
-			report.write("Variants détectés mais non retenus: (NOCALL or allele_freq < 1%  or < 25 reads)")
+			report.write("Variants détectés mais non retenus: (NOCALL ou allele_freq < 1%  ou < 25 reads)")
 			report.write("\n")
 			File = RESULTDIR+"/"+REPERTORYVCF+"/temp/no_contributory_"+i+".vcf"
 			with open(File,'r') as file:
@@ -141,7 +146,21 @@ class MakeReport:
 		report.write("Couverture: La couverture de séquence est le pourcentage de bases couvertes par rapport au nombre total de bases de la région d'intérêt (pour une profondeur de lecture donnée)\n")
 		report.close()
 
-
+	def informations(self,REPERTORYVCF,i,RESULTDIR,pathREPERTORYVCF):
+		if os.path.exists(pathREPERTORYVCF+"/templateNGS.txt") == True:
+			info=""
+			number = i[10:]
+			if "0" in number:
+				number = number.replace("0","")
+			File = pathREPERTORYVCF+"/templateNGS.txt"
+			#with open(File,'r') as file:
+			with codecs.open(File, "r",encoding='utf-8', errors='ignore') as file:
+				file = file.readlines()
+				for element in file:
+					fileSplit = element.split(",")
+					if fileSplit[0] == number :
+						info = "Identifiant = "+fileSplit[1]+"\nNom = "+fileSplit[2]+"\nIndication = "+fileSplit[3]+"\nPanel = "+fileSplit[4]+"\n" 
+			return info
 
 
 	def pyxl(self,i, REPERTORYVCF,RESULTDIR):
@@ -189,10 +208,16 @@ class MakeReport:
 				#font = Font(name='Arial',size=8, bold=False)
 			for col in range(len(contentrowsplit)):
 				if len(contentrowsplit) == 1:
-					font = Font(name='Arial',size=10, bold=True, underline='single')
-					cell = "A"+str(row+1)
-					ws[cell] = content[row]
-					ws[cell].font = font
+					if "=" in contentrowsplit[0]:
+						font = Font(name='Arial',size=10, bold=False)
+						cell = "A"+str(row+1)
+						ws[cell] = content[row]
+						ws[cell].font = font
+					else:
+						font = Font(name='Arial',size=10, bold=True, underline='single')
+						cell = "A"+str(row+1)
+						ws[cell] = content[row]
+						ws[cell].font = font
 
 				else:
 					if Gras:
@@ -249,8 +274,8 @@ class MakeReport:
 		ws1.column_dimensions["B"].width =0# 10.0		
 		ws1.column_dimensions["C"].width = 10.0
 		ws1.column_dimensions["D"].width =10		
-		ws1.column_dimensions["E"].width =0# 12.0		
-		ws1.column_dimensions["F"].width =0# 10.0
+		ws1.column_dimensions["E"].width =15# 12.0		
+		ws1.column_dimensions["F"].width =15# 10.0
 		ws1.column_dimensions["G"].width = 0
 		ws1.column_dimensions["H"].width = 10.0
 		ws1.column_dimensions["I"].width = 10
