@@ -280,7 +280,7 @@ class MakeReport:
 		ws1.column_dimensions["D"].width =10		
 		ws1.column_dimensions["E"].width =15# 12.0		
 		ws1.column_dimensions["F"].width =13# 10.0
-		ws1.column_dimensions["G"].width = 0
+		ws1.column_dimensions["G"].width = 10
 		ws1.column_dimensions["H"].width = 8.0
 		ws1.column_dimensions["I"].width = 10
 		ws1.column_dimensions["J"].width = 0
