@@ -128,7 +128,7 @@ class MainVaran(RefseqToEnsembl):
 			inputfile = RESULTDIR+"/"+REPERTORYVCF+"/VariantCaller/MUTATIONS_"+file
 			outputFile2 = RESULTDIR+"/"+REPERTORYVCF+"/VEP/VEP_"+file
 			commandVEP = "perl ../System/Ensembl/ensembl-tools-release-84/scripts/variant_effect_predictor/variant_effect_predictor.pl -cache --force --no_stats --numbers --refseq --gmaf --hgvs --sift b --polyphen b --port 3337 --input_file "+inputfile+ " --output_file "+outputFile2
-			#os.system(commandVEP)
+			os.system(commandVEP)
 			################################################################################
 			#Filtrage des variants
 			################################################################################
