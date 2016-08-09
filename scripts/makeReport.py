@@ -249,7 +249,7 @@ class MakeReport:
 												contentrowsplit1[col]=contentrowsplit1[col][:a]+"\n"+contentrowsplit1[col][a:]
 												height+=20
 										listeHeight.append(height)
-										ws1.row_dimensions[row+1].height = max(listeHeight)
+										ws.row_dimensions[row+1].height = max(listeHeight)
 										contentrowsplit[col]=contentrowsplit1[col]
 						
 						if col == len(contentrowsplit)-1:
