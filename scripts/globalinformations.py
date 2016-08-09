@@ -145,7 +145,7 @@ class GlobalInformations():
 		elif 'CCrenal' in fileContent[0]:
 			kit = 'CCrenal'
 		else:
-			kit = "non définie"
+			kit = "non défini"
 		return kit
 
 	def get_run_date(self,PATH):
