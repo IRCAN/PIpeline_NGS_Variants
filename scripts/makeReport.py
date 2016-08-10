@@ -267,7 +267,7 @@ class MakeReport:
 
 
 		#Pour les variants:
-		ws1 = wb.create_sheet(title="OK")
+		ws1 = wb.create_sheet(title="Variants")
 		ws1.page_setup.orientation = ws1.ORIENTATION_LANDSCAPE
 		ws1.page_setup.paperSize = ws1.PAPERSIZE_TABLOID
 		#####

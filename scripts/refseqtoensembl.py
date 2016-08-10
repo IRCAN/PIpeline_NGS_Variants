@@ -233,7 +233,10 @@ class RefseqToEnsembl:
 						if mutationSplit[6] == "NOCALL":
 							string = string.replace("NO-NOCALL","NO CALL")
 
-						
+			if "del" in HGVSc:
+				newPosition = int(position)
+				newPosition = newPosition-1
+				string = string.replace(position,str(newPosition))			
 			################################################################################
 			#Recuperation identifiant COSMIC
 			################################################################################

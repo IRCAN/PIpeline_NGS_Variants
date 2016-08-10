@@ -21,7 +21,7 @@ class Updates:
 		print("Verification version genome...")
 		update = False
 		old = os.path.getsize('../System/Ensembl/')
-		os.system('rsync -u rsync://ftp.ensembl.org/ensembl/pub/current_variation/VEP/homo_sapiens_vep_84_GRCh37.tar.gz ../System/Ensembl/')
+		os.system('rsync -u rsync://ftp.ensembl.org/ensembl/pub/current_variation/VEP/homo_sapiens_vep_85_GRCh37.tar.gz ../System/Ensembl/')
 		new = os.path.getsize('../System/Ensembl/')
 		if old != new:
 			update=True
