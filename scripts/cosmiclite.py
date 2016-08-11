@@ -3,7 +3,7 @@
 
 """Script qui reduit la taille de la database cosmic en supprimant tout les doublons par rapport aux identifiants cosmic.
 Ludovic KOSTHOWA (Debut : 06/04/16)
-Info: Creation en cours, script peut etre modifie a tout moment.
+Suite par Florent TESSIER (15/08/16).
 """
 class CosmicLite:
 	def __init__(self):

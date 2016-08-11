@@ -3,7 +3,7 @@
 
 """Script creant un fichier resume et qualite pour chaque echantillon du run.
 Ludovic KOSTHOWA (Debut : 06/04/16)
-Info: Creation en cours, script peut etre modifie a tout moment.
+Suite par Florent TESSIER (15/08/16).
 """
 
 import os,re
@@ -24,11 +24,7 @@ class GlobalInformations():
 			self.mappedReadsList = []
 		#liste qui contiendra chaque sampleList
 			self.finalList = [['Echantillon','Barcode','Kit','Date','Chip','Reads mappés','ID','% reads mappés','Reads On SampleID','Profondeur moyenne','Base avec 1x Couverture','20x','100x','500x',' ']]
-		#############################
-		#############################
-		# Attention chemins
-		#############################
-		#############################
+
 			fileSummary = glob.glob(PATH+REPERTORYVCF+"/plugin_out/coverageAnalysis_out.*/*.bc_summary.xls")
 			if not fileSummary:
 				fileSummary = glob.glob(PATH+REPERTORYVCF+"/*.bc_summary.xls")
@@ -40,12 +36,6 @@ class GlobalInformations():
 			self.get_list_reads_on_target(self.fileContent)
 			self.get_sample(self.fileContent)
 			self.get_mapped_reads(self.fileContent)
-
-		#############################
-		#############################
-		# Attention chemins
-		#############################
-		#############################
 
 			################################################################################
 			# Ouverture et Analyse du fichier explog_final.txt
@@ -79,7 +69,6 @@ class GlobalInformations():
 				fileContent = self.read_file(fichier)
 		
 				sampleList[6] = self.get_id(fileContent)
-				#print(sampleList[6])
 				if sampleList[6]!="N/A":
 					sampleList[8] = self.get_reads_on_sample_ID(fileContent)
 				else:
@@ -151,11 +140,6 @@ class GlobalInformations():
 	def get_run_date(self,PATH):
 		"""Recupere la date d'execution du run."""
 		listdir = []
-		#############################
-		#############################
-		# Attention chemins
-		#############################
-		#############################
 		listdir = os.listdir(PATH)
 		for i in listdir:
 			m = re.search('\d.-\d.-\d.', i)
@@ -203,7 +187,6 @@ class GlobalInformations():
 		readsOnSampleID = fileContent[4]
 		readsOnSampleID = readsOnSampleID.replace('Percent reads in sample ID regions:   ','')
 		readsOnSampleID = readsOnSampleID.replace('\n','')
-		#self.finalList
 		return readsOnSampleID
 
 	def get_mean_read_depth(self,fileContent):

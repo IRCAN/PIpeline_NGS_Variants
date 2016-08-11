@@ -3,7 +3,7 @@
 """Script principal du pipeline qui traite le fichier .vcf de chaque patients d'un run
 afin d'obtenir un compte rendu de mutations.
 Ludovic KOSTHOWA (Debut : 06/04/16)
-Info: Creation en cours, script peut etre modifie a tout moment."""
+Suite par Florent TESSIER (15/08/16)."""
 
 import re,glob,os,shutil
 from separationvariants import SeparationVariants
@@ -52,11 +52,9 @@ class MainVaran(RefseqToEnsembl):
 			a=element.split('/')
 			barecode.append(a[-1])
 		for i in barecode:
-			print(i)
 			if path1:
 				file = i+'.vcf'
 				#print(pathREPERTORYVCF+"/plugin_out/variantCaller_out*/"+i+"/TSVC_variants_"+file)
-				print(file)
 				#Si vcf dezipe
 				TSVC_variants = glob.glob(pathREPERTORYVCF+"/plugin_out/variantCaller_out*/"+i+"/TSVC_variants_"+file)
 				print(TSVC_variants)
@@ -79,12 +77,6 @@ class MainVaran(RefseqToEnsembl):
 				file = i
 				TSVC_variants = glob.glob(pathREPERTORYVCF+"/"+file)
 				print('Traitement du file: \n',TSVC_variants[0],'\n')
-			#print("oui")
-			#os.getcwd()
-			#command="myPath=$(readlink -f $(dirname $0))"
-			#os.system(command)
-			#os.system("echo $myPath")
-			#print("non")
 			with open(TSVC_variants[0],'r') as contentFile:
 				TSVC_variants=contentFile.readlines()
 			#Cree une liste avec chaque elements correspondant a une ligne du file
@@ -110,7 +102,19 @@ class MainVaran(RefseqToEnsembl):
 			################################################################################
 			#Etape de recherche de Hotspots non mutes
 			if hotspot != "":
-				resumeHotspot= HotspotProcess(REPERTORYVCF,RESULTDIR,hotspot,listOfTranscripts,file)
+				#On utilise le fichier hotspots correspondant a celui utilise pour le patient dans le fichier template_NGS.csv
+				hotspotAUtiliser = ""
+				for ligne in hotspot:
+					numeroEchantillon = i.replace("IonXpress_","")
+					numeroEchantillon = float(numeroEchantillon)
+					numeroEchantillon = "%.f" % numeroEchantillon
+					if ligne[0] == numeroEchantillon:
+						listeHotspotsAUtiliser = glob.glob("../Personal_Data/listeHS/Hotspots/"+ligne[5]+"*")
+						contentFile = open(listeHotspotsAUtiliser[0])
+						hotspotAUtiliser=contentFile.readlines()
+						resumeHotspot= HotspotProcess(REPERTORYVCF,RESULTDIR,hotspotAUtiliser,listOfTranscripts,file)
+
+				
 			################################################################################
 			#Etape de creation du file ne contenant que les mutations
 			################################################################################
@@ -135,7 +139,8 @@ class MainVaran(RefseqToEnsembl):
 			self.make_file_for_filter(file,REPERTORYVCF,RESULTDIR)
 			if hotspot != "":
 				filtre = VariantFilter(REPERTORYVCF,file,RESULTDIR)
-				filtre.compare_hs(filtre.sample,file,RESULTDIR)
+				#hotspotAUtiliser car differents hs dans template_NGS.csv
+				filtre.compare_hs(filtre.sample,file,RESULTDIR,hotspotAUtiliser)
 				filtre.no_contributory(filtre.sample,file,RESULTDIR)
 				filtre.uncertain_mutation(filtre.sample,file,RESULTDIR)
 				filtre.mutations(filtre.sample,file,RESULTDIR)
@@ -148,7 +153,6 @@ class MainVaran(RefseqToEnsembl):
 			#Ecriture rapport
 			######
 			report=MakeReport(REPERTORYVCF,i,RESULTDIR,pathREPERTORYVCF)
-			print(i)
 			report.pyxl(i,REPERTORYVCF,RESULTDIR)
 		if hotspot != "":
 			os.remove("liste_hotspot_temp.txt")

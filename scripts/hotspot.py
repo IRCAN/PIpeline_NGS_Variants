@@ -2,7 +2,9 @@
 # coding: utf-8 
 
 """
-A COMMENTER EN MODE "comentaire de fichier"..
+Ludovic KOSTHOWA (Debut : 06/04/16)
+Suite par Florent TESSIER (15/08/16)
+COMMENTER EN MODE "comentaire de fichier"..
 TODO : Si une liste de hotspot est fournie par l'utilisateur, HotspotProcess va regarder les si les differentes mutations sont presentes dans ces Hotposts.
 Cela permettra de ressortir une liste des hotspots non mutes, avec la profondeur pour chacun de ces HSnm.
 preciser HSnm et HSm"""
@@ -27,7 +29,8 @@ class HotspotProcess:
 		value = liste vide. """
 		dicoHS = {}
 		for hs in hotspots:
-			key = hs[3]+'-'+hs[4]
+			hsSplit = hs.split("\t")
+			key = hsSplit[3]+'-'+hsSplit[4]
 			dicoHS[key] = []
 		#Supprime la legende du tableau liste_hotspots
 		del dicoHS["gene-exon"]
@@ -40,7 +43,8 @@ class HotspotProcess:
 		value = profondeurDuVariant"""
 		for l in lignes:
 			ligne = l.split("\t")
-			for hs in hotspots:
+			for hs1 in hotspots:
+				hs = hs1.split("\t")
 				if ligne[0] == hs[0] and int(hs[1]) <= int(ligne[1]) <= int(hs[2]):
 					geneExon = hs[3]+'-'+hs[4]
 					#recherche de la profondeur du variant par expression reguliere
@@ -48,7 +52,7 @@ class HotspotProcess:
 					result = match.group(0)
 					result = int(result[4:])
 					#ajout pour chaque variants du HS la profondeur.
-					dicoHS[geneExon].append(result)				
+					dicoHS[geneExon].append(result)
 		return dicoHS
 
 	def get_depth(self,dicoHS):

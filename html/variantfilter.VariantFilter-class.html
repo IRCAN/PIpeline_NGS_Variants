@@ -27,7 +27,12 @@
       <th>&nbsp;&nbsp;&nbsp;<a
         href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
 
-      <th class="navbar" width="100%"></th>
+  <!-- Project homepage -->
+      <th class="navbar" align="right" width="100%">
+        <table border="0" cellpadding="0" cellspacing="0">
+          <tr><th class="navbar" align="center"
+            ><a class="navbar" target="_top" href="https://github.com/IRCAN/Pipeline_NGS_Variants">VarAn : custom reports creator in predictive medicine</a></th>
+          </tr></table></th>
   </tr>
 </table>
 <table width="100%" cellpadding="0" cellspacing="0">
@@ -78,7 +83,8 @@
         <tr>
           <td><span class="summary-sig"><a name="__init__"></a><span class="summary-sig-name">__init__</span>(<span class="summary-sig-arg">self</span>,
         <span class="summary-sig-arg">REPERTORYVCF</span>,
-        <span class="summary-sig-arg">file</span>)</span></td>
+        <span class="summary-sig-arg">file</span>,
+        <span class="summary-sig-arg">RESULTDIR</span>)</span></td>
           <td align="right" valign="top">
             <span class="codelink"><a href="variantfilter-pysrc.html#VariantFilter.__init__">source&nbsp;code</a></span>
             
@@ -94,25 +100,11 @@
     </td><td class="summary">
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
-          <td><span class="summary-sig"><a name="parse_hs_file"></a><span class="summary-sig-name">parse_hs_file</span>(<span class="summary-sig-arg">self</span>)</span></td>
-          <td align="right" valign="top">
-            <span class="codelink"><a href="variantfilter-pysrc.html#VariantFilter.parse_hs_file">source&nbsp;code</a></span>
-            
-          </td>
-        </tr>
-      </table>
-      
-    </td>
-  </tr>
-<tr>
-    <td width="15%" align="right" valign="top" class="summary">
-      <span class="summary-type">&nbsp;</span>
-    </td><td class="summary">
-      <table width="100%" cellpadding="0" cellspacing="0" border="0">
-        <tr>
           <td><span class="summary-sig"><a name="compare_hs"></a><span class="summary-sig-name">compare_hs</span>(<span class="summary-sig-arg">self</span>,
         <span class="summary-sig-arg">sample</span>,
-        <span class="summary-sig-arg">file</span>)</span><br />
+        <span class="summary-sig-arg">file</span>,
+        <span class="summary-sig-arg">RESULTDIR</span>,
+        <span class="summary-sig-arg">hotspots</span>)</span><br />
       Compare les mutations de l'echantillon au fichier des hotspots 
       d'interet.</td>
           <td align="right" valign="top">
@@ -130,13 +122,14 @@
     </td><td class="summary">
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
-          <td><span class="summary-sig"><a name="uncertain_mutation"></a><span class="summary-sig-name">uncertain_mutation</span>(<span class="summary-sig-arg">self</span>,
+          <td><span class="summary-sig"><a name="no_contributory"></a><span class="summary-sig-name">no_contributory</span>(<span class="summary-sig-arg">self</span>,
         <span class="summary-sig-arg">sample</span>,
-        <span class="summary-sig-arg">file</span>)</span><br />
+        <span class="summary-sig-arg">file</span>,
+        <span class="summary-sig-arg">RESULTDIR</span>)</span><br />
       Recherche parmis les mutations si elle est douteuse, cad si frequence
-      allelique &lt; 1 et couverture &lt; 25.</td>
+      allelique &lt; 1 et couverture &lt; 25 ou NOCALL.</td>
           <td align="right" valign="top">
-            <span class="codelink"><a href="variantfilter-pysrc.html#VariantFilter.uncertain_mutation">source&nbsp;code</a></span>
+            <span class="codelink"><a href="variantfilter-pysrc.html#VariantFilter.no_contributory">source&nbsp;code</a></span>
             
           </td>
         </tr>
@@ -152,7 +145,8 @@
         <tr>
           <td><span class="summary-sig"><a name="find_polymorphism"></a><span class="summary-sig-name">find_polymorphism</span>(<span class="summary-sig-arg">self</span>,
         <span class="summary-sig-arg">sample</span>,
-        <span class="summary-sig-arg">file</span>)</span><br />
+        <span class="summary-sig-arg">file</span>,
+        <span class="summary-sig-arg">RESULTDIR</span>)</span><br />
       Recherche parmis les mutations si c'est un polymorphisme, cad si la 
       minor allele frequency &gt; 0.01.</td>
           <td align="right" valign="top">
@@ -170,13 +164,13 @@
     </td><td class="summary">
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
-          <td><span class="summary-sig"><a name="uncaracterized_mutations"></a><span class="summary-sig-name">uncaracterized_mutations</span>(<span class="summary-sig-arg">self</span>,
+          <td><span class="summary-sig"><a name="uncertain_mutation"></a><span class="summary-sig-name">uncertain_mutation</span>(<span class="summary-sig-arg">self</span>,
         <span class="summary-sig-arg">sample</span>,
-        <span class="summary-sig-arg">file</span>)</span><br />
-      Cree un fichier contenant toutes les mutations qui ne sont pas 
-      categorisees.</td>
+        <span class="summary-sig-arg">file</span>,
+        <span class="summary-sig-arg">RESULTDIR</span>)</span><br />
+      Mutations avec 25&lt; couv &lt; 300.</td>
           <td align="right" valign="top">
-            <span class="codelink"><a href="variantfilter-pysrc.html#VariantFilter.uncaracterized_mutations">source&nbsp;code</a></span>
+            <span class="codelink"><a href="variantfilter-pysrc.html#VariantFilter.uncertain_mutation">source&nbsp;code</a></span>
             
           </td>
         </tr>
@@ -190,13 +184,14 @@
     </td><td class="summary">
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
-          <td><span class="summary-sig"><a name="no_contributory"></a><span class="summary-sig-name">no_contributory</span>(<span class="summary-sig-arg">self</span>,
+          <td><span class="summary-sig"><a name="mutations"></a><span class="summary-sig-name">mutations</span>(<span class="summary-sig-arg">self</span>,
         <span class="summary-sig-arg">sample</span>,
-        <span class="summary-sig-arg">file</span>)</span><br />
+        <span class="summary-sig-arg">file</span>,
+        <span class="summary-sig-arg">RESULTDIR</span>)</span><br />
       Cree un fichier contenant toutes les mutations qui ne sont pas 
-      categorisees.</td>
+      filtrees.</td>
           <td align="right" valign="top">
-            <span class="codelink"><a href="variantfilter-pysrc.html#VariantFilter.no_contributory">source&nbsp;code</a></span>
+            <span class="codelink"><a href="variantfilter-pysrc.html#VariantFilter.mutations">source&nbsp;code</a></span>
             
           </td>
         </tr>
@@ -222,13 +217,18 @@
       <th>&nbsp;&nbsp;&nbsp;<a
         href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
 
-      <th class="navbar" width="100%"></th>
+  <!-- Project homepage -->
+      <th class="navbar" align="right" width="100%">
+        <table border="0" cellpadding="0" cellspacing="0">
+          <tr><th class="navbar" align="center"
+            ><a class="navbar" target="_top" href="https://github.com/IRCAN/Pipeline_NGS_Variants">VarAn : custom reports creator in predictive medicine</a></th>
+          </tr></table></th>
   </tr>
 </table>
 <table border="0" cellpadding="0" cellspacing="0" width="100%%">
   <tr>
     <td align="left" class="footer">
-    Generated by Epydoc 3.0.1 on Mon Jun 13 13:22:59 2016
+    Generated by Epydoc 3.0.1 on Thu Aug 11 14:53:18 2016
     </td>
     <td align="right" class="footer">
       <a target="mainFrame" href="http://epydoc.sourceforge.net"

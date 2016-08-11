@@ -27,7 +27,12 @@
       <th>&nbsp;&nbsp;&nbsp;<a
         href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
 
-      <th class="navbar" width="100%"></th>
+  <!-- Project homepage -->
+      <th class="navbar" align="right" width="100%">
+        <table border="0" cellpadding="0" cellspacing="0">
+          <tr><th class="navbar" align="center"
+            ><a class="navbar" target="_top" href="https://github.com/IRCAN/Pipeline_NGS_Variants">VarAn : custom reports creator in predictive medicine</a></th>
+          </tr></table></th>
   </tr>
 </table>
 <table width="100%" cellpadding="0" cellspacing="0">
@@ -86,7 +91,9 @@
           <td><span class="summary-sig"><a href="main_varan.MainVaran-class.html#__init__" class="summary-sig-name">__init__</a>(<span class="summary-sig-arg">self</span>,
         <span class="summary-sig-arg">pathREPERTORYVCF</span>,
         <span class="summary-sig-arg">REPERTORYVCF</span>,
-        <span class="summary-sig-arg">ALL_HS_FILE</span>=<span class="summary-sig-default"><code class="variable-quote">'</code><code class="variable-string"></code><code class="variable-quote">'</code></span>)</span></td>
+        <span class="summary-sig-arg">RESULTDIR</span>,
+        <span class="summary-sig-arg">ALL_HS_FILE</span>=<span class="summary-sig-default"><code class="variable-quote">'</code><code class="variable-string"></code><code class="variable-quote">'</code></span>)</span><br />
+      initiation des dictionnaires, parsing des bdd</td>
           <td align="right" valign="top">
             <span class="codelink"><a href="main_varan-pysrc.html#MainVaran.__init__">source&nbsp;code</a></span>
             
@@ -123,6 +130,7 @@
           <td><span class="summary-sig"><a name="run_VEP"></a><span class="summary-sig-name">run_VEP</span>(<span class="summary-sig-arg">self</span>,
         <span class="summary-sig-arg">pathREPERTORYVCF</span>,
         <span class="summary-sig-arg">REPERTORYVCF</span>,
+        <span class="summary-sig-arg">RESULTDIR</span>,
         <span class="summary-sig-arg">hotspot</span>=<span class="summary-sig-default"><code class="variable-quote">'</code><code class="variable-string"></code><code class="variable-quote">'</code></span>,
         <span class="summary-sig-arg">ALL_HS_FILE</span>=<span class="summary-sig-default"><code class="variable-quote">'</code><code class="variable-string"></code><code class="variable-quote">'</code></span>)</span><br />
       Lance le logiciel VEP sur les mutations pr&#233;sentes dans chaque 
@@ -218,11 +226,47 @@
     </td><td class="summary">
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
-          <td><span class="summary-sig"><a name="get_allele_cov"></a><span class="summary-sig-name">get_allele_cov</span>(<span class="summary-sig-arg">self</span>,
+          <td><span class="summary-sig"><a name="get_DP"></a><span class="summary-sig-name">get_DP</span>(<span class="summary-sig-arg">self</span>,
         <span class="summary-sig-arg">string</span>)</span><br />
-      Recupere la couverture allelique pour chaque mutations.</td>
+      Recupere la profondeur totale pour chaque mutations.</td>
           <td align="right" valign="top">
-            <span class="codelink"><a href="refseqtoensembl-pysrc.html#RefseqToEnsembl.get_allele_cov">source&nbsp;code</a></span>
+            <span class="codelink"><a href="refseqtoensembl-pysrc.html#RefseqToEnsembl.get_DP">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="get_FAO"></a><span class="summary-sig-name">get_FAO</span>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">string</span>)</span><br />
+      Recupere le nombre d'all&#232;les mut&#233;s pour chaque mutations.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="refseqtoensembl-pysrc.html#RefseqToEnsembl.get_FAO">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="get_FRO"></a><span class="summary-sig-name">get_FRO</span>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">string</span>)</span><br />
+      Recupere la profondeur totale pour chaque mutations.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="refseqtoensembl-pysrc.html#RefseqToEnsembl.get_FRO">source&nbsp;code</a></span>
             
           </td>
         </tr>
@@ -257,7 +301,8 @@
         <tr>
           <td><span class="summary-sig"><a name="make_file_for_filter"></a><span class="summary-sig-name">make_file_for_filter</span>(<span class="summary-sig-arg">self</span>,
         <span class="summary-sig-arg">file</span>,
-        <span class="summary-sig-arg">REPERTORYVCF</span>)</span><br />
+        <span class="summary-sig-arg">REPERTORYVCF</span>,
+        <span class="summary-sig-arg">RESULTDIR</span>)</span><br />
       Parse le file de sortie de VEP et cree un nouveau file avec les 
       lignes qui match avec les ID ensembl.</td>
           <td align="right" valign="top">
@@ -333,7 +378,8 @@
         <tr>
           <td><span class="summary-sig"><a name="parse_mutations_file"></a><span class="summary-sig-name">parse_mutations_file</span>(<span class="summary-sig-arg">self</span>,
         <span class="summary-sig-arg">file</span>,
-        <span class="summary-sig-arg">REPERTORYVCF</span>)</span><br />
+        <span class="summary-sig-arg">REPERTORYVCF</span>,
+        <span class="summary-sig-arg">RESULTDIR</span>)</span><br />
       Parse le fichier contenant toutes les mutations pr&#233;sentes dans 
       l'echantillon.</td>
           <td align="right" valign="top">
@@ -374,6 +420,7 @@
   <h3 class="epydoc"><span class="sig"><span class="sig-name">__init__</span>(<span class="sig-arg">self</span>,
         <span class="sig-arg">pathREPERTORYVCF</span>,
         <span class="sig-arg">REPERTORYVCF</span>,
+        <span class="sig-arg">RESULTDIR</span>,
         <span class="sig-arg">ALL_HS_FILE</span>=<span class="sig-default"><code class="variable-quote">'</code><code class="variable-string"></code><code class="variable-quote">'</code></span>)</span>
     <br /><em class="fname">(Constructor)</em>
   </h3>
@@ -382,10 +429,11 @@
     </td>
   </tr></table>
   
-  
+  <p>initiation des dictionnaires, parsing des bdd</p>
   <dl class="fields">
     <dt>Overrides:
         <a href="refseqtoensembl.RefseqToEnsembl-class.html#__init__">refseqtoensembl.RefseqToEnsembl.__init__</a>
+        <dd><em class="note">(inherited documentation)</em></dd>
     </dt>
   </dl>
 </td></tr></table>
@@ -453,13 +501,18 @@
       <th>&nbsp;&nbsp;&nbsp;<a
         href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
 
-      <th class="navbar" width="100%"></th>
+  <!-- Project homepage -->
+      <th class="navbar" align="right" width="100%">
+        <table border="0" cellpadding="0" cellspacing="0">
+          <tr><th class="navbar" align="center"
+            ><a class="navbar" target="_top" href="https://github.com/IRCAN/Pipeline_NGS_Variants">VarAn : custom reports creator in predictive medicine</a></th>
+          </tr></table></th>
   </tr>
 </table>
 <table border="0" cellpadding="0" cellspacing="0" width="100%%">
   <tr>
     <td align="left" class="footer">
-    Generated by Epydoc 3.0.1 on Mon Jun 13 13:22:59 2016
+    Generated by Epydoc 3.0.1 on Thu Aug 11 14:53:18 2016
     </td>
     <td align="right" class="footer">
       <a target="mainFrame" href="http://epydoc.sourceforge.net"

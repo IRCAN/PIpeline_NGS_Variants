@@ -5,7 +5,7 @@
 et peuvent etre modifies.
 
 Ludovic KOSTHOWA (06/04/16)
-Info: Creation en cours, script peut etre modifie a tout moment."""
+Suite par Florent TESSIER (15/08/16)."""
 
 import re,os
 
@@ -17,21 +17,21 @@ class VariantFilter:
 		del self.sample[0]
 
 
-	def parse_hs_file(self):
-		"""Parse la liste des hotspots fournie en entree."""
+	"""def parse_hs_file(self,hotspots):
+		Parse la liste des hotspots fournie en entree.
 		with open("liste_hotspot_temp.txt",'r') as hotspotsFile:
 			hotspots = hotspotsFile.readlines()
 		count = 0
 		for ligne in hotspots:
-			h = ligne.split()
+			h = ligne.split("\t")
 			if h[1] == "start":
 				del hotspots[count]
 			count += 1
-		return hotspots
+		return hotspots"""
 
-	def compare_hs(self,sample,file,RESULTDIR):
+	def compare_hs(self,sample,file,RESULTDIR,hotspots):
 		"""Compare les mutations de l'echantillon au fichier des hotspots d'interet."""
-		hotspots = self.parse_hs_file()
+		#hotspots = self.parse_hs_file()
 		outputFile = open(RESULTDIR+"/"+self.REPERTORYVCF+"/temp/HSm_"+file, 'w')
 		outputFile.write("Gene\tposition\tExon-Intron\tRefSeq id\tHGVSc\tHGVSp\tcosmic ID\ttotal_cov\tvariant_cov\tallele_freq\tfunction\tsift\tpolyphen\tmaf\t\n")
 		o_f_uncertain = open(RESULTDIR+"/"+self.REPERTORYVCF+"/temp/HSm_questionable_"+file, 'w')
@@ -47,7 +47,6 @@ class VariantFilter:
 				sampleLigneReplace = sampleLigneReplace.replace("idCosmicNotFound"," ")
 				sampleLigneReplace = sampleLigneReplace.replace("NA"," ")
 				sampleLigneSplit = sampleLigneReplace.split("\t")
-				
 				temp = sampleLigneSplit[0].split(":")
 				chrNumber = "chr" + temp[0]
 				position = temp[1]

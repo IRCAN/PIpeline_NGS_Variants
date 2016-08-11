@@ -6,7 +6,7 @@ Script principal du pipeline qui traite le fichier .vcf de chaque patient d'un r
 afin d'obtenir un compte rendu de mutations.
 
 Ludovic KOSTHOWA (Debut : 06/04/16)
-Info: Creation en cours, script peut etre modifie a tout moment.
+Suite par Florent TESSIER (15/08/16).
 """
 
 import os,re,time,glob

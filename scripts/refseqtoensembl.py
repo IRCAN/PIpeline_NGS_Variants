@@ -5,8 +5,12 @@
 Script qui idEnsembleFind les equivalences entre identifiants RefSeq et identifiants Ensembl puis compare
 les identifiants Ensembl à ceux de Cosmic afin d'obtenir diverses informations.
 Ludovic KOSTHOWA (Debut : 06/04/16)
-Info: Creation en cours, script peut etre modifie a tout moment.
+Suite par Florent TESSIER (15/08/16).
 """
+
+###############
+##TODO: Modfier la creation du dictionnaire du panel
+###############
 
 import re
 
@@ -174,7 +178,6 @@ class RefseqToEnsembl:
 				position = pos
 			consequence = ligneSplit[6]
 			chromPosVcf = chrom + "\t" + position
-			
 			if idEnsembleFind:
 				idEnsembl = self.gene2ensemblFinalDic[idRefseq]
 				string = chromPos[0]+":"+position + "\t"+ geneId +"\t" + idRefseq + "\t" + idEnsembl + "\t" + HGVSc + "\t" + HGVSp + "\tidCosmicNotFound\tDP_not_find\tFAO_not_find\tfreq_not_find\t"+ function + "\t" + MAF + "\t" + SIFT + "\t" +PolyPhen + "\t"+ Exon +"\t"+ "NO-NOCALL" + "\n"
@@ -188,15 +191,14 @@ class RefseqToEnsembl:
 				if mutation[0]!="#":
 					mutationSplit = mutation.split("\t")
 					recalculPosition=0
+					#calcul des positions si del
 					if "del" in HGVSc:
-
 						HGV=HGVSc.split("del")
 						if "ins" in HGV[1]:
 							recupLen=HGV[1].split("ins")
 							recalculPosition=len(recupLen[-2]) -len(recupLen[-1])
 						else:
 							recalculPosition=len(HGV[-1])
-
 					chromPosMutation = mutationSplit[0]+"\t"+mutationSplit[1]
 
 					chromPosMutationSplit=chromPosMutation.split()
@@ -218,7 +220,6 @@ class RefseqToEnsembl:
 						Continue=False
 
 					elif (chromPosMutationSplit[0] == chromPosVcfSplit[0]) and (int(chromPosMutationSplit[1]) == (int(chromPosVcfSplit[1])-1)) and Continue:
-					#if chromPosMutation == chromPosVcf:
 						#DP = self.get_DP(mutationSplit[7])
 						FRO= self.get_FRO(mutationSplit[7])
 						FAO = self.get_FAO(mutationSplit[7])

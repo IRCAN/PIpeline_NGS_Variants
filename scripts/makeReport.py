@@ -3,7 +3,7 @@
 
 """Script creant un rapport complet au format xls puis en pdf.
 Ludovic KOSTHOWA (Debut : 06/04/16)
-Info: Creation en cours, script peut etre modifie a tout moment.
+Suite par Florent TESSIER (15/08/16).
 """
 
 from openpyxl import *
@@ -15,8 +15,6 @@ import codecs
 class MakeReport:
 	def __init__(self,REPERTORYVCF,i,RESULTDIR,pathREPERTORYVCF):
 		self.report_body(REPERTORYVCF,i,RESULTDIR,pathREPERTORYVCF)
-
-
 
 	def report_body(self,REPERTORYVCF,i,RESULTDIR,pathREPERTORYVCF):
 		avecHotspot=False
@@ -31,6 +29,7 @@ class MakeReport:
 		report.write("\n")
 		report.write("Rapport de "+title+"\n\n")
 		report.write("\n")
+		#recuperation des informations par patient
 		infos = MakeReport.informations(self,REPERTORYVCF,i,RESULTDIR,pathREPERTORYVCF)
 		if infos != None:
 			report.write(infos)
@@ -93,9 +92,7 @@ class MakeReport:
 					report.write(element)
 			report.write("\n")
 			report.write("\n")
-		##########################################
-		###TODO a virer
-		###################
+
 		if avecHotspot:
 			report.write("Hors Hotspots:")
 			report.write("\n")
@@ -145,22 +142,20 @@ class MakeReport:
 		report.write("Profondeur: La profondeur de lecture est le nombre de lectures («reads») indépendantes d'une base par le séquenceur\n")
 		report.write("Couverture: La couverture (en pourcentage) est le nombre de bases couvertes par rapport au nombre total de bases de la région d'intérêt (pour une profondeur de lecture donnée)\n")
 		report.write("maf: fréquence de l'allèle minoritaire\n")
-
-
 		report.close()
 
 	def informations(self,REPERTORYVCF,i,RESULTDIR,pathREPERTORYVCF):
-		if os.path.exists(pathREPERTORYVCF+"/templateNGS.txt") == True:
+		if os.path.exists("../Personal_Data/listeHS/template_NGS.csv") == True:
 			info=""
+			#recuperation du numero du IonXpress
 			number = i[10:]
 			if "0" in number:
 				number = number.replace("0","")
-			File = pathREPERTORYVCF+"/templateNGS.txt"
-			#with open(File,'r') as file:
+			File = "../Personal_Data/listeHS/template_NGS.csv"
 			with codecs.open(File, "r",encoding='utf-8', errors='ignore') as file:
 				file = file.readlines()
 				for element in file:
-					fileSplit = element.split(",")
+					fileSplit = element.split("\t")
 					if fileSplit[0] == number :
 						info = "Identifiant = "+fileSplit[1]+"\nNom = "+fileSplit[2]+"\nIndication = "+fileSplit[3]+"\nPanel = "+fileSplit[4]+"\n" 
 			return info
@@ -174,7 +169,6 @@ class MakeReport:
 		#####
 		# Largeur des colonnes
 		#####
-		#Pour le sinformations:
 		ws.column_dimensions["A"].width = 10.0
 		ws.column_dimensions["B"].width =12.0		
 		ws.column_dimensions["C"].width = 14.0
@@ -189,9 +183,10 @@ class MakeReport:
 		ws.column_dimensions["L"].width =7.0
 		ws.column_dimensions["M"].width = 7.0
 		ws.column_dimensions["N"].width = 7.0
-				#Titre du fichier
+
 		if i[-3:]=="vcf":
 			i=i[:-4]
+
 		titre=i
 		ws.title = titre
 
@@ -207,9 +202,6 @@ class MakeReport:
 			Gras=False
 			if contentrowsplit[0] == "Gene" or contentrowsplit[0] == "Echantillon":
 				Gras=True
-				
-			#else:
-				#font = Font(name='Arial',size=8, bold=False)
 			for col in range(len(contentrowsplit)):
 				if len(contentrowsplit) == 1:
 					if "=" in contentrowsplit[0]:
@@ -254,7 +246,6 @@ class MakeReport:
 						
 						if col == len(contentrowsplit)-1:
 							cell = alpahabet[col]+str(row+1)
-							#print(cell)
 							ws[cell] = contentrowsplit[col]
 							ws[cell].font = font
 							ws[cell].alignment = Alignment(horizontal="center",vertical="center")
@@ -273,7 +264,6 @@ class MakeReport:
 		#####
 		# Largeur des colonnes
 		#####
-		#Pour le sinformations:
 		ws1.column_dimensions["A"].width = 8.0
 		ws1.column_dimensions["B"].width =0# 10.0		
 		ws1.column_dimensions["C"].width = 10.0
@@ -286,11 +276,8 @@ class MakeReport:
 		ws1.column_dimensions["J"].width = 0
 		ws1.column_dimensions["K"].width = 12
 		ws1.column_dimensions["L"].width =10
-		ws1.column_dimensions["M"].width =0 
+		ws1.column_dimensions["M"].width =10 
 		ws1.column_dimensions["N"].width =9.0
-
-
-		
 
 		fichier2 = open(RESULTDIR+"/"+REPERTORYVCF+"/temp/Report_"+i+".txt","r")
 		content = fichier2.readlines()
@@ -350,7 +337,6 @@ class MakeReport:
 									contentrowsplit[col]=contentrowsplit1[col]
 						if col == len(contentrowsplit)-1:
 							cell = alpahabet[col]+str(row+1)
-							#print(cell)
 							ws1[cell] = contentrowsplit[col]
 							ws1[cell].font = font
 							ws1[cell].alignment = Alignment(horizontal="center",vertical="center")

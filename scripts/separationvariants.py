@@ -6,7 +6,7 @@ Script pour separer une ligne du fichier VCF composee de plusieurs transcripts e
 lignes: une ligne par transcript.
 
 Ludovic KOSTHOWA (06/04/16)
-Info: Creation en cours, script peut etre modifie a tout moment.
+Suite par Florent TESSIER (15/08/16).
 """
 
 import re
