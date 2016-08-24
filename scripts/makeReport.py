@@ -106,7 +106,7 @@ class MakeReport:
 					report.write(element)
 			report.write("\n")
 		if os.path.exists(RESULTDIR+"/"+REPERTORYVCF+"/temp/uncertain_mutation_"+i+".vcf")== True:
-			report.write("Variants détectés mais avec faible couverture: (cov < 300)")
+			report.write("Variants détectés mais avec faible couverture: (cov < 25)")
 			report.write("\n")
 			File = RESULTDIR+"/"+REPERTORYVCF+"/temp/uncertain_mutation_"+i+".vcf"
 			with open(File,'r') as file:
